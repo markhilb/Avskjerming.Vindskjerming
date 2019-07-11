@@ -1,208 +1,242 @@
 import tkinter
 import tkinter.messagebox
-# https://www.geeksforgeeks.org/python-gui-tkinter/
 
-GLASS_TOP = 220
-GLASS_BOTTOM = 300
-GLASS_TEXT_TOP = 190
+PAD_X = 50
+
+
+CANVAS_BASELINE = 300
+
 GLASS_WEIGHT_MULTIPLYER = 0.5
+WALLMOUNT_WEIGHT_MULTIPLYER = 0.2
+POST_WEIGHT_MULTIPLYER = 0.3
 
-VEGGFESTE_ID = -1
-VEGGFESTE_TOP = 200
-VEGGFESTE_BOTTOM = 300
-VEGGFESTE_WEIGHT_MULTIPLYER = 0.2
-
-STOLPE_ID = -2
-STOLPE_TOP = 200
-STOLPE_BOTTOM = 300
-STOLPE_WEIGHT_MULTIPLYER = 0.3
-
-TOTAL_WEIGHT_LABEL_LEFT = 500
-TOTAL_WEIGHT_LABEL_TOP = 100
+WALLMOUNT_WIDTH = 10
+POST_LAST_WIDTH = 15
+POST_WIDTH = 15
 
 LENGTH_BAR_SIDES_TOP = 320
 LENGTH_BAR_SIDES_HEIGHT = 10
-LENGTH_BAR_THICKNESS = 2
+LENGTH_BAR_THICKNESS = 1
 LENGTH_BAR_SIDES_BOTTOM = LENGTH_BAR_SIDES_TOP + LENGTH_BAR_SIDES_HEIGHT
 LENGTH_BAR_TOP = LENGTH_BAR_SIDES_TOP + (LENGTH_BAR_SIDES_HEIGHT / 2)
 LENGTH_BAR_BOTTOM = LENGTH_BAR_TOP + LENGTH_BAR_THICKNESS
 LENGT_BAR_LABEL_TOP = LENGTH_BAR_SIDES_TOP + LENGTH_BAR_SIDES_HEIGHT + 5
 
 
+def to_float(num):
+    try:
+        num = float(num)
+    except ValueError:
+        tkinter.messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
+        return False
+    return True
 
-class Main():
+
+class Glass:
+    def __init__(self, canvas, xpos, width, height):
+        self.id = canvas.create_rectangle(xpos, CANVAS_BASELINE - height, xpos + width, CANVAS_BASELINE, fill="blue")
+        self.xpos = xpos
+        self.width = width
+        self.height = height
+        self.weight = self.width * self.height  * GLASS_WEIGHT_MULTIPLYER
+        self.label = canvas.create_text(xpos + (width / 2), CANVAS_BASELINE - height - 30, text=width)
+
+class Wallmount:
+    def __init__(self, canvas, xpos, height):
+        self.width = WALLMOUNT_WIDTH
+        self.id = canvas.create_rectangle(xpos, CANVAS_BASELINE - height, xpos + self.width, CANVAS_BASELINE, fill="gray")
+        self.xpos = xpos
+        self.height = height
+        self.weight = self.width * self.height  * WALLMOUNT_WEIGHT_MULTIPLYER
+
+class Post:
+    def __init__(self, canvas, xpos, height, is_last=0):
+        if is_last:
+            self.width = POST_LAST_WIDTH
+        else:
+            self.width = POST_WIDTH
+        self.id = canvas.create_rectangle(xpos, CANVAS_BASELINE - height, xpos + self.width, CANVAS_BASELINE, fill="black")
+        self.xpos = xpos
+        self.height = height
+        self.weight = self.width * self.height  * POST_WEIGHT_MULTIPLYER
+
+class LengthBar:
+    def __init__(self, canvas):
+        self.canvas = canvas
+        self.left = self.canvas.create_rectangle(1, LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+        self.right = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.label = self.canvas.create_text(0, 0, text="")
+
+    def update(self, current_width):
+        self.canvas.delete(self.bar)
+        self.canvas.delete(self.right)
+        self.canvas.delete(self.label)
+        self.bar = self.canvas.create_rectangle(0, LENGTH_BAR_TOP, current_width, LENGTH_BAR_BOTTOM, fill="black")
+        self.right = self.canvas.create_rectangle(current_width - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, current_width, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+        self.label = self.canvas.create_text(current_width / 2, LENGT_BAR_LABEL_TOP, text=current_width)
+
+
+class Main:
     def __init__(self, master):
-        self.currentWidth = 0
-        self.veggfesteWidth = 10
-        self.glassWidth = 60
-        self.stolpeWidth = 15
-        self.canvasItems = []
-        self.totalWeight = 0
-
+        self.master = master
+        self.current_width = 0
+        self.current_weight = 0
+        self.canvas_items = []
 
         # ------------ Top Frame ---------------
 
-        self.topFrame = tkinter.Frame(master, bg="white")
-        self.topFrame.pack(side="top", fill="x")
+        self.top_frame = tkinter.Frame(self.master, bg="white")
+        self.top_frame.pack(side="top", fill="x")
 
-        self.regretButton = tkinter.Button(self.topFrame, text="Angre", command=self.undo)
-        self.regretButton.pack(side="left", padx=50)
+        self.undo_button = tkinter.Button(self.top_frame, text="Angre", command=self.undo)
+        self.undo_button.pack(side="left", padx=PAD_X)
 
-        self.topContainer = tkinter.Frame(self.topFrame)
-        self.topContainer.pack(side="top", pady=10)
+        self.top_container = tkinter.Frame(self.top_frame)
+        self.top_container.pack(side="top", pady=10)
 
-        self.totalLengthLabel = tkinter.Label(self.topContainer, text="Total lengde:")
-        self.totalLengthLabel.pack(side="left")
+        self.total_length_label = tkinter.Label(self.top_container, text="Total lengde:")
+        self.total_length_entry = tkinter.Entry(self.top_container)
+        self.total_length_label.pack(side="left")
+        self.total_length_entry.pack(side="left")
+        self.total_length_entry.insert(0, 0)
 
-        self.totalLengthEntry = tkinter.Entry(self.topContainer)
-        self.totalLengthEntry.pack(side="left")
-        self.totalLengthEntry.insert(0, 0)
+        self.current_weight_label = tkinter.Label(self.top_frame, text ="Vekt: 0 kg")
+        self.current_weight_label.pack(side="right", padx=PAD_X, pady=20)
 
 
         # ------------ Middle Frame ---------------
 
-        self.canvas = tkinter.Canvas(master, bg="lightgray")
-        self.canvas.pack(side="top", fill="both", expand=1, padx=50)
+        self.canvas = tkinter.Canvas(self.master, bg="lightgray")
+        self.canvas.pack(side="top", fill="both", expand=1, padx=PAD_X)
 
-        self.lengthBarLeft = self.canvas.create_rectangle(0, LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
-        self.lengthBarRight = self.canvas.create_rectangle(self.currentWidth - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, self.currentWidth, LENGTH_BAR_SIDES_BOTTOM, fill="black")
-        self.lengthBar = self.canvas.create_rectangle(0, LENGTH_BAR_TOP, self.currentWidth, LENGTH_BAR_BOTTOM, fill="black")
-        self.lengthBarLabel = self.canvas.create_text(0, LENGT_BAR_LABEL_TOP, text="")
-
-        self.totalWeightLabel = self.canvas.create_text(500, 100, text=0)
-
+        self.length_bar = LengthBar(self.canvas)
 
         # ------------ Bottom Frame ---------------
 
+        self.bottom_frame = tkinter.Frame(master, bg="white")
+        self.bottom_frame.pack(side="bottom", fill="both", expand=0)
 
-        self.bottomFrame = tkinter.Frame(master, bg="white")
-        self.bottomFrame.pack(side="bottom", fill="both", expand=0)
+        self.bottom_container = tkinter.Frame(self.bottom_frame, bg="white")
+        self.bottom_container.pack(pady=50)
 
-        self.bottomContainer = tkinter.Frame(self.bottomFrame, bg="white")
-        self.bottomContainer.pack(pady=50)
+        self.add_wallmount_button = tkinter.Button(self.bottom_container, text="Veggfeste", command=self.add_wallmount)
+        self.wallmount_height_entry = tkinter.Entry(self.bottom_container)
+        self.add_wallmount_button.pack(side="left", padx=10)
+        self.wallmount_height_entry.pack(side="left", padx=10)
+        self.wallmount_height_entry.insert(0, 65)
+       
+        self.add_post_button = tkinter.Button(self.bottom_container, text="Stolpe", command=self.add_post)
+        self.post_height_entry = tkinter.Entry(self.bottom_container)
+        self.add_post_button.pack(side="left", padx=10)
+        self.post_height_entry.pack(side="left", padx=10)
+        self.post_height_entry.insert(0, 65)
+       
+        self.add_glass_button = tkinter.Button(self.bottom_container, text="Glass", command=self.add_glass)
+        self.add_glass_button.pack(side="left", padx=10)
+       
+        self.glass_entries_container = tkinter.Frame(self.bottom_container, bg="white")
+        self.glass_entries_container.pack(side="left")
 
-        self.veggfeste = tkinter.Button(self.bottomContainer, text="Veggfeste", command=self.addVeggfeste)
-        self.stolpe = tkinter.Button(self.bottomContainer, text="Stolpe", command=self.addStolpe)
-        self.glass = tkinter.Button(self.bottomContainer, text="Glass", command=self.addGlass)
-        self.glassEntry = tkinter.Entry(self.bottomContainer)
-        self.veggfeste.pack(side="left", padx=10)
-        self.stolpe.pack(side="left", padx=10)
-        self.glass.pack(side="left", padx=10)
-        self.glassEntry.pack(side="left")
-        self.glassEntry.insert(0, self.glassWidth)
+        self.glass_width_entry_container = tkinter.Frame(self.glass_entries_container, bg="white")
+        self.glass_height_entry_container = tkinter.Frame(self.glass_entries_container, bg="white")
+        self.glass_width_entry_container.pack(side="top")
+        self.glass_height_entry_container.pack(side="top")
+       
+        self.glass_width_entry = tkinter.Entry(self.glass_width_entry_container)
+        self.glass_width_entry_label = tkinter.Label(self.glass_width_entry_container, text="Bredde", bg="white")
+        self.glass_height_entry = tkinter.Entry(self.glass_height_entry_container)
+        self.glass_height_entry_label = tkinter.Label(self.glass_height_entry_container, text="Høyde", bg="white")
+        
+        self.glass_width_entry.pack(side="left")
+        self.glass_width_entry_label.pack(side="left")
+        self.glass_height_entry.pack(side="left")
+        self.glass_height_entry_label.pack(side="left")
+        self.glass_width_entry.insert(0, 60)
+        self.glass_height_entry.insert(0, 60)
 
 
-    def checkTotalLength(self):
-        if self.totalLengthEntry.get() is '0':
-            tkinter.messagebox.showinfo("Warning", "Legg til en total lengde først!")
-            return False
-        try:
-            float(self.totalLengthEntry.get())
-        except ValueError:
-            tkinter.messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
-            return False
-        return True
-
-    def addVeggfeste(self):
-        if not self.checkTotalLength():
+    def add_wallmount(self):
+        if not to_float(self.wallmount_height_entry.get()) or \
+           not to_float(self.total_length_entry.get()):
             return
-        tmp = self.canvas.create_rectangle(self.currentWidth, VEGGFESTE_TOP, self.currentWidth + self.veggfesteWidth, VEGGFESTE_BOTTOM, fill="gray")
-        self.currentWidth += self.veggfesteWidth
-        self.canvasItems.append((tmp, self.veggfesteWidth, VEGGFESTE_ID))
-        self.updateLengthBar()
-        self.updateWeight(self.getVeggfesteWeight(10, 100))
+        if self.current_width + WALLMOUNT_WIDTH > float(self.total_length_entry.get()):
+            if not self.cut_glass(WALLMOUNT_WIDTH):
+                return
+        wallmount = Wallmount(self.canvas, self.current_width, float(self.wallmount_height_entry.get()))
+        self.canvas_items.append(wallmount)
+        self.current_width += wallmount.width
+        self.length_bar.update(self.current_width)
+        self.update_current_weight(wallmount.weight)
 
-    def addGlass(self):
-        if not self.checkTotalLength():
+    def add_glass(self):
+        if not to_float(self.glass_height_entry.get()) or \
+           not to_float(self.glass_width_entry.get())  or \
+           not to_float(self.total_length_entry.get()):
             return
-        try:
-            self.glassWidth = float(self.glassEntry.get())
-        except ValueError:
-            tkinter.messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
-            return
-        self.checkIfTooLong()
-        tmp = self.canvas.create_rectangle(self.currentWidth, GLASS_TOP, self.currentWidth + self.glassWidth, GLASS_BOTTOM, fill="blue")
-        label = self.canvas.create_text(self.currentWidth + (self.glassWidth / 2), GLASS_TEXT_TOP, text=self.glassWidth)
-        self.currentWidth += self.glassWidth
-        self.canvasItems.append((tmp, self.glassWidth, label))
-        self.updateLengthBar()
-        self.updateWeight(self.getGlassWeight(self.glassWidth, 80))
 
-    def addStolpe(self):
-        if not self.checkTotalLength():
+        glass_width = float(self.glass_width_entry.get())
+        if glass_width + self.current_width > float(self.total_length_entry.get()):
+            glass_width = float(self.total_length_entry.get()) - self.current_width
+        
+        glass = Glass(self.canvas, self.current_width, glass_width, float(self.glass_height_entry.get()))
+        self.canvas_items.append(glass)
+        self.current_width += glass_width
+        self.length_bar.update(self.current_width)
+        self.update_current_weight(glass.weight)
+
+    def add_post(self):
+        if not to_float(self.post_height_entry.get()) or \
+           not to_float(self.total_length_entry.get()):
             return
-        if not self.cutLastGlass(self.stolpeWidth):
-            tmp = self.canvas.create_rectangle(self.currentWidth, STOLPE_TOP, self.currentWidth + self.stolpeWidth, STOLPE_BOTTOM, fill="black") 
-            self.currentWidth += self.stolpeWidth
-            self.canvasItems.append((tmp, self.stolpeWidth, STOLPE_ID))
-        else:
-            #
-            # Todo: if currentWidth + stopleWidth > totalLength
-            #           Cut glass
-            #
-            tmp = self.canvas.create_rectangle(float(self.totalLengthEntry.get()), STOLPE_TOP, float(self.totalLengthEntry.get()) - self.stolpeWidth, STOLPE_BOTTOM, fill="black") 
-            self.canvasItems.append((tmp, self.stolpeWidth, -1))
-        self.updateLengthBar()
-        self.updateWeight(self.getStolpeWeight(15, 100))
+        
+        if self.current_width + POST_WIDTH > float(self.total_length_entry.get()):
+            if not self.cut_glass(POST_WIDTH):
+                return
+        post = Post(self.canvas, self.current_width, float(self.post_height_entry.get()))
+        self.canvas_items.append(post)
+        self.current_width += post.width
+        self.length_bar.update(self.current_width)
+        self.update_current_weight(post.weight)
 
     def undo(self):
-        item = self.canvasItems.pop()
-        if item[2] > 0:
-            self.canvas.delete(item[2])
-            self.updateWeight(-self.getGlassWeight(item[1], 80))
-        if item[2] is STOLPE_ID:
-            self.updateWeight(-self.getStolpeWeight(item[1], 80))
-        if item[2] is VEGGFESTE_ID:
-            self.updateWeight(-self.getVeggfesteWeight(item[1], 80))
+        item = self.canvas_items.pop()
+        self.canvas.delete(item.id)
+        if isinstance(item, Glass):
+            self.canvas.delete(item.label)
+        self.current_width -= item.width
+        self.length_bar.update(self.current_width)
+        self.update_current_weight(-item.weight)
 
-        self.canvas.delete(item[0])
-        self.currentWidth -= item[1]
-        self.updateLengthBar()
+    def update_current_weight(self, weight):
+        self.current_weight += weight
+        self.current_weight_label.configure(text="Vekt: "+str(self.current_weight)+" kg")
 
-    def updateLengthBar(self):
-        self.canvas.delete(self.lengthBar)
-        self.canvas.delete(self.lengthBarRight)
-        self.canvas.delete(self.lengthBarLabel)
-        self.lengthBarRight = self.canvas.create_rectangle(self.currentWidth - 1, LENGTH_BAR_SIDES_TOP, self.currentWidth, LENGTH_BAR_SIDES_BOTTOM, fill="black")
-        self.lengthBar = self.canvas.create_rectangle(0, LENGTH_BAR_TOP, self.currentWidth, LENGTH_BAR_BOTTOM, fill="black")
-        self.lengthBarLabel = self.canvas.create_text(self.currentWidth / 2, LENGT_BAR_LABEL_TOP, text=self.currentWidth)
-
-    def checkIfTooLong(self):
-        if self.currentWidth + self.glassWidth > float(self.totalLengthEntry.get()):
-            self.glassWidth = float(self.totalLengthEntry.get()) - self.currentWidth
-
-    def cutLastGlass(self, len):
-        if self.currentWidth + len > float(self.totalLengthEntry.get()):
-            glass = self.canvasItems.pop()
-            self.canvas.delete(glass[0])
-            self.canvas.delete(glass[2])
-            newGlassWidth = (float(self.totalLengthEntry.get()) - len) - (self.currentWidth - glass[1])
-            newGlass = self.canvas.create_rectangle(self.currentWidth - glass[1], GLASS_TOP, float(self.totalLengthEntry.get()) - len, GLASS_BOTTOM, fill="blue")
-            newLabel = self.canvas.create_text((self.currentWidth - glass[1] + (newGlassWidth / 2)), GLASS_TEXT_TOP, text=newGlassWidth)
-            self.canvasItems.append((newGlass, newGlassWidth, newLabel))
-            self.currentWidth = float(self.totalLengthEntry.get())
-            return True
-        else:
+    def cut_glass(self, width):
+        try:
+            glass = self.canvas_items.pop()
+        except:
             return False
+        if not isinstance(glass, Glass):
+            tkinter.messagebox.showinfo("Warning", "Kan ikke legge til stolpe/veggfeste fordi forrige element er ikke et glass!")
+            return False
+        self.canvas.delete(glass.id)
+        self.canvas.delete(glass.label)
+        self.current_width -= glass.width
+        self.current_weight -= glass.weight
+        new_width = float(self.total_length_entry.get()) - width - self.current_width
+        new_glass = Glass(self.canvas, self.current_width, new_width, glass.height)
+        self.canvas_items.append(new_glass)
+        self.current_width += new_glass.width
+        self.length_bar.update(self.current_width)
+        self.update_current_weight(new_glass.weight)
+        return True
 
-    def updateWeight(self, weight):
-        self.totalWeight += weight
-        self.canvas.delete(self.totalWeightLabel)
-        self.totalWeightLabel = self.canvas.create_text(TOTAL_WEIGHT_LABEL_LEFT, TOTAL_WEIGHT_LABEL_TOP, text=self.totalWeight)
 
-    def getGlassWeight(self, width, height):
-        return (width * height) * GLASS_WEIGHT_MULTIPLYER
 
-    def getStolpeWeight(self, width, height):
-        return (width * height) * STOLPE_WEIGHT_MULTIPLYER
-
-    def getVeggfesteWeight(self, width, height):
-        return (width * height) * VEGGFESTE_WEIGHT_MULTIPLYER
-
-root = tkinter.Tk(screenName="screenname", baseName="basename", className="classname", useTk=1)
-root.geometry("1000x600")
-root.configure(bg="white")
-
-main = Main(root)
-
-root.mainloop()
+if __name__ == "__main__":
+    root = tkinter.Tk(screenName="screenname", baseName="basename", className="Avskjerming", useTk=1)
+    root.geometry("1000x600")
+    root.configure(bg="white")
+    main = Main(root)
+    root.mainloop()
