@@ -108,7 +108,7 @@ class Glass:
 class LengthBar:
     def __init__(self, canvas):
         self.canvas = canvas
-        self.left = self.canvas.create_rectangle(1, LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+        self.left = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.right = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.label = self.canvas.create_text(0, 0, text="")
@@ -116,11 +116,14 @@ class LengthBar:
 
     def update(self, current_width):
         self.canvas.delete(self.bar)
+        self.canvas.delete(self.left)
         self.canvas.delete(self.right)
         self.canvas.delete(self.label)
-        self.bar = self.canvas.create_rectangle(0, LENGTH_BAR_TOP, current_width, LENGTH_BAR_BOTTOM, fill="black")
-        self.right = self.canvas.create_rectangle(current_width - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, current_width, LENGTH_BAR_SIDES_BOTTOM, fill="black")
-        self.label = self.canvas.create_text(current_width / 2, LENGT_BAR_LABEL_TOP, text=current_width)
+        if current_width > 0:
+            self.left = self.canvas.create_rectangle(1, LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+            self.bar = self.canvas.create_rectangle(0, LENGTH_BAR_TOP, current_width, LENGTH_BAR_BOTTOM, fill="black")
+            self.right = self.canvas.create_rectangle(current_width - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, current_width, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+            self.label = self.canvas.create_text(current_width / 2, LENGT_BAR_LABEL_TOP, text=current_width)
 
 
 class Main:
