@@ -273,18 +273,23 @@ class Main:
 
     def assert_user_input(self):
         try:
-            if float(self.glass_height_entry.get()) <= 0:
-                tkinter.messagebox.showinfo("Warning", "Glass høyden må være større enn 0!")
-            elif float(self.glass_width_entry.get()) <= 0:
-                tkinter.messagebox.showinfo("Warning", "Glass bredden må være større enn 0!")
-            elif float(self.wallmount_height_entry.get()) <= 0:
-                tkinter.messagebox.showinfo("Warning", "Veggfeste høyden må være større enn 0!")
-            elif float(self.post_height_entry.get()) <= 0:
-                tkinter.messagebox.showinfo("Warning", "Stolpe høyden må være større enn 0!")
-            elif float(self.total_width_entry.get()) <= 0:
-                tkinter.messagebox.showinfo("Warning", "Den totale lengden må være større enn 0!")
+            glass_height = self.glass_height_entry.get()
+            if glass_height is "" or float(glass_height) <= 0:
+                tkinter.messagebox.showinfo("Warning", "Glass høyden kan ikke være 0/tom!")
+            glass_width = self.glass_width_entry.get()
+            if glass_width is "" or float(glass_width) <= 0:
+                tkinter.messagebox.showinfo("Warning", "Glass bredden kan ikke være 0/tom!")
+            wallmount_height = self.wallmount_height_entry.get()
+            if wallmount_height is "" or float(wallmount_height) <= 0:
+                tkinter.messagebox.showinfo("Warning", "Veggfeste høyden kan ikke være 0/tom!")
+            post_height = self.post_height_entry.get()
+            if post_height is "" or float(post_height) <= 0:
+                tkinter.messagebox.showinfo("Warning", "Stolpe høyden kan ikke være 0/tom!")
+            total_width = self.total_width_entry.get()
+            if total_width is "" or float(total_width) <= 0:
+                tkinter.messagebox.showinfo("Warning", "Den totale lengden kan ikke være 0/tom!")
             else:
-                self.total_width = float(self.total_width_entry.get())
+                self.total_width = float(total_width)
                 return True
         except ValueError:
                 tkinter.messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
