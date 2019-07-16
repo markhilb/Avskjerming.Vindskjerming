@@ -237,7 +237,7 @@ class Main:
 
     def add_post(self, is_first):
         if self.current_width + POST_WIDTH > self.total_width:
-            if not self.cut_glass(POST_WIDTH):
+            if not self.cut_glass(POST_WIDTH + POST_BASE_WIDTH):
                 return False
         post = Post(self.canvas, self.current_width, float(self.post_height_entry.get()), True, is_first)
         self.canvas_items.append(post)
