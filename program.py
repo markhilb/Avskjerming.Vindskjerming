@@ -1,39 +1,31 @@
 import tkinter, collections
 import tkinter.messagebox
+from decimal import Decimal
 
 PAD_X = 50
 
+CANVAS_BASELINE = Decimal('300')
 
-CANVAS_BASELINE = 300
+GLASS_WEIGHT_MULTIPLYER = Decimal('0.5')
+WALLMOUNT_WEIGHT_MULTIPLYER = Decimal('0.2')
+POST_WEIGHT_MULTIPLYER = Decimal('0.3')
 
-GLASS_WEIGHT_MULTIPLYER = 0.5
-WALLMOUNT_WEIGHT_MULTIPLYER = 0.2
-POST_WEIGHT_MULTIPLYER = 0.3
-
-WALLMOUNT_WIDTH = 10
-POST_LAST_WIDTH = 15
-POST_WIDTH = 15
-POST_BASE_WIDTH = 4
-POST_BASE_HEIGHT = 3
+WALLMOUNT_WIDTH = Decimal('0.5')
+POST_WIDTH = Decimal('1.3')
+POST_BASE_WIDTH = Decimal('3')
+POST_BASE_HEIGHT = Decimal('2')
+POST_LAST_WIDTH = POST_WIDTH + POST_BASE_WIDTH
 
 GLASS_BASELINE = CANVAS_BASELINE - POST_BASE_HEIGHT
 
-LENGTH_BAR_SIDES_TOP = 320
-LENGTH_BAR_SIDES_HEIGHT = 10
-LENGTH_BAR_THICKNESS = 1
+LENGTH_BAR_SIDES_TOP = Decimal('320')
+LENGTH_BAR_SIDES_HEIGHT = Decimal('10')
+LENGTH_BAR_THICKNESS = Decimal('1')
 LENGTH_BAR_SIDES_BOTTOM = LENGTH_BAR_SIDES_TOP + LENGTH_BAR_SIDES_HEIGHT
 LENGTH_BAR_TOP = LENGTH_BAR_SIDES_TOP + (LENGTH_BAR_SIDES_HEIGHT / 2)
 LENGTH_BAR_BOTTOM = LENGTH_BAR_TOP + LENGTH_BAR_THICKNESS
 LENGT_BAR_LABEL_TOP = LENGTH_BAR_SIDES_TOP + LENGTH_BAR_SIDES_HEIGHT + 5
 
-
-def to_float(num):
-    try:
-        num = float(num)
-    except ValueError:
-        tkinter.messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
-        return False
-    return True
 
 class Item:
     WALLMOUNT = 0
@@ -45,13 +37,13 @@ class Item:
 class Wallmount:
     def __init__(self, canvas, xpos, height, is_last, is_first):
         self.canvas = canvas
-        self.is_first = is_first
         self.is_last = is_last
+        self.is_first = is_first
         self.width = WALLMOUNT_WIDTH
-        self.id = canvas.create_rectangle(xpos, CANVAS_BASELINE - height, xpos + self.width, CANVAS_BASELINE, fill="gray")
         self.xpos = xpos
         self.height = height
         self.weight = self.width * self.height  * WALLMOUNT_WEIGHT_MULTIPLYER
+        self.id = canvas.create_rectangle(self.xpos, CANVAS_BASELINE - self.height, self.xpos + self.width, CANVAS_BASELINE, fill="gray")
 
     def delete(self):
         self.canvas.delete(self.id)
@@ -60,19 +52,20 @@ class Wallmount:
 class Post:
     def __init__(self, canvas, xpos, height, is_last, is_first):
         self.canvas = canvas
-        self.is_first = is_first
         self.is_last = is_last
+        self.is_first = is_first
         self._width = POST_WIDTH
         if is_first:
             self.xpos = xpos + POST_BASE_WIDTH
         else:
             self.xpos = xpos
-        self.id = canvas.create_rectangle(self.xpos, CANVAS_BASELINE - height, self.xpos + self._width, CANVAS_BASELINE, fill="black")
         self.height = height
         self.weight = self._width * self.height  * POST_WEIGHT_MULTIPLYER
-        self.base_width = self._width + (POST_BASE_WIDTH * 2)
+        
+        self.id = canvas.create_rectangle(self.xpos, CANVAS_BASELINE - height, self.xpos + self._width, CANVAS_BASELINE, fill="black")
 
-        self.base = canvas.create_rectangle(self.xpos - POST_BASE_WIDTH,                    \
+        self.base_width = self._width + (POST_BASE_WIDTH * 2)
+        self.base = canvas.create_rectangle(self.xpos - POST_BASE_WIDTH,              \
                                             CANVAS_BASELINE - POST_BASE_HEIGHT,       \
                                             self.xpos + POST_BASE_WIDTH + POST_WIDTH, \
                                             CANVAS_BASELINE, fill="black")
@@ -91,14 +84,14 @@ class Post:
 class Glass:
     def __init__(self, canvas, xpos, width, height, is_last, is_first):
         self.canvas = canvas
-        self.is_first = is_first
         self.is_last = is_last
-        self.id = canvas.create_rectangle(xpos, GLASS_BASELINE - height, xpos + width, GLASS_BASELINE, fill="blue")
+        self.is_first = is_first
         self.xpos = xpos
         self.width = width
         self.height = height
         self.weight = self.width * self.height  * GLASS_WEIGHT_MULTIPLYER
-        self.label = canvas.create_text(xpos + (width / 2), GLASS_BASELINE - height - 30, text=width)
+        self.id = canvas.create_rectangle(xpos, GLASS_BASELINE - height, xpos + width, GLASS_BASELINE, fill="blue")
+        self.label = canvas.create_text(self.xpos + (self.width / 2), GLASS_BASELINE - self.height - 30, text=width)
 
     def delete(self):
         self.canvas.delete(self.id)
@@ -129,10 +122,10 @@ class LengthBar:
 class Main:
     def __init__(self, master):
         self.master = master
-        self.current_width = 0
-        self.current_weight = 0
+        self.current_width = Decimal('0')
+        self.current_weight = Decimal('0')
         self.canvas_items = []
-        self.total_width = 0
+        self.total_width = Decimal('0')
 
         # ------------ Top Frame ---------------
 
@@ -231,7 +224,7 @@ class Main:
         if self.current_width + WALLMOUNT_WIDTH > self.total_width:
             if not self.cut_glass(WALLMOUNT_WIDTH):
                 return False
-        wallmount = Wallmount(self.canvas, self.current_width, float(self.wallmount_height_entry.get()), True, is_first)
+        wallmount = Wallmount(self.canvas, self.current_width, Decimal(self.wallmount_height_entry.get()), True, is_first)
         self.canvas_items.append(wallmount)
         return True
 
@@ -239,15 +232,15 @@ class Main:
         if self.current_width + POST_WIDTH > self.total_width:
             if not self.cut_glass(POST_WIDTH + POST_BASE_WIDTH):
                 return False
-        post = Post(self.canvas, self.current_width, float(self.post_height_entry.get()), True, is_first)
+        post = Post(self.canvas, self.current_width, Decimal(self.post_height_entry.get()), True, is_first)
         self.canvas_items.append(post)
         return True
 
     def add_glass(self, is_first):
-        glass_width = float(self.glass_width_entry.get())
+        glass_width = Decimal(self.glass_width_entry.get())
         if glass_width + self.current_width > self.total_width:
             glass_width = self.total_width - self.current_width
-        glass = Glass(self.canvas, self.current_width, glass_width, float(self.glass_height_entry.get()), True, is_first)
+        glass = Glass(self.canvas, self.current_width, glass_width, Decimal(self.glass_height_entry.get()), True, is_first)
         self.canvas_items.append(glass)
         return True
 
@@ -289,7 +282,7 @@ class Main:
             if total_width is "" or float(total_width) <= 0:
                 tkinter.messagebox.showinfo("Warning", "Den totale lengden kan ikke være 0/tom!")
             else:
-                self.total_width = float(total_width)
+                self.total_width = Decimal(total_width)
                 return True
         except ValueError:
                 tkinter.messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
@@ -306,8 +299,8 @@ class Main:
         self.update()
 
     def update(self):
-        self.current_width = 0
-        self.current_weight = 0
+        self.current_width = Decimal('0')
+        self.current_weight = Decimal('0')
         for item in self.canvas_items:
             self.current_width += item.width
             self.current_weight += item.weight
