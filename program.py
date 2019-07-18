@@ -10,16 +10,9 @@ from decimal import Decimal
 #
 
 
-
-
-
 PAD_X = 50
 
 CANVAS_BASELINE = Decimal('300')
-
-WALLMOUNT_SCALE = Decimal('6')
-POST_SCALE = Decimal('2')
-GLASS_SCALE = Decimal('1')
 
 GLASS_WEIGHT_MULTIPLYER = Decimal('0.5')
 WALLMOUNT_WEIGHT_MULTIPLYER = Decimal('0.2')
@@ -50,15 +43,16 @@ class Item:
 
 
 class Wallmount:
-    def __init__(self, canvas, xpos, height, canvas_xpos, is_last, is_first):
+    def __init__(self, canvas, xpos, height, canvas_xpos, scale, is_last, is_first):
         self.canvas = canvas
+        self.scale = scale
         self.is_last = is_last
         self.is_first = is_first
         self.width = WALLMOUNT_WIDTH
         self.xpos = xpos
         self.height = height
         self.canvas_xpos = canvas_xpos
-        self.canvas_width = self.width * WALLMOUNT_SCALE
+        self.canvas_width = self.width * self.scale
         self.weight = self.width * self.height  * WALLMOUNT_WEIGHT_MULTIPLYER
         self.id = canvas.create_rectangle(self.canvas_xpos, CANVAS_BASELINE - self.height, self.canvas_xpos + self.canvas_width, CANVAS_BASELINE, fill="gray")
 
@@ -67,8 +61,9 @@ class Wallmount:
 
 
 class Post:
-    def __init__(self, canvas, xpos, height, canvas_xpos, is_last, is_first):
+    def __init__(self, canvas, xpos, height, canvas_xpos, scale, is_last, is_first):
         self.canvas = canvas
+        self.scale = scale
         self.is_last = is_last
         self.is_first = is_first
         self._width = POST_WIDTH
@@ -79,10 +74,10 @@ class Post:
             self.xpos = xpos
             self.canvas_xpos = canvas_xpos
         self.height = height
-        self._canvas_width = self.width * POST_SCALE
+        self._canvas_width = self.width * self.scale
         self.weight = self._width * self.height  * POST_WEIGHT_MULTIPLYER
         self.id = canvas.create_rectangle(self.canvas_xpos, CANVAS_BASELINE - self.height, self.canvas_xpos + self._canvas_width, CANVAS_BASELINE, fill="black")
-        self.canvas_base_width = (POST_BASE_WIDTH * POST_SCALE)
+        self.canvas_base_width = (POST_BASE_WIDTH * self.scale)
         self.base = canvas.create_rectangle(self.canvas_xpos - self.canvas_base_width,                      \
                                             CANVAS_BASELINE - POST_BASE_HEIGHT,                      \
                                             self.canvas_xpos + self.canvas_base_width + self._canvas_width, \
@@ -106,15 +101,16 @@ class Post:
 
 
 class Glass:
-    def __init__(self, canvas, xpos, width, height, canvas_xpos, is_last, is_first):
+    def __init__(self, canvas, xpos, width, height, canvas_xpos, scale, is_last, is_first):
         self.canvas = canvas
+        self.scale = scale
         self.is_last = is_last
         self.is_first = is_first
         self.xpos = xpos
         self.width = width
         self.height = height
         self.canvas_xpos = canvas_xpos
-        self.canvas_width = self.width * GLASS_SCALE
+        self.canvas_width = self.width * self.scale
         self.weight = self.width * self.height  * GLASS_WEIGHT_MULTIPLYER
         self.id = canvas.create_rectangle(self.canvas_xpos, GLASS_BASELINE - self.height, self.canvas_xpos + self.canvas_width, GLASS_BASELINE, fill="blue")
         self.label = canvas.create_text(self.canvas_xpos + (self.canvas_width / 2), GLASS_BASELINE - self.height - 30, text=width)
@@ -153,6 +149,33 @@ class Main:
         self.current_weight = Decimal('0')
         self.canvas_items = []
         self.total_width = Decimal('0')
+
+        self.WALLMOUNT_SCALE = Decimal('6')
+        self.POST_SCALE = Decimal('2')
+        self.GLASS_SCALE = Decimal('1')
+
+        # ------------ Toolbar -----------------
+
+        self.toolbar = tkinter.Menu(self.master)
+        self.master.config(menu=self.toolbar)
+
+        self.toolbar_file = tkinter.Menu(self.toolbar)
+        self.toolbar.add_cascade(label="Fil", menu=self.toolbar_file)
+        self.toolbar_file.add_command(label="Lagre bilde")
+
+        self.toolbar_scale = tkinter.Menu(self.toolbar)
+        self.toolbar.add_cascade(label="Skaler", menu=self.toolbar_scale)
+        self.toolbar_scale_wallmount = tkinter.Menu(self.toolbar_scale)
+        self.toolbar_scale_post = tkinter.Menu(self.toolbar_scale)
+        self.toolbar_scale_glass = tkinter.Menu(self.toolbar_scale)
+        self.toolbar_scale.add_cascade(label="Skaler veggfeste", menu=self.toolbar_scale_wallmount)
+        self.toolbar_scale.add_cascade(label="Skaler stolpe", menu=self.toolbar_scale_post)
+        self.toolbar_scale.add_cascade(label="Skaler glass", menu=self.toolbar_scale_glass)
+
+        for i in range(0, 100, 5):
+            self.toolbar_scale_wallmount.add_command(label=str(i/10), command=lambda: self.set_scale(Item.WALLMOUNT, Decimal(str(i)) / 10))
+            self.toolbar_scale_post.add_command(label=str(i/10), command=lambda: self.set_scale(Item.POST, Decimal(str(i)) / 10))
+            self.toolbar_scale_glass.add_command(label=str(i/10), command=lambda: self.set_scale(Item.GLASS, Decimal(str(i)) / 10))
 
         # ------------ Top Frame ---------------
 
@@ -251,7 +274,7 @@ class Main:
         if self.current_width + WALLMOUNT_WIDTH > self.total_width:
             if not self.cut_glass(WALLMOUNT_WIDTH):
                 return False
-        wallmount = Wallmount(self.canvas, self.current_width, Decimal(self.wallmount_height_entry.get()), self.current_canvas_width, True, is_first)
+        wallmount = Wallmount(self.canvas, self.current_width, Decimal(self.wallmount_height_entry.get()), self.current_canvas_width, self.WALLMOUNT_SCALE, True, is_first)
         self.canvas_items.append(wallmount)
         return True
 
@@ -259,7 +282,7 @@ class Main:
         if self.current_width + POST_WIDTH > self.total_width:
             if not self.cut_glass(POST_WIDTH + POST_BASE_WIDTH):
                 return False
-        post = Post(self.canvas, self.current_width, Decimal(self.post_height_entry.get()), self.current_canvas_width, True, is_first)
+        post = Post(self.canvas, self.current_width, Decimal(self.post_height_entry.get()), self.current_canvas_width, self.POST_SCALE, True, is_first)
         self.canvas_items.append(post)
         return True
 
@@ -267,7 +290,7 @@ class Main:
         glass_width = Decimal(self.glass_width_entry.get())
         if glass_width + self.current_width > self.total_width:
             glass_width = self.total_width - self.current_width
-        glass = Glass(self.canvas, self.current_width, glass_width, Decimal(self.glass_height_entry.get()), self.current_canvas_width, True, is_first)
+        glass = Glass(self.canvas, self.current_width, glass_width, Decimal(self.glass_height_entry.get()), self.current_canvas_width, self.GLASS_SCALE, True, is_first)
         self.canvas_items.append(glass)
         return True
 
@@ -287,7 +310,7 @@ class Main:
         self.current_weight -= glass.weight
         self.current_canvas_width -= glass.canvas_width
         new_width = self.total_width - width - self.current_width
-        new_glass = Glass(self.canvas, self.current_width, new_width, glass.height, self.current_canvas_width, False, False)
+        new_glass = Glass(self.canvas, self.current_width, new_width, glass.height, self.current_canvas_width, self.GLASS_SCALE, False, False)
         self.canvas_items.append(new_glass)
         self.update()
         return True
@@ -336,6 +359,14 @@ class Main:
             self.current_canvas_width += item.canvas_width
         self.current_weight_label.configure(text="Vekt: " + str(self.current_weight) + " kg")
         self.length_bar.update(self.current_width, self.current_canvas_width)
+
+    def set_scale(self, item, num):
+        if item is Item.WALLMOUNT:
+            self.WALLMOUNT_SCALE = num
+        elif item is Item.POST:
+            self.POST_SCALE = num
+        elif item is Item.GLASS:
+            self.GLASS_SCALE = num
 
 
 if __name__ == "__main__":
