@@ -69,7 +69,7 @@ class Post:
         self._width = POST_WIDTH
         if is_first:
             self.xpos = xpos + POST_BASE_WIDTH
-            self.canvas_xpos = canvas_xpos + POST_BASE_WIDTH
+            self.canvas_xpos = canvas_xpos + POST_BASE_WIDTH * scale
         else:
             self.xpos = xpos
             self.canvas_xpos = canvas_xpos
@@ -85,12 +85,16 @@ class Post:
 
     @property
     def width(self):
+        if self.is_first and self.is_last:
+            return self._width + (POST_BASE_WIDTH * 2)
         if self.is_last or self.is_first:
             return self._width + POST_BASE_WIDTH
         return self._width
 
     @property
     def canvas_width(self):
+        if self.is_first and self.is_last:
+            return self._canvas_width + (self.canvas_base_width * 2)
         if self.is_last or self.is_first:
             return self._canvas_width + self.canvas_base_width
         return self._canvas_width
@@ -161,10 +165,9 @@ class Main:
 
         self.toolbar_file = tkinter.Menu(self.toolbar)
         self.toolbar.add_cascade(label="Fil", menu=self.toolbar_file)
-        self.toolbar_file.add_command(label="Lagre bilde")
 
-        self.toolbar_scale = tkinter.Menu(self.toolbar)
-        self.toolbar.add_cascade(label="Skaler", menu=self.toolbar_scale)
+        self.toolbar_scale = tkinter.Menu(self.toolbar_file)
+        self.toolbar_file.add_cascade(label="Skaler", menu=self.toolbar_scale)
         self.toolbar_scale_wallmount = tkinter.Menu(self.toolbar_scale)
         self.toolbar_scale_post = tkinter.Menu(self.toolbar_scale)
         self.toolbar_scale_glass = tkinter.Menu(self.toolbar_scale)
@@ -173,9 +176,10 @@ class Main:
         self.toolbar_scale.add_cascade(label="Skaler glass", menu=self.toolbar_scale_glass)
 
         for i in range(0, 100, 5):
-            self.toolbar_scale_wallmount.add_command(label=str(i/10), command=lambda: self.set_scale(Item.WALLMOUNT, Decimal(str(i)) / 10))
-            self.toolbar_scale_post.add_command(label=str(i/10), command=lambda: self.set_scale(Item.POST, Decimal(str(i)) / 10))
-            self.toolbar_scale_glass.add_command(label=str(i/10), command=lambda: self.set_scale(Item.GLASS, Decimal(str(i)) / 10))
+            num = Decimal(str(i))/ 10
+            self.toolbar_scale_wallmount.add_command(label=str(num), command=lambda _num=num: self.set_scale(Item.WALLMOUNT, _num))
+            self.toolbar_scale_post.add_command(label=str(num), command=lambda _num=num: self.set_scale(Item.POST, _num))
+            self.toolbar_scale_glass.add_command(label=str(num), command=lambda _num=num: self.set_scale(Item.GLASS, _num))
 
         # ------------ Top Frame ---------------
 
@@ -367,6 +371,7 @@ class Main:
             self.POST_SCALE = num
         elif item is Item.GLASS:
             self.GLASS_SCALE = num
+
 
 
 if __name__ == "__main__":
