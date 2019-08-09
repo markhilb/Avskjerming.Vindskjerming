@@ -2,7 +2,7 @@
 * Python 3
 
 
-## Get started
+## Run program
 ```
 $ py program.py
 ```
