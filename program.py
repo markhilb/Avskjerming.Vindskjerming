@@ -175,10 +175,14 @@ class Main:
         self.toolbar_scale.add_cascade(label="Skaler stolpe", menu=self.toolbar_scale_post)
         self.toolbar_scale.add_cascade(label="Skaler glass", menu=self.toolbar_scale_glass)
 
-        for i in range(0, 100, 5):
-            num = Decimal(str(i))/ 10
+        for i in range(0, 21):
+            num = Decimal(str(i))
             self.toolbar_scale_wallmount.add_command(label=str(num), command=lambda _num=num: self.set_scale(Item.WALLMOUNT, _num))
+        for i in range(0, 50, 2):
+            num = Decimal(str(i))/ 10
             self.toolbar_scale_post.add_command(label=str(num), command=lambda _num=num: self.set_scale(Item.POST, _num))
+        for i in range(0, 20, 1):
+            num = Decimal(str(i))/ 10
             self.toolbar_scale_glass.add_command(label=str(num), command=lambda _num=num: self.set_scale(Item.GLASS, _num))
 
         # ------------ Top Frame ---------------
