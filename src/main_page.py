@@ -38,9 +38,9 @@ class MainPage(tkinter.Frame):
 
         top_frame_left_container = tkinter.Frame(top_frame, bg="white")
         top_frame_left_container.grid(row=0, column=0, sticky="w")
-        self.reset_button = tkinter.Button(top_frame_left_container, text="Reset")
+        self.reset_button = tkinter.Button(top_frame_left_container, text="Reset", command=self.canvas.clear)
         self.reset_button.pack(side="left", padx=10)
-        self.undo_button = tkinter.Button(top_frame_left_container, text="Angre")
+        self.undo_button = tkinter.Button(top_frame_left_container, text="Angre", command=self.canvas.undo)
         self.undo_button.pack(side="left")
 
         top_frame_middle_container = tkinter.Frame(top_frame, bg="white")
@@ -73,11 +73,11 @@ class MainPage(tkinter.Frame):
         bottom_frame.grid_columnconfigure(0, weight=1)
         bottom_frame.grid_columnconfigure(5, weight=1)
 
-        self.wallmount_button = tkinter.Button(bottom_frame, text="Veggskinne")
+        self.wallmount_button = tkinter.Button(bottom_frame, text="Veggskinne", command=lambda: self.add_item(Wallmount))
         self.wallmount_button.grid(row=0, column=1, pady=50, padx=10)
-        self.post_button = tkinter.Button(bottom_frame, text="Stolpe")
+        self.post_button = tkinter.Button(bottom_frame, text="Stolpe", command=lambda: self.add_item(Post))
         self.post_button.grid(row=0, column=2, padx=10)
-        self.glass_button = tkinter.Button(bottom_frame, text="Glass")
+        self.glass_button = tkinter.Button(bottom_frame, text="Glass", command=lambda: self.add_item(Glass))
         self.glass_button.grid(row=0, column=3, padx=10)
 
         glass_container = tkinter.Frame(bottom_frame, bg="white")
@@ -114,21 +114,18 @@ class MainPage(tkinter.Frame):
                float(self.glass_height_entry.get()) <= 0:
                 self.canvas.clear()
                 return
-            if Decimal(self.total_width.get()) > 1000000:
+            if Decimal(self.total_width.get()) > 10000000:
                 messagebox.showinfo("Warning", "Total lengde er for stor!")
                 self.canvas.clear()
                 self.total_width.set(self.total_width.get()[:-1])
                 return
         except SyntaxError:
-            messagebox.showinfo("Warning", "Ugyldig tall!")
             self.canvas.clear()
             self.total_width.set(self.total_width.get()[:-1])
             return
         except ValueError:
             if(self.total_width.get().find(",") is not -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
-            else:
-                messagebox.showinfo("Warning", "Ugyldig tall!")
             self.canvas.clear()
             self.total_width.set(self.total_width.get()[:-1])
             return
@@ -141,3 +138,32 @@ class MainPage(tkinter.Frame):
                                    Decimal(self.glass_height_entry.get()),  \
                                    right_item)
 
+    def add_item(self, item):
+        try:
+            if self.total_width.get() is ""                or \
+               float(self.total_width.get()) < 10          or \
+               self.glass_width_entry.get() is ""          or \
+               float(self.glass_width_entry.get()) <= 0    or \
+               self.glass_height_entry.get() is ""         or \
+               float(self.glass_height_entry.get()) <= 0:
+                return
+            if Decimal(self.total_width.get()) > 10000000:
+                messagebox.showinfo("Warning", "Total lengde er for stor!")
+                self.canvas.clear()
+                self.total_width.set(self.total_width.get()[:-1])
+                return
+        except SyntaxError:
+            self.total_width.set(self.total_width.get()[:-1])
+            return
+        except ValueError:
+            if(self.total_width.get().find(",") is not -1):
+                messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
+            self.total_width.set(self.total_width.get()[:-1])
+            return
+
+        if item is Wallmount:
+            self.canvas.add_wallmount(Decimal(self.total_width.get()), Decimal(self.glass_height_entry.get()))
+        elif item is Post:
+            self.canvas.add_post(Decimal(self.total_width.get()), Decimal(self.glass_height_entry.get()))
+        else:
+            self.canvas.add_glass(Decimal(self.total_width.get()), Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()))

@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import messagebox
 from decimal import Decimal
-from items import Wallmount, Post, Glass
+from items import Wallmount, Post, Glass, LengthBar
 from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH
 
 class Canvas(tkinter.Canvas):
@@ -10,6 +10,7 @@ class Canvas(tkinter.Canvas):
         self.items = []
         self.current_width = Decimal("0")
         self.current_xpos = CANVAS_LEFT_START
+        self.length_bar = LengthBar(self)
 
     def auto_calculate(self, total_width, left, width, height, right):
         self.clear()
@@ -22,10 +23,6 @@ class Canvas(tkinter.Canvas):
         
         total_width_minus_edges = (total_width - self.current_width - (POST_WIDTH if right is Post else WALLMOUNT_WIDTH))
         num =  total_width_minus_edges / (Decimal(width) + POST_WIDTH)
-        # check_num = num * Decimal(width) + POST_WIDTH 
-        # if check_num > total_width_minus_edges - POST_WIDTH and check_num < total_width_minus_edges + POST_WIDTH:
-        #     messagebox.showinfo("Warning", "Denne kombinasjonen går ikke opp!\nVelg en annen bredde på glassene!")
-        #     return
         
         for _ in range(int(num)):
             self.add_glass(total_width, width, height)
@@ -42,49 +39,79 @@ class Canvas(tkinter.Canvas):
                 return
             
     def add_wallmount(self, total_width, height):
-        if self.current_width + WALLMOUNT_WIDTH > total_width:
-            if not self.cut_glass(WALLMOUNT_WIDTH):
+        if len(self.items) is not 0:
+            if not isinstance(self.items[len(self.items) - 1], Glass):
+                return False
+        if self.current_width + WALLMOUNT_WIDTH >= total_width:
+            if not self.cut_glass((self.current_width + WALLMOUNT_WIDTH) - total_width):
                 return False
         wallmount = Wallmount(self, self.current_xpos, height)
-        self.add_item(wallmount)
+        self.items.append(wallmount)
+        self.update()
         return True
 
     def add_post(self, total_width, height):
-        if self.current_width + POST_LAST_WIDTH > total_width:
-            if not self.cut_glass(POST_LAST_WIDTH):
+        if len(self.items) is not 0:
+            if not isinstance(self.items[len(self.items) - 1], Glass):
+                return False
+        if self.current_width + POST_LAST_WIDTH >= total_width:
+            if not self.cut_glass((self.current_width + POST_LAST_WIDTH) - total_width):
                 return False
         post = Post(self, self.current_xpos, height, True)
-        self.add_item(post)
+        self.items.append(post)
+        self.update()
         return True
 
     def add_glass(self, total_width, width, height):
-        if self.current_width + width > total_width:
-            width = total_width - self.current_width
-        if width <= 0:
+        if len(self.items) is 0 or self.current_width >= total_width:
             return False
+        if isinstance(self.items[len(self.items) - 1], Post):
+            if len(self.items) is not 1:
+                self.items[len(self.items) - 1].is_last = False
+                self.update()
+        elif isinstance(self.items[len(self.items) - 1], Glass):
+            return False
+        if self.current_width + width > total_width:
+            width = total_width - self.current_width 
         glass = Glass(self, self.current_xpos, width, height)
-        self.add_item(glass)
+        self.items.append(glass)
+        self.update()
         return True
+
 
     def cut_glass(self, width):
-        item = self.items.pop()
-        if not isinstance(item, Glass):
-            self.items.append(item)
+        if len(self.items) is 0:
             return False
-        self.current_width -= item.width
-        new_glass = Glass(self, self.current_xpos, item.width - width, item.height)
-        self.add_item(new_glass)
-        item.delete()
+        glass = self.items.pop()
+        if glass.width <= width:
+            self.items.append(glass)
+            return False
+        self.update()
+        new_glass = Glass(self, self.current_xpos, glass.width - width, glass.height)
+        self.items.append(new_glass)
+        glass.delete()
+        self.update()
         return True
 
-    def add_item(self, item):
-        # las_item = self.items[len(sele)]
-        self.items.append(item)
-        self.current_width += item.width
-        self.current_xpos += item.width
+    def update(self):
+        self.current_width = Decimal("0")
+        for item in self.items:
+            self.current_width += item.width
+        self.current_xpos = self.current_width + CANVAS_LEFT_START
+        self.length_bar.update(self.current_width, self.current_xpos)
 
     def clear(self):
         for item in self.items:
             item.delete()
+        self.items.clear()
         self.current_width = Decimal("0")
         self.current_xpos = CANVAS_LEFT_START
+        self.length_bar.update(self.current_width, self.current_xpos)
+
+    def undo(self):
+        if len(self.items) is not 0:
+            item = self.items.pop()
+            item.delete()
+        if len(self.items) is not 0 and isinstance(self.items[len(self.items) - 1], Post):
+            self.items[len(self.items) - 1].is_last = True
+        self.update()

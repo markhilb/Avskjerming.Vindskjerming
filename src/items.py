@@ -1,5 +1,6 @@
 import tkinter
-from config import CANVAS_BASELINE, GLASS_BASELINE, WALLMOUNT_WIDTH, POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT
+from config import CANVAS_BASELINE, CANVAS_LEFT_START, GLASS_BASELINE, WALLMOUNT_WIDTH, POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT, \
+                   LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, LENGT_BAR_LABEL_TOP
 
 
 class Wallmount:
@@ -17,11 +18,11 @@ class Wallmount:
 
 
 class Post:
-    def __init__(self, canvas, xpos, height, is_first_or_last):
+    def __init__(self, canvas, xpos, height, is_last):
         self.canvas = canvas
         self.xpos = xpos
         self.height = height + 1
-        self.is_first_or_last = is_first_or_last
+        self.is_last = is_last
         self.color = "black"
 
         self.id = canvas.create_rectangle(self.xpos, CANVAS_BASELINE - self.height, self.xpos + POST_WIDTH, CANVAS_BASELINE, fill=self.color)
@@ -30,7 +31,7 @@ class Post:
 
     @property
     def width(self):
-        return (POST_LAST_WIDTH if self.is_first_or_last else POST_WIDTH) 
+        return (POST_LAST_WIDTH if self.is_last else POST_WIDTH) 
 
     def delete(self):
         self.canvas.delete(self.id)
@@ -53,3 +54,23 @@ class Glass:
         self.canvas.delete(self.id)
         self.canvas.delete(self.label)
     
+
+class LengthBar:
+    def __init__(self, canvas):
+        self.canvas = canvas
+        self.left = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.right = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.label = self.canvas.create_text(0, 0, text="")
+    
+
+    def update(self, current_width, xpos):
+        self.canvas.delete(self.bar)
+        self.canvas.delete(self.left)
+        self.canvas.delete(self.right)
+        self.canvas.delete(self.label)
+        if current_width > 0:
+            self.left = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_SIDES_TOP, CANVAS_LEFT_START + LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+            self.bar = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_TOP, xpos, LENGTH_BAR_BOTTOM, fill="black")
+            self.right = self.canvas.create_rectangle(xpos - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, xpos, LENGTH_BAR_SIDES_BOTTOM, fill="black")
+            self.label = self.canvas.create_text(xpos / 2, LENGT_BAR_LABEL_TOP, text=current_width)
