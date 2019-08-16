@@ -117,17 +117,9 @@ class Canvas(tkinter.Canvas):
             self.items[len(self.items) - 1].is_last = True
         self.update()
 
-    def edit(self, id):
-        popup = tkinter.Tk()
-        popup.config(bg="white")
-        popup.wm_title("Rediger glass")
-        label = tkinter.Label(popup, text="Ny bredde:", bg="white")
-        label.pack(side="top", pady=10)
-        entry = tkinter.Entry(popup)
-        entry.pack(side="top", pady=10)
-        ok = tkinter.Button(popup, text="Ok", bg="white")
-        cancel = tkinter.Button(popup, text="Avbryt", command=popup.destroy, bg="white")
-        delete = tkinter.Button(popup, text="Slett", bg="white")
-        ok.pack(side="left", padx=10, pady=10)
-        cancel.pack(side="left", padx=10, pady=10)
-        delete.pack(side="left", padx=10, pady=10)
+    def edit_glass(self, id, width):
+        print(id)
+        print(width)
+
+    def delete_glass(self, id):
+        print(id)

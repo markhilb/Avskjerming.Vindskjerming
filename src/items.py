@@ -1,4 +1,5 @@
 import tkinter
+from popups import EditGlassPopup
 from config import CANVAS_BASELINE, CANVAS_LEFT_START, GLASS_BASELINE, WALLMOUNT_WIDTH, POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT, \
                    LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, LENGT_BAR_LABEL_TOP
 
@@ -47,7 +48,7 @@ class Glass:
         self.color = "blue"
 
         self.id = canvas.create_rectangle(self.xpos, GLASS_BASELINE - self.height, self.xpos + self.width, GLASS_BASELINE, fill=self.color)
-        canvas.tag_bind(self.id, "<Button-1>", lambda *args: canvas.edit(self.id))
+        canvas.tag_bind(self.id, "<Button-1>", lambda *args: EditGlassPopup(canvas, self.id))
 
         self.label = self.canvas.create_text(self.xpos + (self.width / 2), GLASS_BASELINE - self.height - 30, text=self.width)
 
