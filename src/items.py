@@ -47,6 +47,7 @@ class Glass:
         self.color = "blue"
 
         self.id = canvas.create_rectangle(self.xpos, GLASS_BASELINE - self.height, self.xpos + self.width, GLASS_BASELINE, fill=self.color)
+        canvas.tag_bind(self.id, "<Button-1>", lambda *args: canvas.edit(self.id))
 
         self.label = self.canvas.create_text(self.xpos + (self.width / 2), GLASS_BASELINE - self.height - 30, text=self.width)
 
