@@ -15,7 +15,7 @@ $ pip install pyinstaller
 ```
 * Convert to exe:
 ```
-$ pyinstaller --onefile -w program.py
+$ pyinstaller --onefile -w main.py
 ```
 * Delete build folder, and spec file (optional, but you don't need them)
 * Enjoy :)
