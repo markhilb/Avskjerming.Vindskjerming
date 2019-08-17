@@ -7,6 +7,7 @@ from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WID
 
 class Canvas(tkinter.Canvas):
     def __init__(self, parent):
+        self.parent = parent
         super().__init__(parent, bg="red", highlightthickness=0)
         self.items = []
         self.current_width = Decimal("0")
@@ -22,8 +23,8 @@ class Canvas(tkinter.Canvas):
             if not self.add_wallmount(total_width, height):
                 return
         
-        total_width_minus_edges = (total_width - self.current_width - (POST_WIDTH if right is Post else WALLMOUNT_WIDTH))
-        num =  total_width_minus_edges / (Decimal(width) + POST_WIDTH)
+        total_width_minus_edges = (total_width - self.current_width - (POST_LAST_WIDTH if right is Post else WALLMOUNT_WIDTH))
+        num =  total_width_minus_edges / (Decimal(width) + POST_LAST_WIDTH)
         
         for _ in range(int(num)):
             self.add_glass(total_width, width, height)
@@ -32,11 +33,9 @@ class Canvas(tkinter.Canvas):
 
         if right is Post:
             if not self.add_post(total_width, height):
-                self.clear()
                 return
         else:
             if not self.add_wallmount(total_width, height):
-                self.clear()
                 return
             
     def add_wallmount(self, total_width, height):
@@ -70,6 +69,10 @@ class Canvas(tkinter.Canvas):
             if len(self.items) is not 1:
                 self.items[len(self.items) - 1].is_last = False
                 self.update()
+                if self.current_width >= total_width:
+                    self.items[len(self.items) - 1].is_last = True
+                    self.update()
+                    return False
         elif isinstance(self.items[len(self.items) - 1], Glass):
             return False
         if self.current_width + width > total_width:
@@ -130,15 +133,30 @@ class Canvas(tkinter.Canvas):
                 if width >= old_glass.width:
                     for thing in second_half:
                         if isinstance(thing, Wallmount):
-                            self.add_wallmount(total_width, thing.height-1)
+                            self.add_wallmount(total_width, thing.height - 1)
                         elif isinstance(thing, Post):
-                            self.add_post(total_width, thing.height-1)
+                            self.add_post(total_width, thing.height - 1)
                         else:
                             self.add_glass(total_width, thing.width, thing.height)
                         thing.delete()
                 else:
-                    pass
-
+                    [x.delete() for x in second_half]
+                    current_width = self.parent.get_current_widt()
+                    if current_width is False:
+                        return False
+                    last_item = second_half[len(second_half) - 1]
+                    remaining_width = total_width - self.current_width - last_item.width
+                    num =  remaining_width / (Decimal(width) + POST_WIDTH)
+                    
+                    for _ in range(int(num)):
+                        self.add_glass(total_width, current_width, old_glass.height)
+                        self.add_post(total_width, old_glass.height)
+                    self.add_glass(total_width, current_width, old_glass.height)
+            
+                    if isinstance(last_item, Post):
+                        self.add_post(total_width, old_glass.height)
+                    elif isinstance(last_item, Wallmount):
+                        self.add_wallmount(total_width, old_glass.height)
                 return True
         return False
 

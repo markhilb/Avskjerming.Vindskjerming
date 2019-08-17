@@ -167,3 +167,20 @@ class MainPage(tkinter.Frame):
             self.canvas.add_post(Decimal(self.total_width.get()), Decimal(self.glass_height_entry.get()))
         else:
             self.canvas.add_glass(Decimal(self.total_width.get()), Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()))
+
+    def get_current_widt(self):
+        try:
+            if self.glass_width_entry.get() is "" or \
+               float(self.glass_width_entry.get()) <= 0:
+                messagebox.showinfo("Warning", "Ugyldig glass bredde!")
+                return False
+        except SyntaxError:
+                messagebox.showinfo("Warning", "Ugyldig glass bredde!")
+                return False
+        except ValueError:
+            if(self.total_width.get().find(",") is not -1):
+                messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
+            else:
+                messagebox.showinfo("Warning", "Ugyldig glass bredde!")
+            return False
+        return Decimal(self.glass_width_entry.get())
