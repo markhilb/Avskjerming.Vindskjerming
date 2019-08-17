@@ -3,9 +3,10 @@ from tkinter import messagebox
 from decimal import Decimal
 
 class EditGlassPopup(tkinter.Tk):
-    def __init__(self, parent, glass_id):
+    def __init__(self, parent, glass_id, total_width):
         self.parent = parent
         self.glass_id = glass_id
+        self.total_width = total_width
         super().__init__()
         self.config(bg="white")
         self.wm_title("Rediger glass")
@@ -15,10 +16,10 @@ class EditGlassPopup(tkinter.Tk):
         self.entry.pack(side="top", pady=10)
         self.ok = tkinter.Button(self, text="Ok", command=self.edit_glass, bg="white")
         self.cancel = tkinter.Button(self, text="Avbryt", command=self.destroy, bg="white")
-        self.delete = tkinter.Button(self, text="Slett", command=self.delete, bg="white")
+        self.delete_button = tkinter.Button(self, text="Slett", command=self.delete, bg="white")
         self.ok.pack(side="left", padx=10, pady=10)
         self.cancel.pack(side="left", padx=10, pady=10)
-        self.delete.pack(side="left", padx=10, pady=10)
+        self.delete_button.pack(side="left", padx=10, pady=10)
 
     def edit_glass(self):
         try:
@@ -33,9 +34,9 @@ class EditGlassPopup(tkinter.Tk):
             if(self.entry.get().find(",") is not -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
             return
-        self.parent.edit_glass(self.glass_id, Decimal(self.entry.get()))
+        self.parent.edit_glass(self.glass_id, self.total_width, Decimal(self.entry.get()))
         self.destroy()
     
     def delete(self):
-        self.parent.delete_glass(self.glass_id)
+        self.parent.delete_glass(self.glass_id, self.total_width)
         self.destroy()
