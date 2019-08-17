@@ -96,9 +96,10 @@ class Canvas(tkinter.Canvas):
 
     def update(self):
         self.current_width = Decimal("0")
+        self.current_xpos = CANVAS_LEFT_START
         for item in self.items:
             self.current_width += item.width
-        self.current_xpos = self.current_width + CANVAS_LEFT_START
+            self.current_xpos += item.display_width
         self.length_bar.update(self.current_width, self.current_xpos)
 
     def clear(self):
