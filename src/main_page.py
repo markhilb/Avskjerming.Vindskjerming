@@ -162,11 +162,11 @@ class MainPage(tkinter.Frame):
             return
 
         if item is Wallmount:
-            self.canvas.add_wallmount(Decimal(self.total_width.get()), Decimal(self.glass_height_entry.get()))
+            self.canvas.add_wallmount(Decimal(self.glass_height_entry.get()))
         elif item is Post:
-            self.canvas.add_post(Decimal(self.total_width.get()), Decimal(self.glass_height_entry.get()))
+            self.canvas.add_post(Decimal(self.glass_height_entry.get()))
         else:
-            self.canvas.add_glass(Decimal(self.total_width.get()), Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()))
+            self.canvas.add_glass(Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()))
 
     def get_current_widt(self):
         try:
@@ -184,3 +184,20 @@ class MainPage(tkinter.Frame):
                 messagebox.showinfo("Warning", "Ugyldig glass bredde!")
             return False
         return Decimal(self.glass_width_entry.get())
+
+    def get_total_length(self):
+        try:
+            if self.total_width.get() is "" or \
+               float(self.total_width.get()) <= 0:
+                messagebox.showinfo("Warning", "Ugyldig total lengde!")
+                return False
+        except SyntaxError:
+                messagebox.showinfo("Warning", "Ugyldig total lengde!")
+                return False
+        except ValueError:
+            if(self.total_width.get().find(",") is not -1):
+                messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
+            else:
+                messagebox.showinfo("Warning", "Ugyldig total lengde!")
+            return False
+        return Decimal(self.total_width.get())

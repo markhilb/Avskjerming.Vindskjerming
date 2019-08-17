@@ -45,7 +45,7 @@ class Post:
 
 
 class Glass:
-    def __init__(self, canvas, total_width, xpos, width, height):
+    def __init__(self, canvas, xpos, width, height):
         self.canvas = canvas
         self.xpos = xpos
         self.display_width = width
@@ -55,7 +55,7 @@ class Glass:
         self.color = "blue"
 
         self.id = canvas.create_rectangle(self.xpos, GLASS_BASELINE - self.display_height, self.xpos + self.display_width, GLASS_BASELINE, fill=self.color)
-        canvas.tag_bind(self.id, "<Button-1>", lambda *args: EditGlassPopup(canvas, self.id, total_width))
+        canvas.tag_bind(self.id, "<Button-1>", lambda *args: EditGlassPopup(canvas, self.id))
 
         self.label = self.canvas.create_text(self.xpos + (self.display_width / 2), GLASS_BASELINE - self.display_height - 30, text=self.width)
 
@@ -63,6 +63,10 @@ class Glass:
         self.canvas.delete(self.id)
         self.canvas.delete(self.label)
     
+
+class GlassPolygon(Glass):
+    def __init__(self, canvas, total_width):
+        pass
 
 class LengthBar:
     def __init__(self, canvas):

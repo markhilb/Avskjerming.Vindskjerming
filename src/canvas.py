@@ -17,52 +17,61 @@ class Canvas(tkinter.Canvas):
     def auto_calculate(self, total_width, left, width, height, right):
         self.clear()
         if left is Post:
-            if not self.add_post(total_width, height):
+            if not self.add_post(height):
                 return
         else:
-            if not self.add_wallmount(total_width, height):
+            if not self.add_wallmount(height):
                 return
         
         total_width_minus_edges = (total_width - self.current_width - (POST_LAST_WIDTH if right is Post else WALLMOUNT_WIDTH))
         num =  total_width_minus_edges / (Decimal(width) + POST_LAST_WIDTH)
         
         for _ in range(int(num)):
-            self.add_glass(total_width, width, height)
-            self.add_post(total_width, height)
-        self.add_glass(total_width, width, height)
+            self.add_glass(width, height)
+            self.add_post(height)
+        self.add_glass(width, height)
 
         if right is Post:
-            if not self.add_post(total_width, height):
+            if not self.add_post(height):
                 return
         else:
-            if not self.add_wallmount(total_width, height):
+            if not self.add_wallmount(height):
                 return
             
-    def add_wallmount(self, total_width, height):
+    def add_wallmount(self, height):
         if len(self.items) is not 0:
             if not isinstance(self.items[len(self.items) - 1], Glass):
                 return False
+        total_width = self.parent.get_total_length()
+        if not total_width:
+            return False
         if self.current_width + WALLMOUNT_WIDTH >= total_width:
-            if not self.cut_glass(total_width, (self.current_width + WALLMOUNT_WIDTH) - total_width):
+            if not self.cut_glass((self.current_width + WALLMOUNT_WIDTH) - total_width):
                 return False
         wallmount = Wallmount(self, self.current_xpos, height)
         self.items.append(wallmount)
         self.update()
         return True
 
-    def add_post(self, total_width, height):
+    def add_post(self, height):
         if len(self.items) is not 0:
             if not isinstance(self.items[len(self.items) - 1], Glass):
                 return False
+        total_width = self.parent.get_total_length()
+        if not total_width:
+            return False
         if self.current_width + POST_LAST_WIDTH >= total_width:
-            if not self.cut_glass(total_width, (self.current_width + POST_LAST_WIDTH) - total_width):
+            if not self.cut_glass((self.current_width + POST_LAST_WIDTH) - total_width):
                 return False
         post = Post(self, self.current_xpos, height, True)
         self.items.append(post)
         self.update()
         return True
 
-    def add_glass(self, total_width, width, height):
+    def add_glass(self, width, height):
+        total_width = self.parent.get_total_length()
+        if not total_width:
+            return False
         if len(self.items) is 0 or self.current_width >= total_width:
             return False
         if isinstance(self.items[len(self.items) - 1], Post):
@@ -77,13 +86,13 @@ class Canvas(tkinter.Canvas):
             return False
         if self.current_width + width > total_width:
             width = total_width - self.current_width 
-        glass = Glass(self, total_width, self.current_xpos, width, height)
+        glass = Glass(self, self.current_xpos, width, height)
         self.items.append(glass)
         self.update()
         return True
 
 
-    def cut_glass(self, total_width, width):
+    def cut_glass(self, width):
         if len(self.items) is 0:
             return False
         glass = self.items.pop()
@@ -91,7 +100,7 @@ class Canvas(tkinter.Canvas):
             self.items.append(glass)
             return False
         self.update()
-        new_glass = Glass(self, total_width, self.current_xpos, glass.width - width, glass.height)
+        new_glass = Glass(self, self.current_xpos, glass.width - width, glass.height)
         self.items.append(new_glass)
         glass.delete()
         self.update()
@@ -121,7 +130,7 @@ class Canvas(tkinter.Canvas):
             self.items[len(self.items) - 1].is_last = True
         self.update()
 
-    def edit_glass(self, id, total_width, width):
+    def edit_glass(self, id, width):
         for i, item in enumerate(self.items):
             if item.id is id:
                 second_half = self.items[i+1:]
@@ -129,39 +138,40 @@ class Canvas(tkinter.Canvas):
                 old_glass = self.items.pop()
                 old_glass.delete()
                 self.update()
-                self.add_glass(total_width, width, old_glass.height)
+                self.add_glass(width, old_glass.height)
                 if width >= old_glass.width:
                     for thing in second_half:
                         if isinstance(thing, Wallmount):
-                            self.add_wallmount(total_width, thing.height - 1)
+                            self.add_wallmount(thing.height - 1)
                         elif isinstance(thing, Post):
-                            self.add_post(total_width, thing.height - 1)
+                            self.add_post(thing.height - 1)
                         else:
-                            self.add_glass(total_width, thing.width, thing.height)
+                            self.add_glass(thing.width, thing.height)
                         thing.delete()
                 else:
                     [x.delete() for x in second_half]
                     current_width = self.parent.get_current_widt()
-                    if current_width is False:
+                    total_width = self.parent.get_total_length()
+                    if not current_width or not total_width:
                         return False
                     last_item = second_half[len(second_half) - 1]
                     remaining_width = total_width - self.current_width - last_item.width
                     num =  remaining_width / (Decimal(width) + POST_WIDTH)
                     
                     for _ in range(int(num)):
-                        self.add_glass(total_width, current_width, old_glass.height)
-                        self.add_post(total_width, old_glass.height)
-                    self.add_glass(total_width, current_width, old_glass.height)
+                        self.add_glass(current_width, old_glass.height)
+                        self.add_post(old_glass.height)
+                    self.add_glass(current_width, old_glass.height)
             
                     if isinstance(last_item, Post):
-                        self.add_post(total_width, old_glass.height)
+                        self.add_post(old_glass.height)
                     elif isinstance(last_item, Wallmount):
-                        self.add_wallmount(total_width, old_glass.height)
+                        self.add_wallmount(old_glass.height)
                 return True
         return False
 
 
-    def move_items(self, idx, total_width):
+    def move_items(self, idx):
         self.current_width = Decimal("0")
         self.current_xpos = CANVAS_LEFT_START
         for i in range(idx):
@@ -175,12 +185,12 @@ class Canvas(tkinter.Canvas):
             elif isinstance(item, Post):
                 new_item = Post(self, self.current_xpos, item.height, item.is_last)
             else:
-                new_item = Glass(self, total_width, self.current_xpos, item.width, item.height)
+                new_item = Glass(self, self.current_xpos, item.width, item.height)
             self.items[i] = new_item
             self.current_width += new_item.width
             self.current_xpos += new_item.display_width
         
-    def delete_glass(self, id, total_width):
+    def delete_glass(self, id):
         for i, item in enumerate(self.items):
             if item.id is id:
                 item.delete()
@@ -189,7 +199,7 @@ class Canvas(tkinter.Canvas):
                     next_item = self.items[i]
                     next_item.delete()
                     self.items.remove(next_item)
-                    self.move_items(i, total_width)
+                    self.move_items(i)
                 self.update()
                 return True
         return False

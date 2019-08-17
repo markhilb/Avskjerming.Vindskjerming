@@ -3,10 +3,9 @@ from tkinter import messagebox
 from decimal import Decimal
 
 class EditGlassPopup(tkinter.Tk):
-    def __init__(self, parent, glass_id, total_width):
+    def __init__(self, parent, glass_id):
         self.parent = parent
         self.glass_id = glass_id
-        self.total_width = total_width
         super().__init__()
         self.config(bg="white")
         self.wm_title("Rediger glass")
@@ -34,9 +33,9 @@ class EditGlassPopup(tkinter.Tk):
             if(self.entry.get().find(",") is not -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
             return
-        self.parent.edit_glass(self.glass_id, self.total_width, Decimal(self.entry.get()))
+        self.parent.edit_glass(self.glass_id, Decimal(self.entry.get()))
         self.destroy()
     
     def delete(self):
-        self.parent.delete_glass(self.glass_id, self.total_width)
+        self.parent.delete_glass(self.glass_id)
         self.destroy()
