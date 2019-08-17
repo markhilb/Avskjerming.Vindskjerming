@@ -2,7 +2,7 @@ import tkinter
 from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
-from items import Wallmount, Post, Glass, LengthBar
+from items import Wallmount, Post, Glass, LengthBar, GlassPolygon
 from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH
 
 class Canvas(tkinter.Canvas):
@@ -68,7 +68,7 @@ class Canvas(tkinter.Canvas):
         self.update()
         return True
 
-    def add_glass(self, width, height):
+    def add_glass(self, width, height, second_height=0):
         total_width = self.parent.get_total_length()
         if not total_width:
             return False
@@ -86,11 +86,13 @@ class Canvas(tkinter.Canvas):
             return False
         if self.current_width + width > total_width:
             width = total_width - self.current_width 
-        glass = Glass(self, self.current_xpos, width, height)
+        if second_height is 0:
+            glass = Glass(self, self.current_xpos, width, height)
+        else:
+            glass = GlassPolygon(self, self.current_xpos, width, height, second_height)
         self.items.append(glass)
         self.update()
         return True
-
 
     def cut_glass(self, width):
         if len(self.items) is 0:
@@ -100,7 +102,10 @@ class Canvas(tkinter.Canvas):
             self.items.append(glass)
             return False
         self.update()
-        new_glass = Glass(self, self.current_xpos, glass.width - width, glass.height)
+        if isinstance(glass, GlassPolygon):
+            new_glass = GlassPolygon(self, self.current_xpos, glass.width - width, glass.height, glass.second_height)
+        else:
+            new_glass = Glass(self, self.current_xpos, glass.width - width, glass.height)
         self.items.append(new_glass)
         glass.delete()
         self.update()

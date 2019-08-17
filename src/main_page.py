@@ -2,7 +2,7 @@ import tkinter
 from tkinter import messagebox
 from decimal import Decimal, InvalidOperation
 from canvas import Canvas
-from items import Wallmount, Post, Glass
+from items import Wallmount, Post, Glass, GlassPolygon
 from config import DROPDOWN_WIDTH
 
 
@@ -93,9 +93,10 @@ class MainPage(tkinter.Frame):
         self.glass_height_entry.grid(row=1, column=1)
         self.glass_height_entry.insert(0, 60)
 
-        self.polygon_button = tkinter.Button(bottom_frame, text="Skrå glass")
+        self.polygon_button = tkinter.Button(bottom_frame, text="Skrå glass", command=lambda: self.add_item(GlassPolygon))
         self.polygon_button.grid(row=0, column=5, padx=10, sticky="e")
         self.polygon_entry = tkinter.Entry(bottom_frame)
+        self.polygon_entry.insert(0, 20)
         self.polygon_entry.grid(row=0, column=6, padx=10, sticky="e")
 
         self.total_width.trace("w", lambda name, index, mode: self.auto_calculate())
@@ -161,6 +162,22 @@ class MainPage(tkinter.Frame):
             self.total_width.set(self.total_width.get()[:-1])
             return
 
+        if item is GlassPolygon:
+            try:
+                if self.polygon_entry.get() is "" or \
+                   float(self.polygon_entry.get()) < 0:
+                    messagebox.showinfo("Warning", "Ugyldig skrå høyde!")
+                    return False
+            except SyntaxError:
+                    messagebox.showinfo("Warning", "Ugyldig skrå høyde!")
+                    return False
+            except ValueError:
+                if(self.total_width.get().find(",") is not -1):
+                    messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
+                else:
+                    messagebox.showinfo("Warning", "Ugyldig skrå høyde!")
+                return False
+            self.canvas.add_glass(Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()), Decimal(self.polygon_entry.get()))
         if item is Wallmount:
             self.canvas.add_wallmount(Decimal(self.glass_height_entry.get()))
         elif item is Post:

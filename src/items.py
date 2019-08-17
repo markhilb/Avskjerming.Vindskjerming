@@ -57,7 +57,7 @@ class Glass:
         self.id = canvas.create_rectangle(self.xpos, GLASS_BASELINE - self.display_height, self.xpos + self.display_width, GLASS_BASELINE, fill=self.color)
         canvas.tag_bind(self.id, "<Button-1>", lambda *args: EditGlassPopup(canvas, self.id))
 
-        self.label = self.canvas.create_text(self.xpos + (self.display_width / 2), GLASS_BASELINE - self.display_height - 30, text=self.width)
+        self.label = canvas.create_text(self.xpos + (self.display_width / 2), GLASS_BASELINE - self.display_height - 30, text=self.width)
 
     def delete(self):
         self.canvas.delete(self.id)
@@ -65,8 +65,29 @@ class Glass:
     
 
 class GlassPolygon(Glass):
-    def __init__(self, canvas, total_width):
-        pass
+    def __init__(self, canvas, xpos, width, height, second_height):
+        self.canvas = canvas
+        self.xpos = xpos
+        self.display_width = width
+        self.width = width
+        self.display_height = height
+        self.second_display_height = second_height
+        self.height = height
+        self.second_height = second_height
+        self.color = "blue"
+
+        self.id = canvas.create_polygon([self.xpos,\
+                                         GLASS_BASELINE - self.display_height,\
+                                         self.xpos,\
+                                         GLASS_BASELINE,\
+                                         self.xpos + self.display_width,\
+                                         GLASS_BASELINE,\
+                                         self.xpos + self.display_width,\
+                                         GLASS_BASELINE - self.second_display_height],\
+                                         fill=self.color)
+        
+        self.label = canvas.create_text(self.xpos + (self.display_width / 2), GLASS_BASELINE - self.display_height - 30, text=self.width)
+
 
 class LengthBar:
     def __init__(self, canvas):
@@ -75,7 +96,6 @@ class LengthBar:
         self.right = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.label = self.canvas.create_text(0, 0, text="")
-    
 
     def update(self, current_width, xpos):
         self.canvas.delete(self.bar)
@@ -86,4 +106,4 @@ class LengthBar:
             self.left = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_SIDES_TOP, CANVAS_LEFT_START + LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
             self.bar = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_TOP, xpos, LENGTH_BAR_BOTTOM, fill="black")
             self.right = self.canvas.create_rectangle(xpos - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, xpos, LENGTH_BAR_SIDES_BOTTOM, fill="black")
-            self.label = self.canvas.create_text(xpos / 2, LENGT_BAR_LABEL_TOP, text=current_width)
+            self.label = self.canvas.create_text((xpos  + CANVAS_LEFT_START) / 2, LENGT_BAR_LABEL_TOP, text=current_width)
