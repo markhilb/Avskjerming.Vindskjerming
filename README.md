@@ -4,7 +4,7 @@
 
 ## Run program
 ```
-$ py program.py
+$ py main.py
 ```
 
 ## Convert to exe:
