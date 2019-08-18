@@ -6,9 +6,6 @@ from items import Wallmount, Post, Glass, GlassPolygon
 from config import DROPDOWN_WIDTH
 
 
-def total_width_change(sv):
-    print(sv.get())
-
 class MainPage(tkinter.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
