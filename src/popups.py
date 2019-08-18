@@ -25,7 +25,7 @@ class EditGlassPopup(tkinter.Tk):
             if self.entry.get() is "" or \
                float(self.entry.get()) <= 0:
                 return
-            if Decimal(self.entry.get()) > 10000000:
+            if Decimal(self.entry.get()) > 10000:
                 return
         except SyntaxError:
             return

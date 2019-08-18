@@ -208,3 +208,12 @@ class Canvas(tkinter.Canvas):
                 self.update()
                 return True
         return False
+
+    def get_weight(self):
+        weight = Decimal("0")
+        packaging = Decimal("0")
+        for item in self.items:
+            w = item.weight
+            weight += w[0]
+            packaging += w[1]
+        return (weight, packaging)

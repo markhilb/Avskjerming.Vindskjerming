@@ -2,7 +2,8 @@ import tkinter
 from popups import EditGlassPopup
 from config import CANVAS_BASELINE, CANVAS_LEFT_START, GLASS_BASELINE, WALLMOUNT_WIDTH, POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT, \
                    LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, LENGT_BAR_LABEL_TOP, \
-                   WALLMOUNT_DISPLAY_WIDTH, POST_DISPLAY_WIDTH, POST_BASE_DISPLAY_WIDTH, POST_BASE_DISPLAY_HEIGHT
+                   WALLMOUNT_DISPLAY_WIDTH, POST_DISPLAY_WIDTH, POST_BASE_DISPLAY_WIDTH, POST_BASE_DISPLAY_HEIGHT, WALLMOUTN_PACKAGING, POST_PACKAGING,\
+                   WALLMOUNT_WEIGHT_MULTIPLYER, POST_WEIGHT_MULTIPLYER, POST_MOUNT_WEIGHT, GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING
 
 
 class Wallmount:
@@ -19,6 +20,10 @@ class Wallmount:
 
     def delete(self):
         self.canvas.delete(self.id)
+    
+    @property
+    def weight(self):
+        return (self.height * WALLMOUNT_WEIGHT_MULTIPLYER, WALLMOUTN_PACKAGING)
 
 
 class Post:
@@ -42,6 +47,10 @@ class Post:
     def delete(self):
         self.canvas.delete(self.id)
         self.canvas.delete(self.base)
+    
+    @property
+    def weight(self):
+        return ((self.height * POST_WEIGHT_MULTIPLYER) + POST_MOUNT_WEIGHT, POST_PACKAGING)
 
 
 class Glass:
@@ -62,6 +71,10 @@ class Glass:
     def delete(self):
         self.canvas.delete(self.id)
         self.canvas.delete(self.label)
+    
+    @property
+    def weight(self):
+        return (self.width * self.height * GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING)
     
 
 class GlassPolygon(Glass):
@@ -88,6 +101,10 @@ class GlassPolygon(Glass):
         
         self.label = canvas.create_text(self.xpos + (self.display_width / 2), GLASS_BASELINE - self.display_height - 30, text=self.width)
 
+    @property
+    def weight(self):
+        area = (self.width * self.height) - ((self.width * (self.height - self.second_height)) / 2)
+        return (area * GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING)
 
 class LengthBar:
     def __init__(self, canvas):

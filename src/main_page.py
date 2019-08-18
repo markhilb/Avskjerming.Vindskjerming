@@ -115,7 +115,7 @@ class MainPage(tkinter.Frame):
                float(self.glass_height_entry.get()) <= 0:
                 self.canvas.clear()
                 return
-            if Decimal(self.total_width.get()) > 10000000:
+            if Decimal(self.total_width.get()) > 10000:
                 messagebox.showinfo("Warning", "Total lengde er for stor!")
                 self.canvas.clear()
                 self.total_width.set(self.total_width.get()[:-1])
@@ -138,6 +138,7 @@ class MainPage(tkinter.Frame):
                                    Decimal(self.auto_glass_width_sv.get()), \
                                    Decimal(self.glass_height_entry.get()),  \
                                    right_item)
+        self.update()
 
     def add_item(self, item):
         try:
@@ -148,7 +149,7 @@ class MainPage(tkinter.Frame):
                self.glass_height_entry.get() is ""         or \
                float(self.glass_height_entry.get()) <= 0:
                 return
-            if Decimal(self.total_width.get()) > 10000000:
+            if Decimal(self.total_width.get()) > 10000:
                 messagebox.showinfo("Warning", "Total lengde er for stor!")
                 self.canvas.clear()
                 self.total_width.set(self.total_width.get()[:-1])
@@ -185,6 +186,8 @@ class MainPage(tkinter.Frame):
         else:
             self.canvas.add_glass(Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()))
 
+        self.update()
+
     def get_current_widt(self):
         try:
             if self.glass_width_entry.get() is "" or \
@@ -218,3 +221,9 @@ class MainPage(tkinter.Frame):
                 messagebox.showinfo("Warning", "Ugyldig total lengde!")
             return False
         return Decimal(self.total_width.get())
+
+    def update(self):
+        weight = self.canvas.get_weight()
+        weight_kg = (round(weight[0] / 1000), round(weight[1] / 1000))
+        
+        self.total_weight_label.configure(text="Vekt: " + str(weight_kg[0]) + " kg\n+ innpakning: " + str(weight_kg[1]) + " kg\nTotal: " + str(weight_kg[0] + weight_kg[1]) + " kg")
