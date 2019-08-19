@@ -1,9 +1,11 @@
 import tkinter
+from decimal import Decimal
 from popups import EditGlassPopup
 from config import CANVAS_BASELINE, CANVAS_LEFT_START, GLASS_BASELINE, WALLMOUNT_WIDTH, POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT, \
                    LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, LENGT_BAR_LABEL_TOP, \
                    WALLMOUNT_DISPLAY_WIDTH, POST_DISPLAY_WIDTH, POST_BASE_DISPLAY_WIDTH, POST_BASE_DISPLAY_HEIGHT, WALLMOUTN_PACKAGING, POST_PACKAGING,\
-                   WALLMOUNT_WEIGHT_MULTIPLYER, POST_WEIGHT_MULTIPLYER, POST_MOUNT_WEIGHT, GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING
+                   WALLMOUNT_WEIGHT_MULTIPLYER, POST_WEIGHT_MULTIPLYER, POST_MOUNT_WEIGHT, GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING, LENGTH_BAR_SIDES_HEIGHT,\
+                   LEFT_HEIGHT_BAR_START, RIGHT_HEIGHT_BAR_OFFSET, RIGHT_HEIGHT_LABEL_OFFSET
 
 
 class Wallmount:
@@ -106,6 +108,7 @@ class GlassPolygon(Glass):
         area = (self.width * self.height) - ((self.width * (self.height - self.second_height)) / 2)
         return (area * GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING)
 
+
 class LengthBar:
     def __init__(self, canvas):
         self.canvas = canvas
@@ -124,3 +127,38 @@ class LengthBar:
             self.bar = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_TOP, xpos, LENGTH_BAR_BOTTOM, fill="black")
             self.right = self.canvas.create_rectangle(xpos - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, xpos, LENGTH_BAR_SIDES_BOTTOM, fill="black")
             self.label = self.canvas.create_text((xpos  + CANVAS_LEFT_START) / 2, LENGT_BAR_LABEL_TOP, text=current_width)
+
+
+class HeightBars:
+    def __init__(self, canvas):
+        self.canvas = canvas
+        self.left_top = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.left_bottom = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.left_bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.left_label = self.canvas.create_text(0, 0, text="")   
+        self.right_top = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.right_bottom = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.right_bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
+        self.right_label = self.canvas.create_text(0, 0, text="")
+
+    def update(self, items, xpos):
+        self.canvas.delete(self.left_top)
+        self.canvas.delete(self.left_bottom)
+        self.canvas.delete(self.left_bar)
+        self.canvas.delete(self.left_label)
+        self.canvas.delete(self.right_top)
+        self.canvas.delete(self.right_bottom) 
+        self.canvas.delete(self.right_bar)
+        self.canvas.delete(self.right_label) 
+        if len(items) > 2:
+            self.left_top = self.canvas.create_rectangle(LEFT_HEIGHT_BAR_START - (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - items[1].height, (LEFT_HEIGHT_BAR_START) + (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - items[1].height + LENGTH_BAR_THICKNESS, fill="black")
+            self.left_bottom = self.canvas.create_rectangle(LEFT_HEIGHT_BAR_START - (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE, (LEFT_HEIGHT_BAR_START) + (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - LENGTH_BAR_THICKNESS, fill="black")
+            self.left_bar = self.canvas.create_rectangle(LEFT_HEIGHT_BAR_START, GLASS_BASELINE - items[1].height, (LEFT_HEIGHT_BAR_START) + LENGTH_BAR_THICKNESS, GLASS_BASELINE, fill="black")
+            self.left_label = self.canvas.create_text(CANVAS_LEFT_START / 2, GLASS_BASELINE - (items[1].height / 2), text=items[1].height)
+            for i in reversed(range(len(items))):
+                if isinstance(items[i], GlassPolygon):
+                    self.right_top = self.canvas.create_rectangle((xpos + RIGHT_HEIGHT_BAR_OFFSET) - (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - items[i].second_height, ((xpos + RIGHT_HEIGHT_BAR_OFFSET)) + (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - items[i].second_height + LENGTH_BAR_THICKNESS, fill="black")
+                    self.right_bottom = self.canvas.create_rectangle((xpos + RIGHT_HEIGHT_BAR_OFFSET) - (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE, ((xpos + RIGHT_HEIGHT_BAR_OFFSET)) + (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - LENGTH_BAR_THICKNESS, fill="black")
+                    self.right_bar = self.canvas.create_rectangle((xpos + RIGHT_HEIGHT_BAR_OFFSET), GLASS_BASELINE - items[i].second_height, ((xpos + RIGHT_HEIGHT_BAR_OFFSET)) + LENGTH_BAR_THICKNESS, GLASS_BASELINE, fill="black")
+                    self.right_label = self.canvas.create_text(xpos + RIGHT_HEIGHT_LABEL_OFFSET, GLASS_BASELINE - (items[i].second_height / 2), text=items[i].second_height)
+                    return

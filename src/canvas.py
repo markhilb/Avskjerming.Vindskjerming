@@ -2,17 +2,18 @@ import tkinter
 from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
-from items import Wallmount, Post, Glass, LengthBar, GlassPolygon
+from items import Wallmount, Post, Glass, LengthBar, GlassPolygon, HeightBars
 from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH
 
 class Canvas(tkinter.Canvas):
     def __init__(self, parent):
         self.parent = parent
-        super().__init__(parent, bg="red", highlightthickness=0)
+        super().__init__(parent, bg="white", highlightthickness=0)
         self.items = []
         self.current_width = Decimal("0")
         self.current_xpos = CANVAS_LEFT_START
         self.length_bar = LengthBar(self)
+        self.height_bar = HeightBars(self)
 
     def auto_calculate(self, total_width, left, width, height, right):
         self.clear()
@@ -118,6 +119,7 @@ class Canvas(tkinter.Canvas):
             self.current_width += item.width
             self.current_xpos += item.display_width
         self.length_bar.update(self.current_width, self.current_xpos)
+        self.height_bar.update(self.items, self.current_xpos)
 
     def clear(self):
         for item in self.items:
@@ -126,6 +128,7 @@ class Canvas(tkinter.Canvas):
         self.current_width = Decimal("0")
         self.current_xpos = CANVAS_LEFT_START
         self.length_bar.update(self.current_width, self.current_xpos)
+        self.height_bar.update(self.items, self.current_xpos)
 
     def undo(self):
         if len(self.items) is not 0:
