@@ -22,7 +22,7 @@ class Wallmount:
 
     def delete(self):
         self.canvas.delete(self.id)
-    
+
     @property
     def weight(self):
         return (self.height * WALLMOUNT_WEIGHT_MULTIPLYER, WALLMOUTN_PACKAGING)
@@ -44,12 +44,12 @@ class Post:
 
     @property
     def width(self):
-        return (POST_LAST_WIDTH if self.is_last else POST_WIDTH) 
+        return (POST_LAST_WIDTH if self.is_last else POST_WIDTH)
 
     def delete(self):
         self.canvas.delete(self.id)
         self.canvas.delete(self.base)
-    
+
     @property
     def weight(self):
         return ((self.height * POST_WEIGHT_MULTIPLYER) + POST_MOUNT_WEIGHT, POST_PACKAGING)
@@ -73,11 +73,11 @@ class Glass:
     def delete(self):
         self.canvas.delete(self.id)
         self.canvas.delete(self.label)
-    
+
     @property
     def weight(self):
         return (self.width * self.height * GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING)
-    
+
 
 class GlassPolygon(Glass):
     def __init__(self, canvas, xpos, width, height, second_height):
@@ -100,7 +100,7 @@ class GlassPolygon(Glass):
                                          self.xpos + self.display_width,\
                                          GLASS_BASELINE - self.second_display_height],\
                                          fill=self.color)
-        
+
         self.label = canvas.create_text(self.xpos + (self.display_width / 2), GLASS_BASELINE - self.display_height - 30, text=self.width)
 
     @property
@@ -135,7 +135,7 @@ class HeightBars:
         self.left_top = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.left_bottom = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.left_bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
-        self.left_label = self.canvas.create_text(0, 0, text="")   
+        self.left_label = self.canvas.create_text(0, 0, text="")
         self.right_top = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.right_bottom = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
         self.right_bar = self.canvas.create_rectangle(0, 0, 0, 0, fill="black")
@@ -147,9 +147,9 @@ class HeightBars:
         self.canvas.delete(self.left_bar)
         self.canvas.delete(self.left_label)
         self.canvas.delete(self.right_top)
-        self.canvas.delete(self.right_bottom) 
+        self.canvas.delete(self.right_bottom)
         self.canvas.delete(self.right_bar)
-        self.canvas.delete(self.right_label) 
+        self.canvas.delete(self.right_label)
         if len(items) > 2:
             self.left_top = self.canvas.create_rectangle(LEFT_HEIGHT_BAR_START - (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - items[1].height, (LEFT_HEIGHT_BAR_START) + (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - items[1].height + LENGTH_BAR_THICKNESS, fill="black")
             self.left_bottom = self.canvas.create_rectangle(LEFT_HEIGHT_BAR_START - (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE, (LEFT_HEIGHT_BAR_START) + (LENGTH_BAR_SIDES_HEIGHT / 2), GLASS_BASELINE - LENGTH_BAR_THICKNESS, fill="black")

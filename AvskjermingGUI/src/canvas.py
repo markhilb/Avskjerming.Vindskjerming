@@ -23,10 +23,10 @@ class Canvas(tkinter.Canvas):
         else:
             if not self.add_wallmount(height):
                 return
-        
+
         total_width_minus_edges = (total_width - self.current_width - (POST_LAST_WIDTH if right is Post else WALLMOUNT_WIDTH))
         num =  total_width_minus_edges / (Decimal(width) + POST_LAST_WIDTH)
-        
+
         for _ in range(int(num)):
             self.add_glass(width, height)
             self.add_post(height)
@@ -38,7 +38,7 @@ class Canvas(tkinter.Canvas):
         else:
             if not self.add_wallmount(height):
                 return
-            
+
     def add_wallmount(self, height):
         if len(self.items) is not 0:
             if not isinstance(self.items[len(self.items) - 1], Glass):
@@ -86,7 +86,7 @@ class Canvas(tkinter.Canvas):
         elif isinstance(self.items[len(self.items) - 1], Glass):
             return False
         if self.current_width + width > total_width:
-            width = total_width - self.current_width 
+            width = total_width - self.current_width
         if second_height is 0:
             glass = Glass(self, self.current_xpos, width, height)
         else:
@@ -165,12 +165,12 @@ class Canvas(tkinter.Canvas):
                     last_item = second_half[len(second_half) - 1]
                     remaining_width = total_width - self.current_width - last_item.width
                     num =  remaining_width / (Decimal(width) + POST_WIDTH)
-                    
+
                     for _ in range(int(num)):
                         self.add_glass(current_width, old_glass.height)
                         self.add_post(old_glass.height)
                     self.add_glass(current_width, old_glass.height)
-            
+
                     if isinstance(last_item, Post):
                         self.add_post(old_glass.height)
                     elif isinstance(last_item, Wallmount):
@@ -197,7 +197,7 @@ class Canvas(tkinter.Canvas):
             self.items[i] = new_item
             self.current_width += new_item.width
             self.current_xpos += new_item.display_width
-        
+
     def delete_glass(self, id):
         for i, item in enumerate(self.items):
             if item.id is id:

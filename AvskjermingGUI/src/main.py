@@ -19,7 +19,7 @@ class Main(tkinter.Tk):
             f = Frame(container, self)
             self.frames[Frame] = f
             f.grid(row=0, column=0, sticky="nsew")
-        
+
         self.show_frame(MainPage)
 
     def show_frame(self, page):

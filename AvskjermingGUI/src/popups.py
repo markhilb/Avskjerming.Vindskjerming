@@ -35,7 +35,7 @@ class EditGlassPopup(tkinter.Tk):
             return
         self.parent.edit_glass(self.glass_id, Decimal(self.entry.get()))
         self.destroy()
-    
+
     def delete(self):
         self.parent.delete_glass(self.glass_id)
         self.destroy()

@@ -127,7 +127,7 @@ class MainPage(tkinter.Frame):
             self.canvas.clear()
             self.total_width.set(self.total_width.get()[:-1])
             return
-        
+
         left_item = Wallmount if self.auto_left_item_sv.get() == "Veggskinne" else Post
         right_item = Wallmount if self.auto_right_item_sv.get() == "Veggskinne" else Post
         self.canvas.auto_calculate(Decimal(self.total_width.get()),                  \
@@ -222,5 +222,5 @@ class MainPage(tkinter.Frame):
     def update(self):
         weight = self.canvas.get_weight()
         weight_kg = (round(weight[0] / 1000), round(weight[1] / 1000))
-        
+
         self.total_weight_label.configure(text="Vekt: " + str(weight_kg[0]) + " kg\n+ innpakning: " + str(weight_kg[1]) + " kg\nTotal: " + str(weight_kg[0] + weight_kg[1]) + " kg")
