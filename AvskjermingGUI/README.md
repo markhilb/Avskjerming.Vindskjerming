@@ -7,6 +7,18 @@
 $ py main.py
 ```
 
+## Create windows installer:
+* Install cx_Freeze:
+```
+$ pip intall cx_Freeze
+```
+Create installer:
+```
+$ python setup.py bdist_msi
+```
+* Installer is located in src/dist/
+
+
 ## Convert to exe:
 #### Windows
 * Install pyinstaller: 
