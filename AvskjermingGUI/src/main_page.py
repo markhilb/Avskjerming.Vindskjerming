@@ -35,9 +35,9 @@ class MainPage(tkinter.Frame):
 
         top_frame_left_container = tkinter.Frame(top_frame, bg="white")
         top_frame_left_container.grid(row=0, column=0, sticky="w")
-        self.reset_button = tkinter.Button(top_frame_left_container, text="Reset", command=self.canvas.clear)
+        self.reset_button = tkinter.Button(top_frame_left_container, text="Reset", command=lambda: [self.canvas.clear(), self.update_weight()])
         self.reset_button.pack(side="left", padx=10)
-        self.undo_button = tkinter.Button(top_frame_left_container, text="Angre", command=self.canvas.undo)
+        self.undo_button = tkinter.Button(top_frame_left_container, text="Angre", command=lambda: [self.canvas.undo(), self.update_weight()])
         self.undo_button.pack(side="left")
 
         self.auto_left_item_sv = tkinter.StringVar()
@@ -144,7 +144,7 @@ class MainPage(tkinter.Frame):
                                    Decimal(self.auto_glass_width_sv.get()), \
                                    Decimal(self.auto_glass_height_sv.get()),  \
                                    right_item)
-        self.update()
+        self.update_weight()
 
     def add_item(self, item):
         try:
@@ -192,7 +192,7 @@ class MainPage(tkinter.Frame):
         else:
             self.canvas.add_glass(Decimal(self.glass_width_entry.get()), Decimal(self.glass_height_entry.get()))
 
-        self.update()
+        self.update_weight()
 
     def get_current_widt(self):
         try:
@@ -228,7 +228,7 @@ class MainPage(tkinter.Frame):
             return False
         return Decimal(self.total_width.get())
 
-    def update(self):
+    def update_weight(self):
         weight = self.canvas.get_weight()
         weight_kg = (round(weight[0] / 1000), round(weight[1] / 1000))
 
