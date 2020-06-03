@@ -56,7 +56,8 @@ class MainPage(tkinter.Frame):
         self.auto_glass_width_entry = tkinter.Entry(auto_glass_container, text=self.auto_glass_width_sv)
         self.auto_glass_width_entry.grid(row=0, column=1)
         self.auto_glass_width_entry.insert(0, 60)
-        self.auto_glass_height_entry = tkinter.Entry(auto_glass_container)
+        self.auto_glass_height_sv = tkinter.StringVar()
+        self.auto_glass_height_entry = tkinter.Entry(auto_glass_container, text=self.auto_glass_height_sv)
         self.auto_glass_height_entry.grid(row=1, column=1)
         self.auto_glass_height_entry.insert(0, 60)
 
@@ -106,6 +107,7 @@ class MainPage(tkinter.Frame):
         self.total_width.trace("w", lambda name, index, mode: self.auto_calculate())
         self.auto_left_item_sv.trace("w", lambda name, index, mode: self.auto_calculate())
         self.auto_glass_width_sv.trace("w", lambda name, index, mode: self.auto_calculate())
+        self.auto_glass_height_sv.trace("w", lambda name, index, mode: self.auto_calculate())
         self.auto_right_item_sv.trace("w", lambda name, index, mode: self.auto_calculate())
 
 
@@ -115,8 +117,8 @@ class MainPage(tkinter.Frame):
                float(self.total_width.get()) < 10          or \
                self.auto_glass_width_sv.get() is ""        or \
                float(self.auto_glass_width_sv.get()) < 10  or \
-               self.glass_height_entry.get() is ""         or \
-               float(self.glass_height_entry.get()) <= 0:
+               self.auto_glass_height_sv.get() is ""         or \
+               float(self.auto_glass_height_sv.get()) <= 0:
                 self.canvas.clear()
                 return
             if Decimal(self.total_width.get()) > 10000:
@@ -140,7 +142,7 @@ class MainPage(tkinter.Frame):
         self.canvas.auto_calculate(Decimal(self.total_width.get()),                  \
                                    left_item,                               \
                                    Decimal(self.auto_glass_width_sv.get()), \
-                                   Decimal(self.glass_height_entry.get()),  \
+                                   Decimal(self.auto_glass_height_sv.get()),  \
                                    right_item)
         self.update()
 
