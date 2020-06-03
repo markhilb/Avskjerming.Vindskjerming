@@ -13,6 +13,8 @@ class MainPage(tkinter.Frame):
 
         total_width_frame = tkinter.Frame(self, bg="white")
         top_frame = tkinter.Frame(self, bg="white")
+        top_frame.grid_columnconfigure(0, weight=1)
+        top_frame.grid_columnconfigure(4, weight=1)
         self.canvas = Canvas(self)
         bottom_frame = tkinter.Frame(self, bg="white")
 
@@ -68,7 +70,7 @@ class MainPage(tkinter.Frame):
         self.auto_right_item_drop_down.config(width=DROPDOWN_WIDTH)
 
         self.total_weight_label = tkinter.Label(top_frame, text="Total vekt: 0 kg", bg="white")
-        self.total_weight_label.grid(row=0, column=5, padx=20)
+        self.total_weight_label.grid(row=0, column=4, padx=20, sticky="e")
 
 
         self.canvas.pack(side="top", fill="both", expand=1)
