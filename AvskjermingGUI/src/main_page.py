@@ -48,9 +48,9 @@ class MainPage(tkinter.Frame):
 
         auto_glass_container = tkinter.Frame(top_frame, bg="white")
         auto_glass_container.grid(row=0, column=2, padx=10)
-        glass_width_label = tkinter.Label(auto_glass_container, text="Bredde: ", bg="white")
+        glass_width_label = tkinter.Label(auto_glass_container, text="Global bredde: ", bg="white")
         glass_width_label.grid(row=0, column=0)
-        glass_height_label = tkinter.Label(auto_glass_container, text="Høyde: ", bg="white")
+        glass_height_label = tkinter.Label(auto_glass_container, text="Global høyde: ", bg="white")
         glass_height_label.grid(row=1, column=0)
         self.auto_glass_width_sv = tkinter.StringVar()
         self.auto_glass_width_entry = tkinter.Entry(auto_glass_container, text=self.auto_glass_width_sv)
@@ -87,9 +87,9 @@ class MainPage(tkinter.Frame):
 
         glass_container = tkinter.Frame(bottom_frame, bg="white")
         glass_container.grid(row=0, column=4, padx=10)
-        glass_width_label = tkinter.Label(glass_container, text="Bredde: ", bg="white")
+        glass_width_label = tkinter.Label(glass_container, text="Individuell bredde: ", bg="white")
         glass_width_label.grid(row=0, column=0)
-        glass_height_label = tkinter.Label(glass_container, text="Høyde: ", bg="white")
+        glass_height_label = tkinter.Label(glass_container, text="Individuell høyde: ", bg="white")
         glass_height_label.grid(row=1, column=0)
         self.glass_width_entry = tkinter.Entry(glass_container)
         self.glass_width_entry.grid(row=0, column=1)
