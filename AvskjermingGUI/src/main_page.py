@@ -198,8 +198,8 @@ class MainPage(tkinter.Frame):
 
     def get_current_widt(self):
         try:
-            if self.glass_width_entry.get() == "" or \
-               float(self.glass_width_entry.get()) <= 0:
+            if self.auto_glass_width_entry.get() == "" or \
+               float(self.auto_glass_width_entry.get()) <= 0:
                 messagebox.showinfo("Warning", "Ugyldig glass bredde!")
                 return False
         except SyntaxError:
@@ -211,7 +211,7 @@ class MainPage(tkinter.Frame):
             else:
                 messagebox.showinfo("Warning", "Ugyldig glass bredde!")
             return False
-        return Decimal(self.glass_width_entry.get())
+        return Decimal(self.auto_glass_width_entry.get())
 
     def get_total_length(self):
         try:
