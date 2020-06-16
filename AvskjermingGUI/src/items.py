@@ -2,7 +2,7 @@ import tkinter
 from decimal import Decimal
 from popups import EditGlassPopup
 from config import CANVAS_BASELINE, CANVAS_LEFT_START, GLASS_BASELINE, WALLMOUNT_WIDTH, POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT, \
-                   LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, LENGT_BAR_LABEL_TOP, \
+                   LENGTH_BAR_SIDES_TOP, LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, LENGTH_BAR_LABEL_TOP, \
                    WALLMOUNT_DISPLAY_WIDTH, POST_DISPLAY_WIDTH, POST_BASE_DISPLAY_WIDTH, POST_BASE_DISPLAY_HEIGHT, WALLMOUTN_PACKAGING, POST_PACKAGING,\
                    WALLMOUNT_WEIGHT_MULTIPLYER, POST_WEIGHT_MULTIPLYER, POST_MOUNT_WEIGHT, GLASS_WEIGHT_MULTIPLYER, GLASS_PACKAGING, LENGTH_BAR_SIDES_HEIGHT,\
                    LEFT_HEIGHT_BAR_START, RIGHT_HEIGHT_BAR_OFFSET, RIGHT_HEIGHT_LABEL_OFFSET
@@ -126,7 +126,7 @@ class LengthBar:
             self.left = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_SIDES_TOP, CANVAS_LEFT_START + LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, fill="black")
             self.bar = self.canvas.create_rectangle(CANVAS_LEFT_START, LENGTH_BAR_TOP, xpos, LENGTH_BAR_BOTTOM, fill="black")
             self.right = self.canvas.create_rectangle(xpos - LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_TOP, xpos, LENGTH_BAR_SIDES_BOTTOM, fill="black")
-            self.label = self.canvas.create_text((xpos  + CANVAS_LEFT_START) / 2, LENGT_BAR_LABEL_TOP, text=current_width)
+            self.label = self.canvas.create_text((xpos  + CANVAS_LEFT_START) / 2, LENGTH_BAR_LABEL_TOP, text=current_width)
 
 
 class HeightBars:
