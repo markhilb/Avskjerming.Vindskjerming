@@ -196,7 +196,7 @@ class MainPage(tkinter.Frame):
 
         self.update_weight()
 
-    def get_current_widt(self):
+    def get_current_width(self):
         try:
             if self.auto_glass_width_entry.get() == "" or \
                float(self.auto_glass_width_entry.get()) <= 0:

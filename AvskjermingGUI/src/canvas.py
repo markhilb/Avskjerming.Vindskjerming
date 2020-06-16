@@ -170,7 +170,7 @@ class Canvas(tkinter.Canvas):
                         thing.delete()
                 else:
                     [x.delete() for x in second_half]
-                    current_width = self.parent.get_current_widt()
+                    current_width = self.parent.get_current_width()
                     total_width = self.parent.get_total_length()
                     if not current_width or not total_width:
                         return False
