@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
 from items import Wallmount, Post, Glass, LengthBar, GlassPolygon, HeightBars
-from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH
+from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH, POST_MARGIN_ABOVE_GLASS, POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS
 
 class Canvas(tkinter.Canvas):
     def __init__(self, parent):
@@ -49,7 +49,7 @@ class Canvas(tkinter.Canvas):
         if self.current_width + WALLMOUNT_WIDTH >= total_width:
             if not self.cut_glass((self.current_width + WALLMOUNT_WIDTH) - total_width):
                 return False
-        wallmount = Wallmount(self, self.current_xpos, height)
+        wallmount = Wallmount(self, self.current_xpos, height + WALLMOUNT_MARGIN_ABOVE_GLASS)
         self.items.append(wallmount)
         self.update()
         return True
@@ -64,6 +64,12 @@ class Canvas(tkinter.Canvas):
         if self.current_width + POST_LAST_WIDTH >= total_width:
             if not self.cut_glass((self.current_width + POST_LAST_WIDTH) - total_width):
                 return False
+
+        if isinstance(self.items[len(self.items) - 1], Glass):
+            height += POST_MARGIN_ABOVE_GLASS
+        elif isinstance(self.items[len(self.items) - 1], GlassPolygon):
+            height += POST_MARGIN_ABOVE_GLASSPOLYGON
+
         post = Post(self, self.current_xpos, height, True)
         self.items.append(post)
         self.update()
