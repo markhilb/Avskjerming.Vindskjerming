@@ -14,7 +14,7 @@ class Wallmount:
         self.xpos = xpos
         self.width = WALLMOUNT_WIDTH
         self.display_width = WALLMOUNT_DISPLAY_WIDTH
-        self.height = height + 1
+        self.height = height
         self.display_height = height + 5
         self.color = "gray"
 
@@ -33,7 +33,7 @@ class Post:
         self.canvas = canvas
         self.xpos = xpos
         self.display_width = POST_DISPLAY_WIDTH
-        self.height = height + 1
+        self.height = height
         self.display_height = height + 5
         self.is_last = is_last
         self.color = "black"
