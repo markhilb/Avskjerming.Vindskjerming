@@ -115,11 +115,11 @@ class MainPage(tkinter.Frame):
 
     def auto_calculate(self):
         try:
-            if self.total_width.get() is ""                or \
+            if self.total_width.get() == ""                or \
                float(self.total_width.get()) < 10          or \
-               self.auto_glass_width_sv.get() is ""        or \
+               self.auto_glass_width_sv.get() == ""        or \
                float(self.auto_glass_width_sv.get()) < 10  or \
-               self.auto_glass_height_sv.get() is ""         or \
+               self.auto_glass_height_sv.get() == ""         or \
                float(self.auto_glass_height_sv.get()) <= 0:
                 self.canvas.clear()
                 return
@@ -133,7 +133,7 @@ class MainPage(tkinter.Frame):
             self.total_width.set(self.total_width.get()[:-1])
             return
         except ValueError:
-            if(self.total_width.get().find(",") is not -1):
+            if(self.total_width.get().find(",") != -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
             self.canvas.clear()
             self.total_width.set(self.total_width.get()[:-1])
@@ -150,11 +150,11 @@ class MainPage(tkinter.Frame):
 
     def add_item(self, item):
         try:
-            if self.total_width.get() is ""                or \
+            if self.total_width.get() == ""                or \
                float(self.total_width.get()) < 10          or \
-               self.glass_width_entry.get() is ""          or \
+               self.glass_width_entry.get() == ""          or \
                float(self.glass_width_entry.get()) <= 0    or \
-               self.glass_height_entry.get() is ""         or \
+               self.glass_height_entry.get() == ""         or \
                float(self.glass_height_entry.get()) <= 0:
                 return
             if Decimal(self.total_width.get()) > 10000:
@@ -166,14 +166,14 @@ class MainPage(tkinter.Frame):
             self.total_width.set(self.total_width.get()[:-1])
             return
         except ValueError:
-            if(self.total_width.get().find(",") is not -1):
+            if(self.total_width.get().find(",") != -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
             self.total_width.set(self.total_width.get()[:-1])
             return
 
         if item is GlassPolygon:
             try:
-                if self.polygon_entry.get() is "" or \
+                if self.polygon_entry.get() == "" or \
                    float(self.polygon_entry.get()) < 0:
                     messagebox.showinfo("Warning", "Ugyldig skrå høyde!")
                     return False
@@ -181,7 +181,7 @@ class MainPage(tkinter.Frame):
                     messagebox.showinfo("Warning", "Ugyldig skrå høyde!")
                     return False
             except ValueError:
-                if(self.total_width.get().find(",") is not -1):
+                if(self.total_width.get().find(",") != -1):
                     messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
                 else:
                     messagebox.showinfo("Warning", "Ugyldig skrå høyde!")
@@ -198,7 +198,7 @@ class MainPage(tkinter.Frame):
 
     def get_current_widt(self):
         try:
-            if self.glass_width_entry.get() is "" or \
+            if self.glass_width_entry.get() == "" or \
                float(self.glass_width_entry.get()) <= 0:
                 messagebox.showinfo("Warning", "Ugyldig glass bredde!")
                 return False
@@ -206,7 +206,7 @@ class MainPage(tkinter.Frame):
                 messagebox.showinfo("Warning", "Ugyldig glass bredde!")
                 return False
         except ValueError:
-            if(self.total_width.get().find(",") is not -1):
+            if(self.total_width.get().find(",") != -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
             else:
                 messagebox.showinfo("Warning", "Ugyldig glass bredde!")
@@ -215,7 +215,7 @@ class MainPage(tkinter.Frame):
 
     def get_total_length(self):
         try:
-            if self.total_width.get() is "" or \
+            if self.total_width.get() == "" or \
                float(self.total_width.get()) <= 0:
                 messagebox.showinfo("Warning", "Ugyldig total lengde!")
                 return False
@@ -223,7 +223,7 @@ class MainPage(tkinter.Frame):
                 messagebox.showinfo("Warning", "Ugyldig total lengde!")
                 return False
         except ValueError:
-            if(self.total_width.get().find(",") is not -1):
+            if(self.total_width.get().find(",") != -1):
                 messagebox.showinfo("Warning", "Bruk punktum ikke komma!")
             else:
                 messagebox.showinfo("Warning", "Ugyldig total lengde!")
