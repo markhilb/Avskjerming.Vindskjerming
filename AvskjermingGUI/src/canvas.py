@@ -446,34 +446,42 @@ class Canvas(tkinter.Canvas):
 
     def edit_glass(self, glass_id, width, height):
         if list(filter(lambda item: item.id == glass_id, self.left_thing.items)):
-            return self.left_thing.edit_glass(
+            self.left_thing.edit_glass(
                 glass_id, self.parent.get_total_length_l(), width, height
             )
+        else:
+            self.right_thing.edit_glass(
+                glass_id, self.parent.get_total_length_r(), width, height
+            )
 
-        return self.right_thing.edit_glass(
-            glass_id, self.parent.get_total_length_r(), width, height
-        )
+        self.parent.update_packaging_list()
 
 
     def delete_glass(self, glass_id):
         if list(filter(lambda item: item.id == glass_id, self.left_thing.items)):
-            return self.left_thing.delete_glass(glass_id)
+            self.left_thing.delete_glass(glass_id)
+        else:
+            self.right_thing.delete_glass(glass_id)
 
-        return self.right_thing.delete_glass(glass_id)
+        self.parent.update_packaging_list()
 
 
     def edit_post_or_wallmount(self, item_id, height):
         if list(filter(lambda item: item.id == item_id, self.left_thing.items)):
-            return self.left_thing.edit_post_or_wallmount(item_id, height)
+            self.left_thing.edit_post_or_wallmount(item_id, height)
+        else:
+            self.right_thing.edit_post_or_wallmount(item_id, height)
 
-        return self.right_thing.edit_post_or_wallmount(item_id, height)
+        self.parent.update_packaging_list()
 
 
     def delete_post_or_wallmount(self, item_id, height):
         if list(filter(lambda item: item.id == item_id, self.left_thing.items)):
-            return self.left_thing.delete_post_or_wallmount(item_id)
+            self.left_thing.delete_post_or_wallmount(item_id)
+        else:
+            self.right_thing.delete_post_or_wallmount(item_id)
 
-        return self.right_thing.delete_post_or_wallmount(item_id)
+        self.parent.update_packaging_list()
 
 
     def get_packaging_list(self):
