@@ -3,226 +3,483 @@ from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
 from items import Wallmount, Post, Glass, LengthBar, GlassPolygon, HeightBars
-from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH, POST_MARGIN_ABOVE_GLASS, POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS
+from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, \
+                   WALLMOUNT_WIDTH, POST_MARGIN_ABOVE_GLASS, \
+                   POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS, \
+                   CANVAS_SPACE_BETWEEN_WALLS
 
-class Canvas(tkinter.Canvas):
-    def __init__(self, parent):
-        self.parent = parent
-        super().__init__(parent, bg="white", highlightthickness=0)
+
+class Thing:
+    def __init__(self, canvas):
+        self.canvas = canvas
         self.items = []
-        self.current_width = Decimal("0")
+        self.base_xpos = CANVAS_LEFT_START
         self.current_xpos = CANVAS_LEFT_START
-        self.length_bar = LengthBar(self)
-        self.height_bar = HeightBars(self)
+        self.current_width = Decimal("0")
+        self.length_bar = LengthBar(canvas)
 
-    def auto_calculate(self, total_width, left, width, height, right):
+
+    @property
+    def is_empty(self):
+        return len(self.items) == 0
+
+
+    def auto_calculate(self, total_width, width, height, left, right):
         self.clear()
+
+        # Add the leftmost item (if there is one)
         if left is Post:
-            if not self.add_post(height):
+            if not self.add_post(total_width, height):
                 return
-        else:
-            if not self.add_wallmount(height):
+        elif left is Wallmount:
+            if not self.add_wallmount(total_width, height):
                 return
 
-        total_width_minus_edges = (total_width - self.current_width - (POST_LAST_WIDTH if right is Post else WALLMOUNT_WIDTH))
-        num =  total_width_minus_edges / (Decimal(width) + POST_LAST_WIDTH)
-
-        for _ in range(int(num)):
-            self.add_glass(width, height)
-            self.add_post(height)
-        self.add_glass(width, height)
-
+        # Add the rightmost item (if there is one),
+        # and save its width
         if right is Post:
-            if not self.add_post(height):
-                return
+            right_item_width = POST_LAST_WIDTH
+            right_item_add_func = self.add_post
+        elif right is Wallmount:
+            right_item_width = WALLMOUNT_WIDTH
+            right_item_add_func = self.add_wallmount
         else:
-            if not self.add_wallmount(height):
-                return
+            right_item_width = 0
+            right_item_add_func = lambda x, y: None
 
-    def add_wallmount(self, height, add_margin=True):
-        if len(self.items) is not 0:
-            if not isinstance(self.items[len(self.items) - 1], Glass):
-                return False
-        total_width = self.parent.get_total_length()
-        if not total_width:
+        # Calculate the number of items to add (minus the edges)
+        total_width_minus_edges = total_width - self.current_width - right_item_width
+        num =  total_width_minus_edges / (width + POST_WIDTH)
+
+        # Num is floored because another glass and the right item
+        # needs to be added after the loop
+        for _ in range(int(num)):
+            self.add_glass(total_width, width, height)
+            self.add_post(total_width, height)
+
+        self.add_glass(total_width, width, height)
+        right_item_add_func(total_width, height)
+
+
+    def add_wallmount(self, total_width, height, add_margin=True):
+        # Don't add wallmount if the last item is not glass
+        # (unless this is the first item)
+        if len(self.items) > 0 and not isinstance(self.items[-1], Glass):
             return False
-        if self.current_width + WALLMOUNT_WIDTH >= total_width:
-            if not self.cut_glass((self.current_width + WALLMOUNT_WIDTH) - total_width):
+
+        # Try to cut the last glass if adding a wallmount makes it too long
+        if self.current_width + WALLMOUNT_WIDTH > total_width:
+            if not self.cut_glass(self.current_width + WALLMOUNT_WIDTH - total_width):
                 return False
 
         if add_margin:
-            wallmount = Wallmount(self, self.current_xpos, height + WALLMOUNT_MARGIN_ABOVE_GLASS)
+            wallmount = Wallmount(
+                self.canvas, self.current_xpos, height + WALLMOUNT_MARGIN_ABOVE_GLASS
+            )
         else:
-            wallmount = Wallmount(self, self.current_xpos, height)
+            wallmount = Wallmount(self.canvas, self.current_xpos, height)
 
         self.items.append(wallmount)
         self.update()
         return True
 
-    def add_post(self, height, add_margin=True):
-        if len(self.items) is not 0:
-            if not isinstance(self.items[len(self.items) - 1], Glass):
-                return False
-        total_width = self.parent.get_total_length()
-        if not total_width:
+
+    def add_post(self, total_width, height, add_margin=True):
+        # Don't add post if the last item is not glass
+        # (unless this is the first item)
+        if len(self.items) > 0 and not isinstance(self.items[-1], Glass):
             return False
-        if self.current_width + POST_LAST_WIDTH >= total_width:
+
+        # Try to cut the last glass if adding a wallmount makes it too long
+        if self.current_width + POST_LAST_WIDTH > total_width:
             if not self.cut_glass((self.current_width + POST_LAST_WIDTH) - total_width):
                 return False
 
         if add_margin:
-            if isinstance(self.items[len(self.items) - 1], Glass):
+            if len(self.items) == 0 or isinstance(self.items[-1], Glass):
                 height += POST_MARGIN_ABOVE_GLASS
-            elif isinstance(self.items[len(self.items) - 1], GlassPolygon):
+            elif isinstance(self.items[-1], GlassPolygon):
                 height += POST_MARGIN_ABOVE_GLASSPOLYGON
 
-        post = Post(self, self.current_xpos, height, True)
+        post = Post(self.canvas, self.current_xpos, height, True)
         self.items.append(post)
         self.update()
         return True
 
-    def add_glass(self, width, height, second_height=0):
-        total_width = self.parent.get_total_length()
-        if not total_width:
+
+    def add_glass(self, total_width, width, height, second_height=-1):
+        if self.current_width >= total_width:
             return False
-        if len(self.items) is 0 or self.current_width >= total_width:
-            return False
-        if isinstance(self.items[len(self.items) - 1], Post):
-            if len(self.items) is not 1:
-                self.items[len(self.items) - 1].is_last = False
-                self.update()
-                if self.current_width >= total_width:
-                    self.items[len(self.items) - 1].is_last = True
+
+        if len(self.items) > 0:
+            # Don't add two glasses after each other
+            if isinstance(self.items[-1], Glass):
+                return False
+
+            # If the previous item is a post
+            if self.items[-1] is Post:
+                # If the last post is no longer last after adding the glass,
+                # set is_last to false, and update the canvas
+                if len(self.items) != 1:
+                    self.items[-1].is_last = False
                     self.update()
-                    return False
-        elif isinstance(self.items[len(self.items) - 1], Glass):
-            return False
+                    # If this becomes too long from doing this,
+                    # set is_last back to true, and don't add the class
+                    if self.current_width >= total_width:
+                        self.items[-1].is_last = True
+                        self.update()
+                        return False
+
+        # If the glass is too wide, cut it
         if self.current_width + width > total_width:
             width = total_width - self.current_width
-        if second_height is 0:
-            glass = Glass(self, self.current_xpos, width, height)
+
+        if second_height == -1:
+            glass = Glass(self.canvas, self.current_xpos, width, height)
         else:
-            glass = GlassPolygon(self, self.current_xpos, width, height, second_height)
+            glass = GlassPolygon(
+                self.canvas, self.current_xpos, width, height, second_height
+            )
+
         self.items.append(glass)
         self.update()
         return True
 
+
     def cut_glass(self, width):
-        if len(self.items) is 0:
+        # Can't cut a glass that is not there
+        if len(self.items) == 0:
             return False
+
+        # Can't cut something that is not glass
+        if not isinstance(self.items[-1], Glass):
+            return False
+
         glass = self.items.pop()
+
+        # Can't cut more than the glass' width
         if glass.width <= width:
             self.items.append(glass)
             return False
+
+        new_width = glass.width - width
         self.update()
         if isinstance(glass, GlassPolygon):
-            new_glass = GlassPolygon(self, self.current_xpos, glass.width - width, glass.height, glass.second_height)
+            new_glass = GlassPolygon(
+                self.canvas,
+                self.current_xpos,
+                new_width, glass.height, glass.second_height
+            )
         else:
-            new_glass = Glass(self, self.current_xpos, glass.width - width, glass.height)
+            new_glass = Glass(self.canvas, self.current_xpos, new_width, glass.height)
+
         self.items.append(new_glass)
         glass.delete()
         self.update()
         return True
 
-    def update(self):
+
+    def edit_glass(self, glass_id, total_width, width, height):
+        for i, item in enumerate(self.items):
+            if item.id is glass_id:
+                # Split the list where the glass is
+                second_half = self.items[i+1:]
+                self.items = self.items[:i+1]
+
+                # Delete the glass to be edited
+                old_glass = self.items.pop()
+                old_glass.delete()
+                self.update()
+
+                # Add new glass back with the edited size
+                self.add_glass(total_width, width, height)
+
+                # If the edited glass is made wider or the same
+                if width >= old_glass.width and len(second_half) > 0:
+                    # Add back the rest of the items
+                    for itm in second_half:
+                        if isinstance(itm, Wallmount):
+                            self.add_wallmount(total_width, itm.height, False)
+                        elif isinstance(itm, Post):
+                            self.add_post(total_width, itm.height, False)
+                        else:
+                            self.add_glass(total_width, itm.width, itm.height)
+
+                        itm.delete()
+
+                # If the edited glass is made smaller
+                else:
+                    # Delete the old items
+                    [x.delete() for x in second_half]
+
+                    # Get the size of the glasses to fill up the rest of the space
+                    if not (auto_width := self.canvas.parent.get_auto_glass_width()) or \
+                            not (auto_height := self.canvas.parent.get_auto_glass_height()):
+                        return
+
+                    # Find out what the last item is
+                    if second_half:
+                        last_item = second_half[-1]
+                    else:
+                        last_item = self.items[-1]
+
+                    # Calculate the number of items to add (minus the edges)
+                    remaining_width = total_width - self.current_width - last_item.width
+                    num = remaining_width / (auto_width + POST_WIDTH)
+
+                    # Num is floored because another glass and the right item
+                    # needs to be added after the loop
+                    for _ in range(int(num) + 1):
+                        self.add_glass(total_width, auto_width, auto_height)
+                        self.add_post(total_width, auto_height)
+
+                    self.add_glass(total_width, auto_width, auto_height)
+                    if isinstance(last_item, Post):
+                        self.add_post(total_width, auto_height)
+                    elif isinstance(last_item, Wallmount):
+                        self.add_wallmount(total_width, auto_height)
+
+                return True
+
+        return False
+
+
+    def delete_glass(self, glass_id):
+        for i, item in enumerate(self.items):
+            if item.id is glass_id:
+                # Delete the glass
+                item.delete()
+                self.items.remove(item)
+
+                # If there is a post/wallmount after the glass, delete it too
+                if len(self.items) > i:
+                    next_item = self.items[i]
+                    if isinstance(next_item, Post) or isinstance(next_item, Wallmount):
+                        next_item.delete()
+                        self.items.remove(next_item)
+
+                self.redraw_items()
+                self.update()
+                return True
+
+        return False
+
+
+    def edit_post_or_wallmount(self, item_id, height):
+        for i, item in enumerate(self.items):
+            if item.id is item_id:
+                item.delete()
+                if isinstance(item, Post):
+                    self.items[i] = Post(self.canvas, item.xpos, height, True)
+                elif isinstance(item, Wallmount):
+                    self.items[i] = Wallmount(self.canvas, item.xpos, height)
+                else:
+                    return False
+
+                return True
+
+        return False
+
+
+    def delete_post_or_wallmount(self, item_id):
+        for i, item in enumerate(self.items):
+            if item.id is item_id:
+                # Delete the item
+                item.delete()
+                self.items.remove(item)
+
+                # If there is a glass after the item, delete it too
+                if len(self.items) > i:
+                    next_item = self.items[i]
+                    if isinstance(next_item, Glass):
+                        next_item.delete()
+                        self.items.remove(next_item)
+
+                self.redraw_items()
+                self.update()
+                return True
+
+        return False
+
+
+    def redraw_items(self):
+        old_items = self.items
+        total_width = self.current_width
+        self.items = []
         self.current_width = Decimal("0")
-        self.current_xpos = CANVAS_LEFT_START
-        for item in self.items:
-            self.current_width += item.width
-            self.current_xpos += item.display_width
-        self.length_bar.update(self.current_width, self.current_xpos)
-        self.height_bar.update(self.items, self.current_xpos)
+        self.current_xpos = self.base_xpos
+
+        for item in old_items:
+            if isinstance(item, Wallmount):
+                self.add_wallmount(total_width, item.height, False)
+            elif isinstance(item, Post):
+                self.add_post(total_width, item.height, False)
+            else:
+                self.add_glass(total_width, item.width, item.height)
+
+            item.delete()
+
 
     def clear(self):
         for item in self.items:
             item.delete()
+
         self.items.clear()
         self.current_width = Decimal("0")
-        self.current_xpos = CANVAS_LEFT_START
-        self.length_bar.update(self.current_width, self.current_xpos)
-        self.height_bar.update(self.items, self.current_xpos)
+        self.current_xpos = self.base_xpos
+        self.length_bar.update(self.current_width, self.current_xpos, self.base_xpos)
+
+
+    def update(self):
+        self.current_width = Decimal("0")
+        self.current_xpos = self.base_xpos
+        for item in self.items:
+            self.current_width += item.width
+            self.current_xpos += item.display_width
+
+        self.length_bar.update(self.current_width, self.current_xpos, self.base_xpos)
+
+
+class Canvas(tkinter.Canvas):
+    def __init__(self, parent):
+        self.parent = parent
+        super().__init__(parent, bg="white", highlightthickness=0)
+        self.left_thing = Thing(self)
+        self.right_thing = Thing(self)
+        self.height_bar = HeightBars(self)
+
+
+    def auto_calculate(self, total_width_l, total_width_r, width, height):
+        left_item = self.parent.get_left_item()
+        right_item = self.parent.get_right_item()
+        if total_width_r:
+            self.left_thing.auto_calculate(
+                total_width_l, width, height, left_item, Post
+            )
+
+            self.right_thing.base_xpos = (self.left_thing.current_xpos +
+                                          CANVAS_SPACE_BETWEEN_WALLS)
+            self.right_thing.auto_calculate(
+                total_width_r, width, height, None, right_item
+            )
+        else:
+            self.right_thing.clear()
+            self.left_thing.auto_calculate(
+                total_width_l, width, height, left_item, right_item
+            )
+
+        # self.height_bar.update()
+
+
+    def add_wallmount(self, total_width_l, total_width_r, height):
+        if total_width_r:
+            # If the right thing is not empty, then the wallmount is added there
+            if not self.right_thing.is_empty:
+                self.right_thing.add_wallmount(total_width_r, height)
+            # If the right thing is empty, try to add to the left thing
+            else:
+                # If the wallmount can't be added to the left thing,
+                # add it to the right thing anyway
+                if not self.left_thing.add_wallmount(total_width_l, height):
+                    self.right_thing.add_wallmount(total_width_r, height)
+        else:
+            self.left_thing.add_wallmount(total_width_l, height)
+
+
+    def add_post(self, total_width_l, total_width_r, height):
+        if total_width_r:
+            # If the right thing is not empty, then the post is added there
+            if not self.right_thing.is_empty:
+                self.right_thing.add_post(total_width_r, height)
+            # If the right thing is empty, try to add to the left thing
+            else:
+                # If the post can't be added to the left thing,
+                # add it to the right thing anyway
+                if not self.left_thing.add_post(total_width_l, height):
+                    self.right_thing.add_post(total_width_r, height)
+        else:
+            self.left_thing.add_post(total_width_l, height)
+
+
+    def add_glass(self, total_width_l, total_width_r, width, height, second_height=-1):
+        if total_width_r:
+            # If the right thing is not empty, then the glass is added there
+            if not self.right_thing.is_empty:
+                self.right_thing.add_glass(total_width_r, width, height, second_height)
+            # If the right thing is empty, try to add to the left thing
+            else:
+                # If the glass can't be added to the left thing,
+                # add it to the right thing anyway
+                if not self.left_thing.add_glass(total_width_r, width, height, second_height):
+                    self.right_thing.add_glass(total_width_r, width, height, second_height)
+        else:
+            self.left_thing.add_glass(total_width_l, width, height, second_height)
+
+
+    def update(self):
+        self.left_thing.update()
+        self.right_thing.update()
+        # self.height_bar.update(self.items, self.current_xpos)
+
+
+    def clear(self):
+        self.left_thing.clear()
+        self.right_thing.clear()
+        # self.height_bar.update(self.items, self.current_xpos)
+
 
     def undo(self):
-        if len(self.items) is not 0:
-            item = self.items.pop()
-            item.delete()
-        if len(self.items) is not 0 and isinstance(self.items[len(self.items) - 1], Post):
-            self.items[len(self.items) - 1].is_last = True
+        # Figure out which list to undo from
+        if self.right_thing.is_empty:
+            items = self.left_thing.items
+        else:
+            items = self.right_thing.items
+
+        if not items:
+            return
+
+        # Remove last item
+        item = items.pop()
+        item.delete()
+
+        # If the last iitem  is now a post, set is_last to true
+        if len(items) > 0 and isinstance(items[-1], Post):
+            items[-1].is_last = True
+
         self.update()
 
-    def edit_glass(self, id, width):
-        for i, item in enumerate(self.items):
-            if item.id is id:
-                second_half = self.items[i+1:]
-                self.items = self.items[:i+1]
-                old_glass = self.items.pop()
-                old_glass.delete()
-                self.update()
-                self.add_glass(width, old_glass.height)
-                if width >= old_glass.width:
-                    for thing in second_half:
-                        if isinstance(thing, Wallmount):
-                            self.add_wallmount(thing.height, False)
-                        elif isinstance(thing, Post):
-                            self.add_post(thing.height - 1)
-                        else:
-                            self.add_glass(thing.width, thing.height)
-                        thing.delete()
-                else:
-                    [x.delete() for x in second_half]
-                    current_width = self.parent.get_current_width()
-                    total_width = self.parent.get_total_length()
-                    if not current_width or not total_width:
-                        return False
-                    last_item = second_half[len(second_half) - 1]
-                    remaining_width = total_width - self.current_width - last_item.width
-                    num =  remaining_width / (Decimal(width) + POST_WIDTH)
 
-                    for _ in range(int(num)):
-                        self.add_glass(current_width, old_glass.height)
-                        self.add_post(old_glass.height)
-                    self.add_glass(current_width, old_glass.height)
+    def edit_glass(self, glass_id, width, height):
+        if list(filter(lambda item: item.id == glass_id, self.left_thing.items)):
+            return self.left_thing.edit_glass(
+                glass_id, self.parent.get_total_length_l(), width, height
+            )
 
-                    if isinstance(last_item, Post):
-                        self.add_post(old_glass.height)
-                    elif isinstance(last_item, Wallmount):
-                        self.add_wallmount(old_glass.height)
-                return True
-        return False
+        return self.right_thing.edit_glass(
+            glass_id, self.parent.get_total_length_r(), width, height
+        )
 
 
-    def move_items(self, idx):
-        self.current_width = Decimal("0")
-        self.current_xpos = CANVAS_LEFT_START
-        for i in range(idx):
-            self.current_width += self.items[i].width
-            self.current_xpos += self.items[i].display_width
-        for i in range(idx, len(self.items)):
-            item = self.items[i]
-            item.delete()
-            if isinstance(item, Wallmount):
-                new_item = Wallmount(self, self.current_xpos, item.height)
-            elif isinstance(item, Post):
-                new_item = Post(self, self.current_xpos, item.height, item.is_last)
-            else:
-                new_item = Glass(self, self.current_xpos, item.width, item.height)
-            self.items[i] = new_item
-            self.current_width += new_item.width
-            self.current_xpos += new_item.display_width
+    def delete_glass(self, glass_id):
+        if list(filter(lambda item: item.id == glass_id, self.left_thing.items)):
+            return self.left_thing.delete_glass(glass_id)
 
-    def delete_glass(self, id):
-        for i, item in enumerate(self.items):
-            if item.id is id:
-                item.delete()
-                self.items.remove(item)
-                if len(self.items) > i:
-                    next_item = self.items[i]
-                    next_item.delete()
-                    self.items.remove(next_item)
-                    self.move_items(i)
-                self.update()
-                return True
-        return False
+        return self.right_thing.delete_glass(glass_id)
+
+
+    def edit_post_or_wallmount(self, item_id, height):
+        if list(filter(lambda item: item.id == item_id, self.left_thing.items)):
+            return self.left_thing.edit_post_or_wallmount(item_id, height)
+
+        return self.right_thing.edit_post_or_wallmount(item_id, height)
+
+
+    def delete_post_or_wallmount(self, item_id, height):
+        if list(filter(lambda item: item.id == item_id, self.left_thing.items)):
+            return self.left_thing.delete_post_or_wallmount(item_id)
+
+        return self.right_thing.delete_post_or_wallmount(item_id)
+
 
     def get_weight(self):
         weight = Decimal("0")
@@ -232,3 +489,4 @@ class Canvas(tkinter.Canvas):
             weight += w[0]
             packaging += w[1]
         return (weight, packaging)
+
