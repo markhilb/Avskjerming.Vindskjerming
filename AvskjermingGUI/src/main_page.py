@@ -55,7 +55,7 @@ class MainPage(tkinter.Frame):
         # Frame containing top row of buttons and inputs
         top_frame = tkinter.Frame(self, bg="white")
         top_frame.grid_columnconfigure(2, weight=1)
-        top_frame.grid_columnconfigure(6, weight=1)
+        top_frame.grid_columnconfigure(5, weight=1)
         top_frame.pack(side="top", fill="x")
 
         # Reset button
@@ -64,7 +64,7 @@ class MainPage(tkinter.Frame):
             command=lambda: [self.canvas.clear(), self.update_packaging_list()]
         )
 
-        self.reset_button.grid(row=0, column=0)
+        self.reset_button.grid(row=0, column=0, sticky="n")
 
         # Undo button
         self.undo_button = tkinter.Button(
@@ -72,7 +72,7 @@ class MainPage(tkinter.Frame):
             command=lambda: [self.canvas.undo(), self.update_packaging_list()]
         )
 
-        self.undo_button.grid(row=0, column=1)
+        self.undo_button.grid(row=0, column=1, sticky="n")
 
         # Dropdown for wallmoun/post on left side
         self.auto_left_item_dropdown = tkinter.StringVar()
@@ -81,25 +81,29 @@ class MainPage(tkinter.Frame):
             top_frame, self.auto_left_item_dropdown, *["Veggskinne", "Stolpe"]
         )
 
-        auto_left_item_dropdown_menu.grid(row=0, column=2, padx=40, sticky="e")
+        auto_left_item_dropdown_menu.grid(row=0, column=2, padx=40, sticky="ne")
         auto_left_item_dropdown_menu.config(width=DROPDOWN_WIDTH)
 
+        # Frame for glass size entries
+        auto_glass_frame = tkinter.Frame(top_frame, bg="white")
+        auto_glass_frame.grid(row=0, column=3, padx=10, sticky="n")
+
         # Labels for glass size entries
-        glass_width_label = tkinter.Label(top_frame, text="Global bredde: ", bg="white")
-        glass_width_label.grid(row=0, column=3)
-        glass_height_label = tkinter.Label(top_frame, text="Global høyde: ", bg="white")
-        glass_height_label.grid(row=1, column=3)
+        glass_width_label = tkinter.Label(auto_glass_frame, text="Global bredde: ", bg="white")
+        glass_width_label.grid(row=0, column=0)
+        glass_height_label = tkinter.Label(auto_glass_frame, text="Global høyde: ", bg="white")
+        glass_height_label.grid(row=1, column=0)
 
         # Entry for glass width for automatic calculation
         self.auto_glass_width = tkinter.StringVar()
-        auto_glass_width_entry = tkinter.Entry(top_frame, text=self.auto_glass_width)
-        auto_glass_width_entry.grid(row=0, column=4)
+        auto_glass_width_entry = tkinter.Entry(auto_glass_frame, text=self.auto_glass_width)
+        auto_glass_width_entry.grid(row=0, column=1)
         auto_glass_width_entry.insert(0, 60)
 
         # Entry for glass height for automatic calculation
         self.auto_glass_height = tkinter.StringVar()
-        auto_glass_height_entry = tkinter.Entry(top_frame, text=self.auto_glass_height)
-        auto_glass_height_entry.grid(row=1, column=4)
+        auto_glass_height_entry = tkinter.Entry(auto_glass_frame, text=self.auto_glass_height)
+        auto_glass_height_entry.grid(row=1, column=1)
         auto_glass_height_entry.insert(0, 60)
 
         # Dropdown for wallmoun/post on right side
@@ -109,12 +113,12 @@ class MainPage(tkinter.Frame):
             top_frame, self.auto_right_item_dropdown, *["Veggskinne", "Stolpe"]
         )
 
-        auto_right_item_dropdown_menu.grid(row=0, column=5, padx=40, sticky="w")
+        auto_right_item_dropdown_menu.grid(row=0, column=4, padx=40, sticky="nw")
         auto_right_item_dropdown_menu.config(width=DROPDOWN_WIDTH)
 
         # Frame for the packaging list
         self.packaging_frame = tkinter.Frame(top_frame, bg="white")
-        self.packaging_frame.grid(row=0, column=6, padx=20, sticky="e")
+        self.packaging_frame.grid(row=0, column=5, padx=20, sticky="e")
 
         # Create a table for the packaging list
         self.packaging_table = ttk.Treeview(self.packaging_frame, height=1)
