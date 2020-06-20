@@ -5,7 +5,7 @@ from main_page import MainPage
 class Main(tkinter.Tk):
     def __init__(self):
         super().__init__()
-        self.geometry("1000x800")
+        self.geometry("1200x1000")
         self.config(bg="white")
         self.wm_title(TITLE)
 

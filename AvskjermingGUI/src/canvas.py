@@ -2,7 +2,7 @@ import tkinter
 from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
-from items import Wallmount, Post, Glass, LengthBar, GlassPolygon, HeightBars
+from items import Wallmount, Post, Glass, LengthBar, GlassPolygon
 from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, \
                    WALLMOUNT_WIDTH, POST_MARGIN_ABOVE_GLASS, \
                    POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS, \
@@ -96,9 +96,9 @@ class Thing:
                 return False
 
         if add_margin:
-            if len(self.items) == 0 or isinstance(self.items[-1], Glass):
+            if len(self.items) == 0 or not isinstance(self.items[-1], GlassPolygon):
                 height += POST_MARGIN_ABOVE_GLASS
-            elif isinstance(self.items[-1], GlassPolygon):
+            else:
                 height += POST_MARGIN_ABOVE_GLASSPOLYGON
 
         post = Post(self.canvas, self.current_xpos, height, True)
@@ -346,7 +346,6 @@ class Canvas(tkinter.Canvas):
         super().__init__(parent, bg="white", highlightthickness=0)
         self.left_thing = Thing(self)
         self.right_thing = Thing(self)
-        self.height_bar = HeightBars(self)
 
 
     def auto_calculate(self, total_width_l, total_width_r, width, height):
@@ -367,8 +366,6 @@ class Canvas(tkinter.Canvas):
             self.left_thing.auto_calculate(
                 total_width_l, width, height, left_item, right_item
             )
-
-        # self.height_bar.update()
 
 
     def add_wallmount(self, total_width_l, total_width_r, height):
@@ -419,13 +416,11 @@ class Canvas(tkinter.Canvas):
     def update(self):
         self.left_thing.update()
         self.right_thing.update()
-        # self.height_bar.update(self.items, self.current_xpos)
 
 
     def clear(self):
         self.left_thing.clear()
         self.right_thing.clear()
-        # self.height_bar.update(self.items, self.current_xpos)
 
 
     def undo(self):
@@ -481,12 +476,36 @@ class Canvas(tkinter.Canvas):
         return self.right_thing.delete_post_or_wallmount(item_id)
 
 
-    def get_weight(self):
-        weight = Decimal("0")
-        packaging = Decimal("0")
-        for item in self.items:
+    def get_packaging_list(self):
+        pl = {}
+        pl["Weight"] = Decimal("0")
+        for item in self.left_thing.items + self.right_thing.items:
+            # Get the map for this type of item, and create an empty one if it does not exist.
+            # Increments the value for this items's size, or initializes it if does not exist.
+            if isinstance(item, GlassPolygon):
+                pl["Skrå glass"][f"{item.width}x{item.height}x{item.second_height}"] = (
+                    pl.setdefault("Skrå glass", {})
+                      .setdefault(f"{item.width}x{item.height}x{item.second_height}", 0) + 1
+                 )
+            elif isinstance(item, Glass):
+                pl["Glass"][f"{item.width}x{item.height}"] = (
+                    pl.setdefault("Glass", {})
+                      .setdefault(f"{item.width}x{item.height}", 0) + 1
+                )
+            elif isinstance(item, Post):
+                pl["Stolpe"][f"{item.height}"] = (
+                    pl.setdefault("Stolpe", {})
+                      .setdefault(f"{item.height}", 0) + 1
+                )
+            elif isinstance(item, Wallmount):
+                pl["Veggskinne"][f"{item.height}"] = (
+                    pl.setdefault("Veggskinne", {})
+                      .setdefault(f"{item.height}", 0) + 1
+                )
+
+            # Add the items weight to the map
             w = item.weight
-            weight += w[0]
-            packaging += w[1]
-        return (weight, packaging)
+            pl["Weight"] += w[0] + w[1]
+
+        return pl
 

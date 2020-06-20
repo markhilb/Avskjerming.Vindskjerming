@@ -1,6 +1,6 @@
 import tkinter
 import re
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from decimal import Decimal, InvalidOperation
 from canvas import Canvas
 from items import Wallmount, Post, Glass, GlassPolygon
@@ -61,7 +61,7 @@ class MainPage(tkinter.Frame):
         # Reset button
         self.reset_button = tkinter.Button(
             top_frame, text="Reset",
-            command=lambda: [self.canvas.clear(), self.update_info()]
+            command=lambda: [self.canvas.clear(), self.update_packaging_list()]
         )
 
         self.reset_button.grid(row=0, column=0)
@@ -69,7 +69,7 @@ class MainPage(tkinter.Frame):
         # Undo button
         self.undo_button = tkinter.Button(
             top_frame, text="Angre",
-            command=lambda: [self.canvas.undo(), self.update_info()]
+            command=lambda: [self.canvas.undo(), self.update_packaging_list()]
         )
 
         self.undo_button.grid(row=0, column=1)
@@ -112,12 +112,20 @@ class MainPage(tkinter.Frame):
         auto_right_item_dropdown_menu.grid(row=0, column=5, padx=40, sticky="w")
         auto_right_item_dropdown_menu.config(width=DROPDOWN_WIDTH)
 
-        # Label for the total weight
-        self.total_weight_label = tkinter.Label(
-            top_frame, text="Total vekt: 0 kg", bg="white"
-        )
+        # Frame for the packaging list
+        self.packaging_frame = tkinter.Frame(top_frame, bg="white")
+        self.packaging_frame.grid(row=0, column=6, padx=20, sticky="e")
 
-        self.total_weight_label.grid(row=0, column=6, padx=20, sticky="e")
+        # Create a table for the packaging list
+        self.packaging_table = ttk.Treeview(self.packaging_frame, height=1)
+        self.packaging_table["columns"] = ("#1", "#2")
+        self.packaging_table.column("#0", width=100, anchor="center")
+        self.packaging_table.column("#1", width=100, anchor="center")
+        self.packaging_table.column("#2", width=100, anchor="center")
+        self.packaging_table.heading("#0", text="Type", anchor="center")
+        self.packaging_table.heading("#1", text="Størrelse", anchor="center")
+        self.packaging_table.heading("#2", text="Antall", anchor="center")
+        self.packaging_table.pack(side="top", fill="x")
 
         # Place the canvas in middle
         self.canvas.pack(side="top", fill="both", expand=1)
@@ -315,7 +323,7 @@ class MainPage(tkinter.Frame):
             return
 
         self.canvas.auto_calculate(total_width_l, total_width_r, glass_width, height)
-        self.update_info()
+        self.update_packaging_list()
 
 
     def add_item(self, item):
@@ -326,7 +334,7 @@ class MainPage(tkinter.Frame):
                 not (height := self.validate_and_get_entry(self.manual_glass_height)):
             return
 
-        if isinstance(item, GlassPolygon):
+        if item is GlassPolygon:
             if not (polygon_height := self.validate_and_get_entry(self.polygon_glass_height)):
                 return
 
@@ -340,13 +348,28 @@ class MainPage(tkinter.Frame):
         else:
             self.canvas.add_glass(total_width_l, total_width_r, glass_width, height)
 
-        self.update_info()
+        self.update_packaging_list()
 
 
-    def update_info(self):
-        pass
-        # weight = self.canvas.get_weight()
-        # weight_kg = (round(weight[0] / 1000), round(weight[1] / 1000))
+    def update_packaging_list(self):
+        pl = self.canvas.get_packaging_list()
+        weight = round(pl.pop("Weight") / 1000)
 
-        # self.total_weight_label.configure(text="Vekt: " + str(weight_kg[0]) + " kg\n+ innpakning: " + str(weight_kg[1]) + " kg\nTotal: " + str(weight_kg[0] + weight_kg[1]) + " kg")
+        # Clear the table before adding the items list
+        self.packaging_table.delete(*self.packaging_table.get_children())
+
+        # Add the items to the table
+        for type, rows in pl.items():
+            first = True
+            for size, num in rows.items():
+                if first:
+                    self.packaging_table.insert("", "end", text=type, values=(size, num))
+                    first = False
+                else:
+                    self.packaging_table.insert("", "end", values=(size, num))
+
+        self.packaging_table.insert("", "end", text="Vekt", values=("", f"{weight} kg"))
+
+        # Reset the height of the table to fit all rows
+        self.packaging_table.configure(height=len(self.packaging_table.get_children()))
 
