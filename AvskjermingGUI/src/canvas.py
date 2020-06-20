@@ -3,10 +3,9 @@ from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
 from items import Wallmount, Post, Glass, LengthBar, GlassPolygon
-from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, \
-                   WALLMOUNT_WIDTH, POST_MARGIN_ABOVE_GLASS, \
-                   POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS, \
-                   CANVAS_SPACE_BETWEEN_WALLS
+from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH, \
+    POST_MARGIN_ABOVE_GLASS, POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS, \
+    CANVAS_SPACE_BETWEEN_WALLS
 
 
 class Thing:
