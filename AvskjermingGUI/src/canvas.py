@@ -107,7 +107,7 @@ class Thing:
         return True
 
 
-    def add_glass(self, total_width, width, height, second_height=-1):
+    def add_glass(self, total_width, width, height, second_height=False):
         if self.current_width >= total_width:
             return False
 
@@ -134,12 +134,12 @@ class Thing:
         if self.current_width + width > total_width:
             width = total_width - self.current_width
 
-        if second_height == -1:
-            glass = Glass(self.canvas, self.current_xpos, width, height)
-        else:
+        if second_height:
             glass = GlassPolygon(
                 self.canvas, self.current_xpos, width, height, second_height
             )
+        else:
+            glass = Glass(self.canvas, self.current_xpos, width, height)
 
         self.items.append(glass)
         self.update()
@@ -179,7 +179,7 @@ class Thing:
         return True
 
 
-    def edit_glass(self, glass_id, total_width, width, height):
+    def edit_glass(self, glass_id, total_width, width, height, second_height=False):
         for i, item in enumerate(self.items):
             if item.id is glass_id:
                 # Split the list where the glass is
@@ -192,7 +192,7 @@ class Thing:
                 self.update()
 
                 # Add new glass back with the edited size
-                self.add_glass(total_width, width, height)
+                self.add_glass(total_width, width, height, second_height)
 
                 # If the edited glass is made wider or the same
                 if width >= old_glass.width and len(second_half) > 0:
@@ -202,6 +202,8 @@ class Thing:
                             self.add_wallmount(total_width, itm.height, False)
                         elif isinstance(itm, Post):
                             self.add_post(total_width, itm.height, False)
+                        elif isinstance(itm, GlassPolygon):
+                            self.add_glass(total_width, itm.width, itm.height, itm.second_height)
                         else:
                             self.add_glass(total_width, itm.width, itm.height)
 
@@ -398,7 +400,7 @@ class Canvas(tkinter.Canvas):
             self.left_thing.add_post(total_width_l, height)
 
 
-    def add_glass(self, total_width_l, total_width_r, width, height, second_height=-1):
+    def add_glass(self, total_width_l, total_width_r, width, height, second_height=False):
         if total_width_r:
             # If the right thing is not empty, then the glass is added there
             if not self.right_thing.is_empty:
@@ -444,14 +446,14 @@ class Canvas(tkinter.Canvas):
         self.update()
 
 
-    def edit_glass(self, glass_id, width, height):
+    def edit_glass(self, glass_id, width, height, second_height):
         if list(filter(lambda item: item.id == glass_id, self.left_thing.items)):
             self.left_thing.edit_glass(
-                glass_id, self.parent.get_total_length_l(), width, height
+                glass_id, self.parent.get_total_length_l(), width, height, second_height
             )
         else:
             self.right_thing.edit_glass(
-                glass_id, self.parent.get_total_length_r(), width, height
+                glass_id, self.parent.get_total_length_r(), width, height, second_height
             )
 
         self.parent.update_packaging_list()
