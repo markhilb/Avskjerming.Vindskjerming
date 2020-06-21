@@ -1,5 +1,5 @@
 ## Prerequisites
-* Python 3
+* Python 3.8
 
 
 ## Run program
