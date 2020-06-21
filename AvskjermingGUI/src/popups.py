@@ -2,6 +2,7 @@ import tkinter
 import re
 from tkinter import messagebox
 from decimal import Decimal
+from common import normalize
 
 
 class EditGlassPopup(tkinter.Tk):
@@ -48,15 +49,16 @@ class EditGlassPopup(tkinter.Tk):
 
 
     def validate_and_get_entry(self, entry):
-        # Remove all non-numbers from entry_val, and replace comma with period
-        entry_val = re.sub("[^0-9,\.]", "", entry.get()).replace(",", ".")
-        entry.delete(0, "end")
-        entry.insert(0, entry_val)
-        if entry_val == "":
-            return False
-
         try:
-            value = Decimal(entry_val)
+            # Remove all non-numbers from entry_val, and replace comma with period
+            entry_val = re.sub("[^0-9,\.]", "", entry.get()).replace(",", ".")
+            if entry_val == "":
+                return False
+
+            # Normalize value to remove all trailing 0s
+            value = normalize(entry_val)
+            entry.delete(0, "end")
+            entry.insert(0, value)
             if value < 0:
                 return False
 
@@ -68,6 +70,7 @@ class EditGlassPopup(tkinter.Tk):
     def edit_glass(self):
         if (new_width := self.validate_and_get_entry(self.width_entry)) and \
                 (new_height := self.validate_and_get_entry(self.height_entry)):
+            print(new_width)
             self.canvas.edit_glass(self.glass_id, new_width, new_height)
             self.destroy()
 
@@ -115,15 +118,16 @@ class EditPostOrWallmountPopup(tkinter.Tk):
 
 
     def validate_and_get_entry(self, entry):
-        # Remove all non-numbers from entry_val, and replace comma with period
-        entry_val = re.sub("[^0-9,\.]", "", entry.get()).replace(",", ".")
-        entry.delete(0, "end")
-        entry.insert(0, entry_val)
-        if entry_val == "":
-            return False
-
         try:
-            value = Decimal(entry_val)
+            # Remove all non-numbers from entry_val, and replace comma with period
+            entry_val = re.sub("[^0-9,\.]", "", entry.get()).replace(",", ".")
+            if entry_val == "":
+                return False
+
+            # Normalize value to remove all trailing 0s
+            value = normalize(entry_val)
+            entry.delete(0, "end")
+            entry.insert(0, value)
             if value < 0:
                 return False
 
