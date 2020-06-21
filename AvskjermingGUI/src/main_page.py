@@ -4,6 +4,7 @@ from tkinter import messagebox, ttk
 from decimal import Decimal, InvalidOperation
 from canvas import Canvas
 from items import Wallmount, Post, Glass, GlassPolygon
+from common import normalize
 from config import DROPDOWN_WIDTH
 
 
@@ -267,28 +268,29 @@ class MainPage(tkinter.Frame):
         """
 
 
-        # Remove all non-numbers from entry_val, and replace comma with period
-        entry_val = re.sub("[^0-9,\.]", "", entry.get()).replace(",", ".")
-
-        # Need to remove trace before entry.set, or it will be activated
-        if getattr(entry, "trace_id", False):
-            entry.trace_vdelete("w", entry.trace_id)
-            entry.set(entry_val)
-            entry.trace_id = entry.trace_add("write", lambda n, i, m: self.auto_calculate())
-        else:
-            entry.set(entry_val)
-
-        if entry_val == "":
-            return False
-
         try:
-            value = Decimal(entry_val)
+            # Remove all non-numbers from entry_val, and replace comma with period
+            entry_val = re.sub("[^0-9,\.]", "", entry.get()).replace(",", ".")
+            if entry_val == "":
+                return False
+
+            # Normalize value to remove all trailing 0s
+            value = normalize(entry_val)
+
+            # Need to remove trace before entry.set, or it will be activated
+            if getattr(entry, "trace_id", False):
+                entry.trace_vdelete("w", entry.trace_id)
+                entry.set(value)
+                entry.trace_id = entry.trace_add("write", lambda n, i, m: self.auto_calculate())
+            else:
+                entry.set(entry)
+
             if value < less_than_value or value > greater_than_value:
                 return False
 
             return value
-        except:
-            # messagebox.showinfo("Test", "OBS! Ugyldig tall.")
+        except Exception as e:
+            print(str(e))
             return  False
 
 
