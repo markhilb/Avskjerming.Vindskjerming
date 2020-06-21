@@ -1,6 +1,7 @@
 import tkinter
 from decimal import Decimal
 from popups import EditGlassPopup, EditPostOrWallmountPopup
+from common import normalize
 from config import CANVAS_BASELINE, CANVAS_LEFT_START, GLASS_BASELINE, WALLMOUNT_WIDTH, \
     POST_WIDTH, POST_LAST_WIDTH, POST_BASE_WIDTH, POST_BASE_HEIGHT, LENGTH_BAR_SIDES_TOP, \
     LENGTH_BAR_THICKNESS, LENGTH_BAR_SIDES_BOTTOM, LENGTH_BAR_TOP, LENGTH_BAR_BOTTOM, \
@@ -17,8 +18,8 @@ class Wallmount:
         self.xpos = xpos
         self.width = WALLMOUNT_WIDTH
         self.display_width = WALLMOUNT_DISPLAY_WIDTH
-        self.height = height
-        self.display_height = height + 5
+        self.height = normalize(height)
+        self.display_height = self.height + 5
         self.color = "gray"
 
         self.id = canvas.create_rectangle(
@@ -50,8 +51,8 @@ class Post:
         self.canvas = canvas
         self.xpos = xpos
         self.display_width = POST_DISPLAY_WIDTH
-        self.height = height
-        self.display_height = height + 5
+        self.height = normalize(height)
+        self.display_height = self.height + 5
         self.is_last = is_last
         self.color = "black"
 
@@ -97,10 +98,10 @@ class Glass:
     def __init__(self, canvas, xpos, width, height):
         self.canvas = canvas
         self.xpos = xpos
-        self.display_width = width
-        self.width = width
-        self.display_height = height
-        self.height = height
+        self.width = normalize(width)
+        self.height = normalize(height)
+        self.display_width = self.width
+        self.display_height = self.height
         self.color = "blue"
 
         self.id = canvas.create_rectangle(
@@ -138,12 +139,12 @@ class GlassPolygon(Glass):
     def __init__(self, canvas, xpos, width, height, second_height):
         self.canvas = canvas
         self.xpos = xpos
-        self.display_width = width
-        self.width = width
-        self.display_height = height
-        self.second_display_height = second_height
-        self.height = height
-        self.second_height = second_height
+        self.width = normalize(width)
+        self.height = normalize(height)
+        self.second_height = normalize(second_height)
+        self.display_width = self.width
+        self.display_height = self.height
+        self.second_display_height = self.second_height
         self.color = "blue"
 
         self.id = canvas.create_polygon([
