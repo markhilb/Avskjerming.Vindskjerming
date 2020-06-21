@@ -477,7 +477,7 @@ class Canvas(tkinter.Canvas):
         self.parent.update_packaging_list()
 
 
-    def delete_post_or_wallmount(self, item_id, height):
+    def delete_post_or_wallmount(self, item_id):
         if list(filter(lambda item: item.id == item_id, self.left_thing.items)):
             self.left_thing.delete_post_or_wallmount(item_id)
         else:
