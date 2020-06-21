@@ -6,7 +6,7 @@ from common import normalize
 
 
 class EditGlassPopup(tkinter.Tk):
-    def __init__(self, canvas, glass_id, current_width, current_height):
+    def __init__(self, canvas, glass_id, current_width, current_height, second_height=False):
         self.canvas = canvas
         self.glass_id = glass_id
         super().__init__()
@@ -26,7 +26,7 @@ class EditGlassPopup(tkinter.Tk):
         self.width_entry.insert(0, current_width)
         self.width_entry.grid(row=0, column=1)
 
-        # Label for new height height
+        # Label for new height
         label = tkinter.Label(entries_frame, text="Ny høyde:", bg="white")
         label.grid(row=1, column=0)
 
@@ -34,6 +34,16 @@ class EditGlassPopup(tkinter.Tk):
         self.height_entry = tkinter.Entry(entries_frame)
         self.height_entry.insert(0, current_height)
         self.height_entry.grid(row=1, column=1)
+
+        # Label for new polygon height
+        label = tkinter.Label(entries_frame, text="Skrå høyde", bg="white")
+        label.grid(row=2, column=0)
+
+        # Entry for new polygon height
+        self.polygon_height_entry = tkinter.Entry(entries_frame)
+        self.polygon_height_entry.grid(row=2, column=1)
+        if second_height:
+            self.polygon_height_entry.insert(0, second_height)
 
         # Frame for buttons
         buttons_frame = tkinter.Frame(self, bg="white")
@@ -68,10 +78,10 @@ class EditGlassPopup(tkinter.Tk):
 
 
     def edit_glass(self):
+        second_height = self.validate_and_get_entry(self.polygon_height_entry)
         if (new_width := self.validate_and_get_entry(self.width_entry)) and \
                 (new_height := self.validate_and_get_entry(self.height_entry)):
-            print(new_width)
-            self.canvas.edit_glass(self.glass_id, new_width, new_height)
+            self.canvas.edit_glass(self.glass_id, new_width, new_height, second_height)
             self.destroy()
 
 

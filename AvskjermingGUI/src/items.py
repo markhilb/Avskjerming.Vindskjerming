@@ -163,7 +163,15 @@ class GlassPolygon(Glass):
         self.label = canvas.create_text(
             self.xpos + (self.display_width / 2),
             GLASS_BASELINE - self.display_height - 30,
-            text=self.width
+            text=f"{self.width}x{self.height}x{self.second_height}"
+        )
+
+        canvas.tag_bind(
+            self.id,
+            "<Button-1>",
+            lambda *args: EditGlassPopup(
+                canvas, self.id, self.width, self.height, self.second_height
+            )
         )
 
 
