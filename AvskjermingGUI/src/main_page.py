@@ -22,7 +22,7 @@ class MainPage(tkinter.Frame):
 
         # Frame containing the total width entries
         total_width_frame = tkinter.Frame(self, bg="white")
-        total_width_frame.grid_columnconfigure(0, weight=1)
+        total_width_frame.grid_columnconfigure(0, weight=2)
         total_width_frame.grid_columnconfigure(3, weight=1)
         total_width_frame.pack(side="top", fill="x", pady=10)
 
@@ -51,6 +51,32 @@ class MainPage(tkinter.Frame):
         )
 
         total_width_r_entry.grid(row=1, column=2, padx=10, sticky="w")
+
+        # Customer name label
+        customer_name_label = tkinter.Label(
+            total_width_frame, text="Kundenavn", bg="white"
+        )
+
+        customer_name_label.grid(row=0, column=4, padx=10, sticky="w")
+        self.customer_name = tkinter.StringVar()
+        self.customer_name_entry = tkinter.Entry(
+            total_width_frame, text=self.customer_name, bg="white"
+        )
+
+        self.customer_name_entry.grid(row=1, column=4, padx=10)
+
+        # Order number label
+        order_number_label = tkinter.Label(
+            total_width_frame, text="Ordrenummer", bg="white"
+        )
+
+        order_number_label.grid(row=0, column=5, padx=10, sticky="w")
+        self.order_number = tkinter.StringVar()
+        self.order_number_entry = tkinter.Entry(
+            total_width_frame, text=self.order_number, bg="white"
+        )
+
+        self.order_number_entry.grid(row=1, column=5, padx=10)
 
         # Frame containing top row of buttons and inputs
         top_frame = tkinter.Frame(self, bg="white")
@@ -206,6 +232,15 @@ class MainPage(tkinter.Frame):
         polygon_entry.insert(0, 20)
         polygon_entry.grid(row=0, column=7, padx=10)
 
+        # Add eventlistener to customer_name/order_number to resize entries
+        self.customer_name.trace_add(
+            "write", lambda n, i, m: self.resize_entry(self.customer_name_entry)
+        )
+
+        self.order_number.trace_add(
+            "write", lambda n, i, m: self.resize_entry(self.order_number_entry)
+        )
+
         # Add eventlisteners to every entry in the
         # automatic section to call auto_calculate
         setattr(
@@ -255,6 +290,14 @@ class MainPage(tkinter.Frame):
                 "write", lambda n, i, m: self.auto_calculate()
             )
         )
+
+
+    def resize_entry(self, entry):
+        width = len(entry.get())
+        if width > 20:
+            entry.configure(width=width)
+        else:
+            entry.configure(width=20)
 
 
     def validate_and_get_entry(self, entry, less_than_value=0, greater_than_value=10000):
