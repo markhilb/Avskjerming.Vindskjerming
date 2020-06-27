@@ -7,6 +7,7 @@ from decimal import Decimal, InvalidOperation
 from canvas import Canvas
 from items import Wallmount, Post, Glass, GlassPolygon
 from config import DROPDOWN_WIDTH, ORDERS_FOLDER
+from common import get_current_directory
 
 
 class MainPage(tkinter.Frame):
@@ -14,6 +15,11 @@ class MainPage(tkinter.Frame):
         super().__init__(parent)
         self.config(bg="white")
         self.canvas = Canvas(self)
+
+        # Make sure the ORDERS_FOLDER exists
+        cwd = get_current_directory()
+        if not os.path.isdir(f"{cwd}/{ORDERS_FOLDER}"):
+            os.mkdir(f"{cwd}/{ORDERS_FOLDER}")
 
         # Menubar
         menubar = tkinter.Menu(self)
@@ -475,7 +481,10 @@ class MainPage(tkinter.Frame):
 
 
     def load_file(self):
-        filename = self.order_number.get()
+        if (filename := self.order_number.get()) == "":
+            messagebox.showinfo("", "Mangler ordrenummer!")
+            return
+
         try:
             with open(f"{ORDERS_FOLDER}/{filename}", "r") as json_file:
                 data = json.load(json_file)
@@ -507,8 +516,7 @@ class MainPage(tkinter.Frame):
 
 
     def save(self):
-        filename =  self.order_number.get()
-        if filename == "":
+        if (filename := self.order_number.get()) == "":
             return
 
         json_data = self.get_document_as_json()
