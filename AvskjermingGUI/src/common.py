@@ -1,4 +1,14 @@
 from decimal import Decimal
+import sys
+import os
+
+
+def get_current_directory():
+    if getattr(sys, "frozen", False):
+        # Frozen means the program is running as an exe
+        return os.path.dirname(sys.executable)
+
+    return os.path.dirname(__file__)
 
 
 def normalize(number):
