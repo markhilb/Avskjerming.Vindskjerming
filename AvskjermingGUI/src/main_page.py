@@ -81,7 +81,7 @@ class MainPage(tkinter.Frame):
         # Frame containing top row of buttons and inputs
         top_frame = tkinter.Frame(self, bg="white")
         top_frame.grid_columnconfigure(2, weight=1)
-        top_frame.grid_columnconfigure(5, weight=1)
+        top_frame.grid_columnconfigure(6, weight=1)
         top_frame.pack(side="top", fill="x")
 
         # Reset button
@@ -100,6 +100,15 @@ class MainPage(tkinter.Frame):
 
         self.undo_button.grid(row=0, column=1, sticky="n")
 
+        # Dropdown for type of glass
+        self.glass_type_dropdown = tkinter.StringVar()
+        self.glass_type_dropdown.set("Klart")
+        glass_type_dropdown_menu = tkinter.OptionMenu(
+            top_frame, self.glass_type_dropdown, *["Klart", "Frostet"]
+        )
+
+        glass_type_dropdown_menu.grid(row=0, column=2, padx=10, sticky="n")
+
         # Dropdown for wallmoun/post on left side
         self.auto_left_item_dropdown = tkinter.StringVar()
         self.auto_left_item_dropdown.set("Veggskinne")
@@ -107,12 +116,12 @@ class MainPage(tkinter.Frame):
             top_frame, self.auto_left_item_dropdown, *["Veggskinne", "Stolpe"]
         )
 
-        auto_left_item_dropdown_menu.grid(row=0, column=2, padx=40, sticky="ne")
+        auto_left_item_dropdown_menu.grid(row=0, column=3, padx=40, sticky="ne")
         auto_left_item_dropdown_menu.config(width=DROPDOWN_WIDTH)
 
         # Frame for glass size entries
         auto_glass_frame = tkinter.Frame(top_frame, bg="white")
-        auto_glass_frame.grid(row=0, column=3, padx=10, sticky="n")
+        auto_glass_frame.grid(row=0, column=4, padx=10, sticky="n")
 
         # Labels for glass size entries
         glass_width_label = tkinter.Label(auto_glass_frame, text="Global bredde: ", bg="white")
@@ -139,17 +148,17 @@ class MainPage(tkinter.Frame):
             top_frame, self.auto_right_item_dropdown, *["Veggskinne", "Stolpe"]
         )
 
-        auto_right_item_dropdown_menu.grid(row=0, column=4, padx=40, sticky="nw")
+        auto_right_item_dropdown_menu.grid(row=0, column=5, padx=40, sticky="nw")
         auto_right_item_dropdown_menu.config(width=DROPDOWN_WIDTH)
 
         # Frame for the packaging list
         self.packaging_frame = tkinter.Frame(top_frame, bg="white")
-        self.packaging_frame.grid(row=0, column=5, padx=20, sticky="e")
+        self.packaging_frame.grid(row=0, column=6, padx=20, sticky="e")
 
         # Create a table for the packaging list
         self.packaging_table = ttk.Treeview(self.packaging_frame, height=1)
         self.packaging_table["columns"] = ("#1", "#2")
-        self.packaging_table.column("#0", width=100, anchor="center")
+        self.packaging_table.column("#0", width=150, anchor="center")
         self.packaging_table.column("#1", width=100, anchor="center")
         self.packaging_table.column("#2", width=100, anchor="center")
         self.packaging_table.heading("#0", text="Type", anchor="center")
@@ -239,6 +248,11 @@ class MainPage(tkinter.Frame):
 
         self.order_number.trace_add(
             "write", lambda n, i, m: self.resize_entry(self.order_number_entry)
+        )
+
+        # Add eventlistener to glass type to change color of glass
+        self.glass_type_dropdown.trace_add(
+            "write", lambda n, i, m: self.canvas.change_glass_type()
         )
 
         # Add eventlisteners to every entry in the
@@ -356,6 +370,10 @@ class MainPage(tkinter.Frame):
 
     def get_right_item(self):
         return Wallmount if self.auto_right_item_dropdown.get() == "Veggskinne" else Post
+
+
+    def get_color(self):
+        return "blue" if self.glass_type_dropdown.get() == "Klart" else "red"
 
 
     def auto_calculate(self):

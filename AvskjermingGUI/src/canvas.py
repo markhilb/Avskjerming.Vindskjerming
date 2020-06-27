@@ -415,6 +415,15 @@ class Canvas(tkinter.Canvas):
             self.left_thing.add_glass(total_width_l, width, height, second_height)
 
 
+    def change_glass_type(self):
+        color = self.parent.get_color()
+        for item in self.left_thing.items + self.right_thing.items:
+            if isinstance(item, Glass):
+                self.itemconfig(item.id, fill=color)
+
+        self.parent.update_packaging_list()
+
+
     def update(self):
         self.left_thing.update()
         self.right_thing.update()
@@ -489,6 +498,8 @@ class Canvas(tkinter.Canvas):
     def get_packaging_list(self):
         pl = {}
         pl["Weight"] = Decimal("0")
+        glass_color = self.parent.get_color()
+        glass_type = "(klart)" if glass_color == "blue" else "(frostet)"
         for item in self.left_thing.items + self.right_thing.items:
             # Get the map for this type of item, and create an empty one if it does not exist.
             # Increments the value for this items's size, or initializes it if does not exist.
@@ -497,13 +508,13 @@ class Canvas(tkinter.Canvas):
                 width = normalize(item.width)
                 if isinstance(item, GlassPolygon):
                     second_height = normalize(item.second_height)
-                    pl["Skrå glass"][f"{width}x{height}x{second_height}"] = (
-                        pl.setdefault("Skrå glass", {})
+                    pl["Skrå glass " + glass_type][f"{width}x{height}x{second_height}"] = (
+                        pl.setdefault("Skrå glass " + glass_type, {})
                         .setdefault(f"{width}x{height}x{second_height}", 0) + 1
                     )
                 else:
-                    pl["Glass"][f"{width}x{height}"] = (
-                        pl.setdefault("Glass", {})
+                    pl["Glass " + glass_type][f"{width}x{height}"] = (
+                        pl.setdefault("Glass " + glass_type, {})
                           .setdefault(f"{width}x{height}", 0) + 1
                     )
             elif isinstance(item, Post):
