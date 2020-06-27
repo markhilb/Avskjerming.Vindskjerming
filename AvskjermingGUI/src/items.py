@@ -102,7 +102,7 @@ class Glass:
         self.height = normalize(height)
         self.display_width = self.width
         self.display_height = self.height
-        self.color = canvas.parent.get_color()
+        self.color = canvas.parent.get_glass_color()
 
         self.id = canvas.create_rectangle(
             self.xpos,
@@ -145,7 +145,7 @@ class GlassPolygon(Glass):
         self.display_width = self.width
         self.display_height = self.height
         self.second_display_height = self.second_height
-        self.color = canvas.parent.get_color()
+        self.color = canvas.parent.get_glass_color()
 
         self.id = canvas.create_polygon([
                 self.xpos,\

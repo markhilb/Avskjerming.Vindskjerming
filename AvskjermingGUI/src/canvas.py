@@ -416,7 +416,7 @@ class Canvas(tkinter.Canvas):
 
 
     def change_glass_type(self):
-        color = self.parent.get_color()
+        color = self.parent.get_glass_color()
         for item in self.left_thing.items + self.right_thing.items:
             if isinstance(item, Glass):
                 self.itemconfig(item.id, fill=color)
@@ -498,7 +498,7 @@ class Canvas(tkinter.Canvas):
     def get_packaging_list(self):
         pl = {}
         pl["Weight"] = Decimal("0")
-        glass_color = self.parent.get_color()
+        glass_color = self.parent.get_glass_color()
         glass_type = "(klart)" if glass_color == "blue" else "(frostet)"
         for item in self.left_thing.items + self.right_thing.items:
             # Get the map for this type of item, and create an empty one if it does not exist.

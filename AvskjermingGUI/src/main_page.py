@@ -372,7 +372,7 @@ class MainPage(tkinter.Frame):
         return Wallmount if self.auto_right_item_dropdown.get() == "Veggskinne" else Post
 
 
-    def get_color(self):
+    def get_glass_color(self):
         return "blue" if self.glass_type_dropdown.get() == "Klart" else "red"
 
 
