@@ -12,7 +12,7 @@ if sys.platform == "win32":
 
 setup(
     name = "Vindskjerming",
-    version = "3.0",
+    version = "3.1",
     description = "GUI for Vindskjerming!",
     options = {"build_exe": build_exe_options},
     executables = [Executable("main.py", base=base, targetName="Vindskjerming")]
