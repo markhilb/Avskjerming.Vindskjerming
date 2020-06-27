@@ -3,6 +3,8 @@ from decimal import Decimal
 
 TITLE = "Avskjerming AS"
 
+ORDERS_FOLDER = "ordrer"
+
 DROPDOWN_WIDTH = 13
 
 PAD_X = 50

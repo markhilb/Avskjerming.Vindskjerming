@@ -1,10 +1,12 @@
 import tkinter
+import json
 import re
+import os
 from tkinter import messagebox, ttk
 from decimal import Decimal, InvalidOperation
 from canvas import Canvas
 from items import Wallmount, Post, Glass, GlassPolygon
-from config import DROPDOWN_WIDTH
+from config import DROPDOWN_WIDTH, ORDERS_FOLDER
 
 
 class MainPage(tkinter.Frame):
@@ -12,6 +14,16 @@ class MainPage(tkinter.Frame):
         super().__init__(parent)
         self.config(bg="white")
         self.canvas = Canvas(self)
+
+        # Menubar
+        menubar = tkinter.Menu(self)
+        filemenu = tkinter.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Last opp", command=self.load_file)
+        filemenu.add_command(label="Lagre", command=self.save)
+        filemenu.add_separator()
+        filemenu.add_command(label="Slett", command=self.delete_file)
+        menubar.add_cascade(label="Fil", menu=filemenu)
+        tkinter.Tk.config(controller, menu=menubar)
 
         # Top label
         automatic_calculation_label = tkinter.Label(
@@ -439,4 +451,75 @@ class MainPage(tkinter.Frame):
 
         # Reset the height of the table to fit all rows
         self.packaging_table.configure(height=len(self.packaging_table.get_children()))
+
+
+    def load_document_from_json(self, data):
+        self.customer_name.set(data["customer_name"])
+        self.resize_entry(self.customer_name_entry)
+        self.order_number.set(data["order_number"])
+        self.resize_entry(self.order_number_entry)
+        self.total_length_l.set(data["total_length_l"])
+        self.total_length_r.set(data["total_length_r"])
+        self.glass_type_dropdown.set(data["glass_color"])
+        self.auto_left_item_dropdown.set(data["left_item"])
+        self.auto_glass_width.set(data["auto_glass_width"])
+        self.auto_glass_height.set(data["auto_glass_height"])
+        self.auto_right_item_dropdown.set(data["right_item"])
+        self.canvas.load_items(
+            self.validate_and_get_entry(self.total_length_l),
+            self.validate_and_get_entry(self.total_length_r),
+            data["items"]
+        )
+
+        self.update_packaging_list()
+
+
+    def load_file(self):
+        filename = self.order_number.get()
+        try:
+            with open(f"{ORDERS_FOLDER}/{filename}", "r") as json_file:
+                data = json.load(json_file)
+        except FileNotFoundError:
+            messagebox.showinfo("", "Denne ordren finnes ikke!")
+            return
+        except:
+            return
+
+        self.load_document_from_json(data)
+
+
+    def get_document_as_json(self):
+        data = {}
+        data["customer_name"] = self.customer_name.get()
+        data["order_number"] = self.order_number.get()
+        data["total_length_l"] = self.total_length_l.get()
+        data["total_length_r"] = self.total_length_r.get()
+        glass_color = self.get_glass_color()
+        data["glass_color"] = "Klart" if glass_color == "blue" else "Frostet"
+        left_item = "Stolpe" if self.get_left_item() is Post else "Veggskinne"
+        data["left_item"] = left_item
+        data["auto_glass_width"] = self.auto_glass_width.get()
+        data["auto_glass_height"] = self.auto_glass_height.get()
+        right_item = "Stolpe" if self.get_right_item() is Post else "Veggskinne"
+        data["right_item"] = right_item
+        data["items"] = self.canvas.get_items_as_json()
+        return data
+
+
+    def save(self):
+        filename =  self.order_number.get()
+        if filename == "":
+            return
+
+        json_data = self.get_document_as_json()
+        with open(f"{ORDERS_FOLDER}/{filename}", "w") as json_file:
+            json.dump(json_data, json_file)
+
+
+    def delete_file(self):
+        filename =  self.order_number.get()
+        try:
+            os.remove(f"{ORDERS_FOLDER}/{filename}")
+        except:
+            pass
 

@@ -533,3 +533,38 @@ class Canvas(tkinter.Canvas):
 
         return pl
 
+
+    def load_items(self, total_width_l, total_width_r, items):
+        self.clear()
+        for item in items:
+            size = [Decimal(i) for i in item[1].split("x")]
+            if item[0] == "GlassPolygon":
+                self.add_glass(
+                    total_width_l, total_width_r, size[0], size[1], size[2]
+                )
+            elif item[0] == "Glass":
+                self.add_glass(total_width_l, total_width_r, size[0], size[1])
+            elif item[0] == "Post":
+                self.add_post(total_width_l, total_width_r, size[0], add_margin=False)
+            elif item[0] == "Wallmount":
+                self.add_wallmount(total_width_l, total_width_r, size[0], add_margin=False)
+
+
+    def get_items_as_json(self):
+        items = []
+        for item in self.left_thing.items + self.right_thing.items:
+            height = normalize(item.height)
+            if isinstance(item, Glass):
+                width = normalize(item.width)
+                if isinstance(item, GlassPolygon):
+                    second_height = normalize(item.second_height)
+                    items.append(("GlassPolygon", f"{width}x{height}x{second_height}"))
+                else:
+                    items.append(("Glass", f"{width}x{height}"))
+            elif isinstance(item, Post):
+                items.append(("Post", f"{height}"))
+            elif isinstance(item, Wallmount):
+                items.append(("Wallmount", f"{height}"))
+
+        return items
+
