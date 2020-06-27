@@ -1,5 +1,4 @@
 import tkinter
-from tkinter import messagebox
 from tkinter.simpledialog import askstring
 from decimal import Decimal
 from items import Wallmount, Post, Glass, LengthBar, GlassPolygon

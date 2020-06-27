@@ -1,6 +1,5 @@
 import tkinter
 import re
-from tkinter import messagebox
 from decimal import Decimal
 from common import normalize
 
