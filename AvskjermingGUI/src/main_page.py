@@ -39,17 +39,17 @@ class MainPage(tkinter.Frame):
         total_width_frame.pack(side="top", fill="x", pady=10)
 
         # The left total width entry
-        total_width_l_label = tkinter.Label(
+        total_length_l_label = tkinter.Label(
             total_width_frame, text="Total lengde venstre: ", bg="white"
         )
 
-        total_width_l_label.grid(row=0, column=1, padx=10, sticky="w")
-        self.total_width_l = tkinter.StringVar()
-        total_width_l_entry = tkinter.Entry(
-            total_width_frame, text=self.total_width_l, bg="white"
+        total_length_l_label.grid(row=0, column=1, padx=10, sticky="w")
+        self.total_length_l = tkinter.StringVar()
+        total_length_l_entry = tkinter.Entry(
+            total_width_frame, text=self.total_length_l, bg="white"
         )
 
-        total_width_l_entry.grid(row=1, column=1, padx=10, sticky="w")
+        total_length_l_entry.grid(row=1, column=1, padx=10, sticky="w")
 
         # The rigth total width entry
         total_width_r_label = tkinter.Label(
@@ -57,9 +57,9 @@ class MainPage(tkinter.Frame):
         )
 
         total_width_r_label.grid(row=0, column=2, padx=10, sticky="w")
-        self.total_width_r = tkinter.StringVar()
+        self.total_length_r = tkinter.StringVar()
         total_width_r_entry = tkinter.Entry(
-            total_width_frame, text=self.total_width_r, bg="white"
+            total_width_frame, text=self.total_length_r, bg="white"
         )
 
         total_width_r_entry.grid(row=1, column=2, padx=10, sticky="w")
@@ -270,17 +270,17 @@ class MainPage(tkinter.Frame):
         # Add eventlisteners to every entry in the
         # automatic section to call auto_calculate
         setattr(
-            self.total_width_l,
+            self.total_length_l,
             "trace_id",
-            self.total_width_l.trace_add(
+            self.total_length_l.trace_add(
                 "write", lambda n, i, m: self.auto_calculate()
             )
         )
 
         setattr(
-            self.total_width_r,
+            self.total_length_r,
             "trace_id",
-            self.total_width_r.trace_add(
+            self.total_length_r.trace_add(
                 "write", lambda n, i, m: self.auto_calculate()
             )
         )
@@ -369,11 +369,11 @@ class MainPage(tkinter.Frame):
 
 
     def get_total_length_l(self):
-        return self.validate_and_get_entry(self.total_width_l)
+        return self.validate_and_get_entry(self.total_length_l)
 
 
     def get_total_length_r(self):
-        return self.validate_and_get_entry(self.total_width_r)
+        return self.validate_and_get_entry(self.total_length_r)
 
 
     def get_left_item(self):
@@ -390,22 +390,22 @@ class MainPage(tkinter.Frame):
 
     def auto_calculate(self):
         # This is not in the if test because it can be empty
-        total_width_l = self.validate_and_get_entry(self.total_width_l)
-        total_width_r = self.validate_and_get_entry(self.total_width_r)
-        if not (total_width_l := self.validate_and_get_entry(self.total_width_l)) or \
+        total_length_l = self.validate_and_get_entry(self.total_length_l)
+        total_length_r = self.validate_and_get_entry(self.total_length_r)
+        if not (total_length_l := self.validate_and_get_entry(self.total_length_l)) or \
                 not (glass_width := self.validate_and_get_entry(self.auto_glass_width)) or \
                 not (height := self.validate_and_get_entry(self.auto_glass_height)):
             self.canvas.clear()
             return
 
-        self.canvas.auto_calculate(total_width_l, total_width_r, glass_width, height)
+        self.canvas.auto_calculate(total_length_l, total_length_r, glass_width, height)
         self.update_packaging_list()
 
 
     def add_item(self, item):
         # This is not in the if test because it can be empty
-        total_width_r = self.validate_and_get_entry(self.total_width_r)
-        if not (total_width_l := self.validate_and_get_entry(self.total_width_l)) or \
+        total_length_r = self.validate_and_get_entry(self.total_length_r)
+        if not (total_length_l := self.validate_and_get_entry(self.total_length_l)) or \
                 not (glass_width := self.validate_and_get_entry(self.manual_glass_width)) or \
                 not (height := self.validate_and_get_entry(self.manual_glass_height)):
             return
@@ -415,14 +415,14 @@ class MainPage(tkinter.Frame):
                 return
 
             self.canvas.add_glass(
-                total_width_l, total_width_r, glass_width, height, polygon_height
+                total_length_l, total_length_r, glass_width, height, polygon_height
             )
         elif item is Wallmount:
-            self.canvas.add_wallmount(total_width_l, total_width_r, height)
+            self.canvas.add_wallmount(total_length_l, total_length_r, height)
         elif item is Post:
-            self.canvas.add_post(total_width_l, total_width_r, height)
+            self.canvas.add_post(total_length_l, total_length_r, height)
         else:
-            self.canvas.add_glass(total_width_l, total_width_r, glass_width, height)
+            self.canvas.add_glass(total_length_l, total_length_r, glass_width, height)
 
         self.update_packaging_list()
 

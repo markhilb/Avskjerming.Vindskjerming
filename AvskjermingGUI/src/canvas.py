@@ -369,34 +369,34 @@ class Canvas(tkinter.Canvas):
             )
 
 
-    def add_wallmount(self, total_width_l, total_width_r, height):
+    def add_wallmount(self, total_width_l, total_width_r, height, add_margin=True):
         if total_width_r:
             # If the right thing is not empty, then the wallmount is added there
             if not self.right_thing.is_empty:
-                self.right_thing.add_wallmount(total_width_r, height)
+                self.right_thing.add_wallmount(total_width_r, height, add_margin)
             # If the right thing is empty, try to add to the left thing
             else:
                 # If the wallmount can't be added to the left thing,
                 # add it to the right thing anyway
-                if not self.left_thing.add_wallmount(total_width_l, height):
-                    self.right_thing.add_wallmount(total_width_r, height)
+                if not self.left_thing.add_wallmount(total_width_l, height, add_margin):
+                    self.right_thing.add_wallmount(total_width_r, height, add_margin)
         else:
-            self.left_thing.add_wallmount(total_width_l, height)
+            self.left_thing.add_wallmount(total_width_l, height, add_margin)
 
 
-    def add_post(self, total_width_l, total_width_r, height):
+    def add_post(self, total_width_l, total_width_r, height, add_margin=True):
         if total_width_r:
             # If the right thing is not empty, then the post is added there
             if not self.right_thing.is_empty:
-                self.right_thing.add_post(total_width_r, height)
+                self.right_thing.add_post(total_width_r, height, add_margin)
             # If the right thing is empty, try to add to the left thing
             else:
                 # If the post can't be added to the left thing,
                 # add it to the right thing anyway
-                if not self.left_thing.add_post(total_width_l, height):
-                    self.right_thing.add_post(total_width_r, height)
+                if not self.left_thing.add_post(total_width_l, height, add_margin):
+                    self.right_thing.add_post(total_width_r, height, add_margin)
         else:
-            self.left_thing.add_post(total_width_l, height)
+            self.left_thing.add_post(total_width_l, height, add_margin)
 
 
     def add_glass(self, total_width_l, total_width_r, width, height, second_height=False):
@@ -408,7 +408,7 @@ class Canvas(tkinter.Canvas):
             else:
                 # If the glass can't be added to the left thing,
                 # add it to the right thing anyway
-                if not self.left_thing.add_glass(total_width_r, width, height, second_height):
+                if not self.left_thing.add_glass(total_width_l, width, height, second_height):
                     self.right_thing.add_glass(total_width_r, width, height, second_height)
         else:
             self.left_thing.add_glass(total_width_l, width, height, second_height)
