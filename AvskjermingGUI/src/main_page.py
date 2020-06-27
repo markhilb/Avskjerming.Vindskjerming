@@ -517,6 +517,7 @@ class MainPage(tkinter.Frame):
 
     def save(self):
         if (filename := self.order_number.get()) == "":
+            messagebox.showinfo("", "Mangler ordrenummer!")
             return
 
         json_data = self.get_document_as_json()
