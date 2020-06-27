@@ -2,6 +2,7 @@ import tkinter
 from config import TITLE
 from main_page import MainPage
 
+
 class Main(tkinter.Tk):
     def __init__(self):
         super().__init__()
@@ -21,6 +22,7 @@ class Main(tkinter.Tk):
             f.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(MainPage)
+
 
     def show_frame(self, page):
         self.frames[page].tkraise()
