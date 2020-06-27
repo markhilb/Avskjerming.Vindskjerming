@@ -421,6 +421,9 @@ class MainPage(tkinter.Frame):
 
         # Clear the table before adding the items list
         self.packaging_table.delete(*self.packaging_table.get_children())
+        self.packaging_table.column("#0", width=150, anchor="center")
+        self.packaging_table.column("#1", width=100, anchor="center")
+        self.packaging_table.column("#2", width=100, anchor="center")
 
         # Add the items to the table
         for type, rows in pl.items():
