@@ -2,6 +2,7 @@ from decimal import Decimal
 
 
 TITLE = "Avskjerming AS"
+LOGO = "avskjerming-logo.jpg"
 
 ORDERS_FOLDER = "ordrer"
 

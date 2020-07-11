@@ -1,8 +1,10 @@
+import os
 import tkinter
 from tkinter.simpledialog import askstring
 from decimal import Decimal
+from PIL import Image, ImageChops
 from items import Wallmount, Post, Glass, LengthBar, GlassPolygon
-from common import normalize
+from common import normalize, get_current_directory
 from config import CANVAS_LEFT_START, POST_WIDTH, POST_LAST_WIDTH, WALLMOUNT_WIDTH, \
     POST_MARGIN_ABOVE_GLASS, POST_MARGIN_ABOVE_GLASSPOLYGON, WALLMOUNT_MARGIN_ABOVE_GLASS, \
     CANVAS_SPACE_BETWEEN_WALLS
@@ -568,3 +570,43 @@ class Canvas(tkinter.Canvas):
 
         return items
 
+
+    def save_canvas_as_images(self):
+        filename = os.path.join(get_current_directory(), "canvas_image")
+        # Save/load canvas as an eps file
+        self.postscript(file=filename + ".eps", colormode="color")
+        img = Image.open(filename + ".eps")
+
+        # Scaling the image gives better quality (bigger scale = better quality)
+        img.load(scale=2)
+
+        # Crop image to remove whitespace
+        bg = Image.new(img.mode, img.size, img.getpixel((0, 0)))
+        diff = ImageChops.difference(img, bg)
+        bbox = diff.getbbox()
+        img = img.crop(bbox)
+
+        if not self.right_thing.is_empty:
+            size = img.size
+            y = size[1] / 2
+            for i in range(10, size[0]):
+                if img.getpixel((i, y)) == (255, 255, 255):
+                    mid = i + (CANVAS_SPACE_BETWEEN_WALLS / 2)
+                    break
+
+            left_img = img.crop((0, 0, mid, size[1]))
+            right_img = img.crop((mid, 0, size[0], size[1]))
+            left_img.save(filename + "1.png")
+            right_img.save(filename + ".png")
+            names = [filename + "1.png", filename + ".png"]
+        else:
+            img.save(filename + ".png")
+            names = [filename + ".png"]
+
+        # Delete eps file
+        try:
+            os.remove(filename + ".eps")
+        except:
+            pass
+
+        return names

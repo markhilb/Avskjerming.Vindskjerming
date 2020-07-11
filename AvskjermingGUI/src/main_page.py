@@ -4,9 +4,13 @@ import re
 import os
 from tkinter import messagebox, ttk, filedialog
 from decimal import Decimal, InvalidOperation
+from PIL import Image
+from pylatex import Document, PageStyle, Head, MiniPage, \
+    StandAloneGraphic, LargeText, Tabularx, Section, Figure
+from pylatex.utils import bold, NoEscape
 from canvas import Canvas
 from items import Wallmount, Post, Glass, GlassPolygon
-from config import DROPDOWN_WIDTH, ORDERS_FOLDER
+from config import DROPDOWN_WIDTH, ORDERS_FOLDER, LOGO
 from common import get_current_directory
 
 
@@ -548,10 +552,117 @@ class MainPage(tkinter.Frame):
 
     def export(self):
         if not (filename := filedialog.asksaveasfilename(
-            initialdir="/",
+            # initialdir="/",
             initialfile=self.order_number.get(),
-            title="Lagre som", filetypes=[("pdf files", "*.pdf")]
+            title="Lagre som"
         )): return
 
-        print(filename)
+        doc = self.create_document()
+        doc.append(Section("", numbering=False))
+        doc.append(self.get_general_info_as_tabularx())
+        doc.append(Section("Pakkeliste", numbering=False))
+        doc.append(self.get_packaging_table_as_tabularx())
+        doc.append(Section("Tegning", numbering=False))
+        figures = self.get_canvas_as_figure_and_filename()
+        for fig in figures[0]:
+            doc.append(fig)
+        doc.generate_pdf(filename, compiler="pdflatex")
+
+        # Remove the temporary canvas image(s)
+        try:
+            for img in figures[1]:
+                os.remove(img)
+        except:
+            pass
+
+
+    def create_document(self):
+        geometry = {
+            "head": "40pt",
+            "margin": "1in",
+            "bottom": "1in",
+        }
+
+        doc = Document(geometry_options=geometry)
+        page = PageStyle("pagestyle")
+        with page.create(Head("L")) as header_left:
+            with header_left.create(
+                MiniPage(width=NoEscape(r"0.5\textwidth"), pos="c")
+            ) as logo_wrapper:
+                logo_file = os.path.join(get_current_directory(), "assets/" + LOGO)
+                logo_wrapper.append(
+                    StandAloneGraphic(image_options="width=120px", filename=logo_file)
+                )
+
+        with page.create(Head("R")) as right_header:
+            with right_header.create(
+                MiniPage(width=NoEscape(r"0.5\textwidth"), pos="c", align="r")
+            ) as title_wrapper:
+                title_wrapper.append(LargeText(bold("Vindskjerming")))
+
+        doc.preamble.append(page)
+        doc.change_document_style("pagestyle")
+        return doc
+
+
+    def get_general_info_as_tabularx(self):
+        table = Tabularx("|X|X|X|X|", row_height=1.25)
+        table.add_hline()
+        table.add_row(
+            bold("Kundenavn"),
+            self.customer_name.get(),
+            bold("Ordrenummer"),
+            self.order_number.get()
+        )
+
+        table.add_hline()
+        total_lengde = str(self.get_total_length_l())
+        if (total_length_r := self.get_total_length_r()):
+            total_lengde += f" x {total_length_r}"
+
+        table.add_row(
+            bold("Total lengde"),
+            total_lengde,
+            bold(self.glass_type_dropdown.get()),
+            bold(self.shipping_dropdown.get())
+        )
+
+        table.add_hline()
+        return table
+
+
+    def get_packaging_table_as_tabularx(self):
+        table = Tabularx("|X|X|X|", row_height=1.25)
+        table.add_hline()
+        table.add_row(bold("Type"), bold("Størrelse"), bold("Antall"))
+        for child_id in self.packaging_table.get_children():
+            child = self.packaging_table.item(child_id)
+            if (text := child["text"]):
+                table.add_hline()
+
+            table.add_row(text, child["values"][0], child["values"][1])
+
+        table.add_hline()
+        return table
+
+
+    def get_canvas_as_figure_and_filename(self):
+        image_names = self.canvas.save_canvas_as_images()
+
+        # Create figure with canvas image
+        pictures = []
+        for filename in image_names:
+            picture = Figure(position="h")
+            img = Image.open(filename)
+
+            # If the canvas is small it does not need to be the full width of the page
+            fq = 1
+            magic_scale_factor_number_thing = 900
+            if (tot := img.size[0]) < magic_scale_factor_number_thing:
+                fq = tot / magic_scale_factor_number_thing
+
+            # Add the image to the figure with the calculated width
+            picture.add_image(filename, width=NoEscape(str(fq) + r"\textwidth"))
+            pictures.append(picture)
+        return pictures, image_names
 
