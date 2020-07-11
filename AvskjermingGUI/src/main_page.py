@@ -2,7 +2,7 @@ import tkinter
 import json
 import re
 import os
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 from decimal import Decimal, InvalidOperation
 from canvas import Canvas
 from items import Wallmount, Post, Glass, GlassPolygon
@@ -26,6 +26,8 @@ class MainPage(tkinter.Frame):
         filemenu = tkinter.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Last opp", command=self.load_file)
         filemenu.add_command(label="Lagre", command=self.save)
+        filemenu.add_separator()
+        filemenu.add_command(label="Eksporter", command=self.export)
         filemenu.add_separator()
         filemenu.add_command(label="Slett", command=self.delete_file)
         menubar.add_cascade(label="Fil", menu=filemenu)
@@ -542,4 +544,14 @@ class MainPage(tkinter.Frame):
             os.remove(f"{ORDERS_FOLDER}/{filename}")
         except:
             pass
+
+
+    def export(self):
+        if not (filename := filedialog.asksaveasfilename(
+            initialdir="/",
+            initialfile=self.order_number.get(),
+            title="Lagre som", filetypes=[("pdf files", "*.pdf")]
+        )): return
+
+        print(filename)
 
