@@ -169,9 +169,18 @@ class MainPage(tkinter.Frame):
         auto_right_item_dropdown_menu.grid(row=0, column=5, padx=40, sticky="nw")
         auto_right_item_dropdown_menu.config(width=DROPDOWN_WIDTH)
 
+        # Dropdown for shipping
+        self.shipping_dropdown = tkinter.StringVar()
+        self.shipping_dropdown.set("Sendes")
+        shipping_dropdown_menu = tkinter.OptionMenu(
+            top_frame, self.shipping_dropdown, *["Sendes", "Hentes", "Monteres"]
+        )
+
+        shipping_dropdown_menu.grid(row=0, column=6, padx=10, sticky="ne")
+
         # Frame for the packaging list
         self.packaging_frame = tkinter.Frame(top_frame, bg="white")
-        self.packaging_frame.grid(row=0, column=6, padx=20, sticky="e")
+        self.packaging_frame.grid(row=0, column=7, padx=20, sticky="e")
 
         # Create a table for the packaging list
         self.packaging_table = ttk.Treeview(self.packaging_frame, height=1)
@@ -471,6 +480,7 @@ class MainPage(tkinter.Frame):
         self.auto_glass_width.set(data["auto_glass_width"])
         self.auto_glass_height.set(data["auto_glass_height"])
         self.auto_right_item_dropdown.set(data["right_item"])
+        self.shipping_dropdown.set(data["shipping"])
         self.canvas.load_items(
             self.validate_and_get_entry(self.total_length_l),
             self.validate_and_get_entry(self.total_length_r),
@@ -511,6 +521,7 @@ class MainPage(tkinter.Frame):
         data["auto_glass_height"] = self.auto_glass_height.get()
         right_item = "Stolpe" if self.get_right_item() is Post else "Veggskinne"
         data["right_item"] = right_item
+        data["shipping"] = self.shipping_dropdown.get()
         data["items"] = self.canvas.get_items_as_json()
         return data
 
