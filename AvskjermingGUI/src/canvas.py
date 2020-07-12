@@ -571,6 +571,22 @@ class Canvas(tkinter.Canvas):
         return items
 
 
+    def find_mid_between_walls(self, img):
+        width, _ = img.size
+
+        # Divide the image based on how wide the two walls are
+        fq = self.left_thing.current_width / \
+            (self.left_thing.current_width + self.right_thing.current_width)
+        mid = width * fq
+
+        # If the image is not cut in half, the smaller part needs some extra padding
+        # in order to not be clipped.
+        # The buffer is adjusted based on how much smaller the smallest part is.
+        buf = Decimal(0.5) - fq
+        buf = width * (buf / 10)
+        return mid + buf
+
+
     def save_canvas_as_images(self):
         filename = os.path.join(get_current_directory(), "canvas_image")
         # Save/load canvas as an eps file
@@ -587,15 +603,10 @@ class Canvas(tkinter.Canvas):
         img = img.crop(bbox)
 
         if not self.right_thing.is_empty:
-            size = img.size
-            y = size[1] / 2
-            for i in range(10, size[0]):
-                if img.getpixel((i, y)) == (255, 255, 255):
-                    mid = i + (CANVAS_SPACE_BETWEEN_WALLS / 2)
-                    break
-
-            left_img = img.crop((0, 0, mid, size[1]))
-            right_img = img.crop((mid, 0, size[0], size[1]))
+            # Split the image between the two walls and save the images
+            mid = self.find_mid_between_walls(img)
+            left_img = img.crop((0, 0, mid, img.size[1]))
+            right_img = img.crop((mid, 0, img.size[0], img.size[1]))
             left_img.save(filename + "1.png")
             right_img.save(filename + ".png")
             names = [filename + "1.png", filename + ".png"]
