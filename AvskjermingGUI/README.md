@@ -1,5 +1,17 @@
 ## Prerequisites
 * Python 3.8
+* Pillow
+```
+$ pip install Pillow
+```
+
+* Pylatex
+```
+$ pip install pylatex
+```
+
+* Latex compiler
+https://miktex.org/download
 
 
 ## Run program
