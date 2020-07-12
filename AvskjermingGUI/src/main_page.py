@@ -655,7 +655,7 @@ class MainPage(tkinter.Frame):
             picture = Figure(position="h")
             img = Image.open(filename)
 
-            # If the canvas is small it does not need to be the full width of the page
+            # If the canvas is small, it does not need to be the full width of the page
             fq = 1
             magic_scale_factor_number_thing = 900
             if (tot := img.size[0]) < magic_scale_factor_number_thing:
@@ -664,5 +664,6 @@ class MainPage(tkinter.Frame):
             # Add the image to the figure with the calculated width
             picture.add_image(filename, width=NoEscape(str(fq) + r"\textwidth"))
             pictures.append(picture)
+
         return pictures, image_names
 
