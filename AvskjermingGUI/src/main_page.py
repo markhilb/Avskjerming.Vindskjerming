@@ -566,6 +566,7 @@ class MainPage(tkinter.Frame):
         figures = self.get_canvas_as_figure_and_filename()
         for fig in figures[0]:
             doc.append(fig)
+
         doc.generate_pdf(filename, compiler="pdflatex")
 
         # Remove the temporary canvas image(s)
@@ -589,7 +590,7 @@ class MainPage(tkinter.Frame):
             with header_left.create(
                 MiniPage(width=NoEscape(r"0.5\textwidth"), pos="c")
             ) as logo_wrapper:
-                logo_file = os.path.join(get_current_directory(), "assets/" + LOGO)
+                logo_file = os.path.join(get_current_directory(), "assets/" + LOGO).replace("\\", "/")
                 logo_wrapper.append(
                     StandAloneGraphic(image_options="width=120px", filename=logo_file)
                 )
