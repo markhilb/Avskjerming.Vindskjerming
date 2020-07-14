@@ -30,5 +30,13 @@ setup(
     version = "3.2.2",
     description = "GUI for Vindskjerming!",
     options = {"build_exe": build_exe_options},
-    executables = [Executable("main.py", base=base, targetName="Vindskjerming")]
+    executables = [
+        Executable(
+            "main.py",
+            base=base,
+            targetName="Vindskjerming",
+            shortcutName="Vindskjerming",
+            shortcutDir="DesktopFolder"
+        )
+    ]
 )
