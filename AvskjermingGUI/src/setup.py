@@ -27,7 +27,6 @@ if sys.platform == "win32":
 
 setup(
     name = "Vindskjerming",
-    version = "3.2.2",
     description = "GUI for Vindskjerming!",
     options = {"build_exe": build_exe_options},
     executables = [
