@@ -13,6 +13,9 @@ $ pip install pylatex
 * Latex compiler
 https://miktex.org/download
 
+* Ghostscript
+https://www.ghostscript.com/download/gsdnld.html
+
 
 ## Run program
 ```
