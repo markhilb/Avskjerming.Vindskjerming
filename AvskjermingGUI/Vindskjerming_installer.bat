@@ -6,7 +6,7 @@ cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) &&
 
 echo Downloading Vindskjerming.msi...
 set vindskjerming_file="Vindskjerming.msi"
-curl -s -L -X GET https://github.com/markhilb/Avskjerming/raw/export/AvskjermingGUI/src/dist/Vindskjerming-0.0.0-win32.msi -o %vindskjerming_file%
+curl -s -L -X GET https://github.com/markhilb/Avskjerming/raw/master/AvskjermingGUI/src/dist/Vindskjerming-0.0.0-win32.msi -o %vindskjerming_file%
 
 set folder="%userprofile%\AppData\Local\Programs\Vindskjerming"
 echo Updating Vindskjerming...
