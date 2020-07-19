@@ -15,6 +15,7 @@ IF NOT %errorlevel% == 0 (
     del /f /q "%folder%\*"
     rmdir /s /q "%folder%\lib"
     msiexec /i %vindskjerming_file% /qn
+    msiexec /famus %vindskjerming_file%
 )
 
 del /f %vindskjerming_file%
