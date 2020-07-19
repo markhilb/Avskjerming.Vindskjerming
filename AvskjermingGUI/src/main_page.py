@@ -20,6 +20,10 @@ class MainPage(tkinter.Frame):
         self.config(bg="white")
         self.canvas = Canvas(self)
 
+        # Add ghostscript and miktex to path
+        os.environ["PATH"] += os.pathsep + "C:\\Program Files\\MiKTeX\\miktex\\bin\\x64\\"
+        os.environ["PATH"] += os.pathsep + "C:\\Program Files (x86)\\gs\\gs9.52\\bin\\"
+
         # Make sure the ORDERS_FOLDER exists
         cwd = get_current_directory()
         if not os.path.isdir(f"{cwd}/{ORDERS_FOLDER}"):
