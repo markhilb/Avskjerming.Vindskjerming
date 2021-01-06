@@ -1,0 +1,140 @@
+<div class="menu">
+  <button class="save" (click)="onSave()">Lagre</button>
+  <button class="load" (click)="onLoad()">Last opp</button>
+  <div class="spacer"></div>
+  <button class="reset" (click)="onReset()">Reset</button>
+  <button class="undo" (click)="onUndo()">Angre</button>
+</div>
+
+<div class="page">
+  <div class="top-container">
+    <h2 style="text-align: center">Automatisk utregning</h2>
+    <div class="grid-center-right">
+      <div class="center row">
+        <div style="margin-right: 1rem">
+          Total lengde venstre:
+          <br />
+          <input type="number" [(ngModel)]="totalWidthL" />
+        </div>
+        <div>
+          Total lengde høyre:
+          <br />
+          <input type="number" [(ngModel)]="totalWidthR" />
+        </div>
+      </div>
+      <div class="right row">
+        <div style="margin-right: 1rem">
+          Kundenavn:
+          <br />
+          <input type="text" [(ngModel)]="customer" />
+        </div>
+        <div>
+          Ordrenummer:
+          <br />
+          <input type="text" [(ngModel)]="orderNumber" />
+        </div>
+      </div>
+    </div>
+
+    <div class="second-row">
+      <div class="glass-type">
+        Glass type:
+        <br />
+        <select [(ngModel)]="glassType">
+          <option value="klart">Klart</option>
+          <option value="frost">Frost</option>
+        </select>
+      </div>
+      <div class="left-mount">
+        <select [(ngModel)]="leftMount">
+          <option value="post">Stolpe</option>
+          <option value="wallmount">Veggskinne</option>
+        </select>
+      </div>
+      <div class="global row">
+        <div style="margin-right: 0.5rem">
+          Global bredde:
+          <br />
+          Global høyde:
+        </div>
+        <div>
+          <input type="number" [(ngModel)]="globalWidth" />
+          <br />
+          <input type="number" [(ngModel)]="globalHeight" />
+        </div>
+      </div>
+      <div class="right-mount">
+        <select [(ngModel)]="rightMount">
+          <option value="post">Stolpe</option>
+          <option value="wallmount">Veggskinne</option>
+        </select>
+      </div>
+      <div class="transport">
+        Transport:
+        <br />
+        <select [(ngModel)]="transport">
+          <option value="sendes">Sendes</option>
+          <option value="hentes">Hentes</option>
+        </select>
+      </div>
+      <table class="table">
+        <tr>
+          <th>Type</th>
+          <th>Størrelse</th>
+          <th>Antall</th>
+        </tr>
+        <tr *ngFor="let item of packageList">
+          <td>item.name</td>
+          <td>item.size</td>
+          <td>item.num</td>
+        </tr>
+        <tr *ngIf="totalWeight">
+          <td>Vekt</td>
+          <td></td>
+          <td>{{totalWeight | number: '.0-0'}} kg</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="canvas">
+    <app-canvas
+      #canvas
+      (packageList)="packageList"
+      [totalWidthL]="totalWidthL"
+      [totalWidthR]="totalWidthR"
+      [globalWidth]="globalWidth"
+      [globalHeight]="globalHeight"
+      [individualWidth]="individualWidth"
+      [individualHeight]="individualHeight"
+      [leftMount]="leftMount"
+      [rightMount]="rightMount"
+      [glassType]="glassType"
+    ></app-canvas>
+  </div>
+
+  <div class="bottom-container">
+    <h2 style="text-align: center">Manuel utregning</h2>
+    <div class="grid-center-right container">
+      <div class="center row">
+        <button (click)="onAddWallmount()">Veggskinne</button>
+        <button (click)="onAddPost()">Stolpe</button>
+        <button (click)="onAddGlass()">Glass</button>
+        <div>
+          Individuell bredde:
+          <br />
+          Individuell høyde:
+        </div>
+        <div style="margin-left: 0">
+          <input type="number" [(ngModel)]="individualWidth" />
+          <br />
+          <input type="number" [(ngModel)]="individualHeight" />
+        </div>
+      </div>
+      <div class="right">
+        <button (click)="onAddGlassPolygon()">Skrå glass</button>
+        <input type="number" [(ngModel)]="secondGlassHeight" />
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,118 @@
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.grid-center-right {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr 2fr 1fr;
+  column-gap: 1rem;
+  margin-bottom: 1rem;
+
+  .center {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .right {
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: end;
+  }
+}
+
+.menu {
+  height: 40px;
+  display: flex;
+  align-content: center;
+  border-bottom: solid 1px gray;
+
+  button {
+    margin: auto 0.25rem;
+  }
+
+  .spacer {
+    margin: auto 1rem;
+    height: 60%;
+    border-left: solid 1px gray;
+  }
+}
+
+.page {
+  height: fit-content;
+  min-height: calc(100vh - 41px);
+  margin: auto 1rem;
+  display: flex;
+  flex-direction: column;
+
+  .canvas {
+    flex-grow: 1;
+    overflow-x: auto;
+    display: flex;
+
+    app-canvas {
+      height: fit-content;
+      margin: auto;
+    }
+  }
+}
+
+.top-container {
+  .second-row {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: auto 1fr 2fr auto 2fr 1fr;
+    column-gap: 1rem;
+
+    .glass-type {
+      grid-row: 1;
+      grid-column: 1;
+      justify-self: end;
+    }
+
+    .left-mount {
+      grid-row: 1;
+      grid-column: 3;
+      justify-self: end;
+      margin-top: 19px;
+    }
+
+    .global {
+      grid-row: 1;
+      grid-column: 4;
+    }
+
+    .right-mount {
+      grid-row: 1;
+      grid-column: 5;
+      justify-self: start;
+      margin-top: 19px;
+    }
+
+    .transport {
+      grid-row: 1;
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .table {
+      grid-row: 1;
+      grid-column: 6;
+
+      width: 100%;
+      min-width: 20rem;
+      background-color: white;
+      border: solid 1px var(--black);
+      text-align: center;
+    }
+  }
+}
+
+.container > * {
+  align-self: center;
+
+  > * {
+    margin: auto 0.5rem;
+  }
+}

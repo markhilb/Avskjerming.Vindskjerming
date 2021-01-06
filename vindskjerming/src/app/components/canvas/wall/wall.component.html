@@ -1,0 +1,52 @@
+<div class="row">
+  <div *ngFor="let item of items">
+    <div
+      *ngIf="isWallmount(item)"
+      [style.width.px]="item.displayWidth"
+      [style.height.px]="item.displayHeight"
+      [style.backgroundColor]="item.color"
+    ></div>
+
+    <div
+      *ngIf="isPost(item)"
+      class="post"
+      [style.width.px]="item.displayWidth"
+      [style.height.px]="item.displayHeight"
+      [style.backgroundColor]="item.color"
+    >
+      <div class="base"></div>
+    </div>
+
+    <div *ngIf="isGlass(item)" class="glass" [style.width.px]="item.width">
+      <p *ngIf="!item.isPolygon">
+        {{ item.width | number: '.0-2' }}x{{ item.height | number: '.0-2' }}
+      </p>
+      <p *ngIf="item.isPolygon">
+        {{ item.width | number: '.0-2' }}x{{ item.height | number: '.0-2' }}x{{
+        item.secondHeight | number: '.0-2' }}
+      </p>
+      <div
+        *ngIf="item.height > item.secondHeight"
+        class="item"
+        [style.borderTopWidth.px]="item.height - item.secondHeight"
+        [style.borderLeftWidth.px]="ceil(item.width)"
+        [style.borderLeftColor]="item.color"
+        [style.height.px]="item.secondHeight"
+      ></div>
+      <div
+        *ngIf="item.height <= item.secondHeight"
+        class="item"
+        [style.borderTopWidth.px]="item.secondHeight - item.height"
+        [style.borderRightWidth.px]="ceil(item.width)"
+        [style.borderRightColor]="item.color"
+        [style.height.px]="item.height"
+      ></div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="items.length > 0" class="length-bar">
+  <div class="end left"></div>
+  <div class="end right"></div>
+  <p>{{ currentWidth }}</p>
+</div>

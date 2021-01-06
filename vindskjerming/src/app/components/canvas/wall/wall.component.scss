@@ -1,0 +1,58 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.post {
+  .base {
+    position: relative;
+    width: 20px;
+    height: 6px;
+    background-color: black;
+    left: -4px;
+    top: 100%;
+  }
+}
+
+.glass {
+  .item {
+    border-top: 0 solid transparent;
+    border-left: 0 solid transparent;
+    border-right: 0 solid transparent;
+  }
+
+  p {
+    position: relative;
+    text-align: center;
+  }
+}
+
+.length-bar {
+  width: 100%;
+  height: 5px;
+  background-color: var(--black);
+  margin-top: 1rem;
+
+  .end {
+    position: relative;
+    width: 4px;
+    height: 15px;
+    background-color: var(--black);
+    top: -5px;
+  }
+
+  .left {
+    left: 0;
+  }
+
+  .right {
+    top: -20px;
+    left: calc(100% - 4px);
+  }
+
+  p {
+    text-align: center;
+    margin: -1rem 0 0 0;
+  }
+}

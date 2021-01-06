@@ -1,1 +1,5 @@
-Page is working
+<div
+  [@routeAnimations]="o && o.activatedRouteData && o.activatedRouteData.animation"
+>
+  <router-outlet #o="outlet"></router-outlet>
+</div>
