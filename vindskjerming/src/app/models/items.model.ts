@@ -2,9 +2,7 @@ import * as Config from '../config.json';
 
 export class Item {
   width: number;
-  displayWidth: number;
   height: number;
-  displayHeight: number;
   color: string;
   secondHeight?: number;
   _isLast = false;
@@ -16,6 +14,10 @@ export class Item {
   get isPolygon(): boolean {
     return false;
   }
+
+  get weight(): number {
+    return 0;
+  }
 }
 
 export class Wallmount extends Item {
@@ -25,8 +27,6 @@ export class Wallmount extends Item {
   constructor(height: number) {
     super();
     this.height = height;
-    this.displayHeight = height + 5;
-    this.displayWidth = Config['wallmount']['displayWidth'];
   }
 
   get weight(): number {
@@ -44,8 +44,6 @@ export class Post extends Item {
     super();
     this.isLast = true;
     this.height = height;
-    this.displayHeight = height + 5;
-    this.displayWidth = Config['post']['displayWidth'];
   }
 
   set isLast(val: boolean) {

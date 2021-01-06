@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { Item, Wallmount, Post, Glass } from '../../../models/items.model';
 import * as Config from '../../../config.json';
@@ -9,7 +9,13 @@ import * as Config from '../../../config.json';
   styleUrls: ['./wall.component.scss'],
 })
 export class WallComponent implements OnInit {
+  @Output() packageList = new EventEmitter<any>();
+
   items: Item[] = [];
+  selectedItem: Item;
+  editItem: { width: number; height: number; secondHeight: number };
+
+  modalOpen = false;
 
   _totalWidth: number;
   currentWidth: number;
@@ -60,6 +66,7 @@ export class WallComponent implements OnInit {
     this.items.forEach((item) => {
       if (item instanceof Glass) item.glassType = val;
     });
+    this.updatePackageList();
   }
 
   autoCalculate() {
@@ -169,12 +176,12 @@ export class WallComponent implements OnInit {
           // If the last post is no longer last after adding the glass
           if (this.items.length != 1) {
             lastItem.isLast = false;
-            this.update();
+            this.updateCurrentWidth();
             // If the wall becomes too long from this,
             // undo and don't add glass
             if (this.currentWidth >= this._totalWidth) {
               lastItem.isLast = true;
-              this.update();
+              this.updateCurrentWidth();
               return false;
             }
           }
@@ -219,25 +226,118 @@ export class WallComponent implements OnInit {
     return false;
   }
 
+  onEditItem(item: Item) {
+    this.selectedItem = item;
+    this.editItem = {
+      width: item.width,
+      height: item.height,
+      secondHeight: item.secondHeight,
+    };
+    this.modalOpen = true;
+  }
+
+  editGlass() {
+    const secondHalf = this.items.splice(this.items.indexOf(this.selectedItem));
+    this.updateCurrentWidth();
+
+    // Add back the new glass
+    this.addGlass(
+      this.editItem.width,
+      this.editItem.height,
+      this.editItem.secondHeight,
+    );
+
+    if (this.editItem.width >= this.selectedItem.width) {
+      // If new glass is wider/same, just add back the old items
+      secondHalf.forEach((item) => {
+        if (item instanceof Wallmount) this.addWallmount(item.height, false);
+        else if (item instanceof Post) this.addPost(item.height, false);
+        else this.addGlass(item.width, item.height, item.secondHeight);
+      });
+    } else {
+      // Need to auto calculate the remaining space
+      let lastItem: Item;
+      if (secondHalf.length > 0) lastItem = secondHalf[secondHalf.length - 1];
+      else lastItem = this.items[this.items.length - 1];
+
+      // Calculate number of items to add (minus edges)
+      const remainingWidth =
+        this._totalWidth - this.currentWidth - lastItem.width;
+      const num =
+        remainingWidth / (this._globalWidth + Config['post']['width']);
+
+      for (let i = 0; i < Math.floor(num) + 1; i++) {
+        this.addGlass(this._globalWidth, this._globalHeight);
+        this.addPost(this._globalHeight);
+      }
+      this.addGlass(this._globalWidth, this._globalHeight);
+      if (lastItem instanceof Wallmount) this.addWallmount(this._globalHeight);
+      else if (lastItem instanceof Post) this.addPost(this._globalHeight);
+    }
+  }
+
+  saveEditItem() {
+    if (
+      this.selectedItem instanceof Post ||
+      this.selectedItem instanceof Wallmount
+    )
+      this.selectedItem.height = this.editItem.height;
+    else this.editGlass();
+
+    this.update();
+    this.modalOpen = false;
+  }
+
+  deleteItem(item: Item) {
+    const index = this.items.indexOf(this.selectedItem);
+    const num = index + 1 < this.items.length ? 2 : 1;
+    this.items.splice(index, num);
+    this.update();
+
+    this.modalOpen = false;
+  }
+
   clear() {
     this.items = [];
     this.currentWidth = 0;
   }
 
-  undo() {
-    this.items.pop();
+  undo(): boolean {
+    const res = this.items.pop();
+    if (this.items.length > 0) this.items[this.items.length - 1].isLast = true;
     this.update();
+    return res !== undefined;
+  }
+
+  updateCurrentWidth = () =>
+    (this.currentWidth = this.items.reduce((tot, cur) => tot + cur.width, 0));
+
+  updatePackageList() {
+    this.packageList.emit(
+      this.items.map((item) => {
+        return {
+          type: item.constructor.name,
+          width: item.width,
+          height: item.height,
+          secondHeight: item.secondHeight,
+          weight: item.weight,
+        };
+      }),
+    );
   }
 
   update() {
-    this.currentWidth = this.items.reduce((tot, cur) => tot + cur.width, 0);
+    this.updateCurrentWidth();
+    this.updatePackageList();
   }
 
-  ceil = (a) => Math.ceil(a);
+  closeModal = () => (this.modalOpen = false);
 
-  isWallmount = (item) => item instanceof Wallmount;
+  ceil = (a: number): number => Math.ceil(a);
 
-  isPost = (item) => item instanceof Post;
+  isWallmount = (item: Item): boolean => item instanceof Wallmount;
 
-  isGlass = (item) => item instanceof Glass;
+  isPost = (item: Item): boolean => item instanceof Post;
+
+  isGlass = (item: Item): boolean => item instanceof Glass;
 }

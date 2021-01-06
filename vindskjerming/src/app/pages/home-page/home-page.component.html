@@ -84,14 +84,14 @@
           <th>Antall</th>
         </tr>
         <tr *ngFor="let item of packageList">
-          <td>item.name</td>
-          <td>item.size</td>
-          <td>item.num</td>
+          <td>{{ item[0] }}</td>
+          <td>{{ item[1] }}</td>
+          <td>{{ item[2] }}</td>
         </tr>
         <tr *ngIf="totalWeight">
           <td>Vekt</td>
           <td></td>
-          <td>{{totalWeight | number: '.0-0'}} kg</td>
+          <td>{{ totalWeight }} kg</td>
         </tr>
       </table>
     </div>
@@ -100,7 +100,7 @@
   <div class="canvas">
     <app-canvas
       #canvas
-      (packageList)="packageList"
+      (packageList)="updatePackageList($event)"
       [totalWidthL]="totalWidthL"
       [totalWidthR]="totalWidthR"
       [globalWidth]="globalWidth"

@@ -6,6 +6,7 @@
     >
       <app-wall
         #leftWall
+        (packageList)="changePackageListL($event)"
         [globalWidth]="globalWidth"
         [globalHeight]="globalHeight"
         [individualWidth]="individualWidth"
@@ -17,6 +18,7 @@
       ></app-wall>
       <app-wall
         #rightWall
+        (packageList)="changePackageListR($event)"
         [globalWidth]="globalWidth"
         [globalHeight]="globalHeight"
         [individualWidth]="individualWidth"
@@ -29,6 +31,7 @@
     <ng-template #single class="row">
       <app-wall
         #leftWall
+        (packageList)="changePackageListL($event)"
         [globalWidth]="globalWidth"
         [globalHeight]="globalHeight"
         [individualWidth]="individualWidth"

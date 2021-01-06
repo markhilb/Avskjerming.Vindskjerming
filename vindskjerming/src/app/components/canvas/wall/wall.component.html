@@ -2,16 +2,17 @@
   <div *ngFor="let item of items">
     <div
       *ngIf="isWallmount(item)"
-      [style.width.px]="item.displayWidth"
-      [style.height.px]="item.displayHeight"
+      class="wallmount pointer"
+      (click)="onEditItem(item)"
+      [style.height.px]="item.height + 5"
       [style.backgroundColor]="item.color"
     ></div>
 
     <div
       *ngIf="isPost(item)"
-      class="post"
-      [style.width.px]="item.displayWidth"
-      [style.height.px]="item.displayHeight"
+      class="post pointer"
+      (click)="onEditItem(item)"
+      [style.height.px]="item.height + 5"
       [style.backgroundColor]="item.color"
     >
       <div class="base"></div>
@@ -27,7 +28,8 @@
       </p>
       <div
         *ngIf="item.height > item.secondHeight"
-        class="item"
+        class="item pointer"
+        (click)="onEditItem(item)"
         [style.borderTopWidth.px]="item.height - item.secondHeight"
         [style.borderLeftWidth.px]="ceil(item.width)"
         [style.borderLeftColor]="item.color"
@@ -35,7 +37,8 @@
       ></div>
       <div
         *ngIf="item.height <= item.secondHeight"
-        class="item"
+        class="item pointer"
+        (click)="onEditItem(item)"
         [style.borderTopWidth.px]="item.secondHeight - item.height"
         [style.borderRightWidth.px]="ceil(item.width)"
         [style.borderRightColor]="item.color"
@@ -48,5 +51,29 @@
 <div *ngIf="items.length > 0" class="length-bar">
   <div class="end left"></div>
   <div class="end right"></div>
-  <p>{{ currentWidth }}</p>
+  <p>{{ currentWidth | number: '.0-2' }}</p>
+</div>
+
+<div *ngIf="modalOpen" class="modal-container" (click)="closeModal()">
+  <div class="modal-body" (click)="$event.stopPropagation()">
+    <div class="inputs">
+      <div *ngIf="isGlass(selectedItem)" class="space-between">
+        Bredde:
+        <input type="number" [(ngModel)]="editItem.width" />
+      </div>
+      <div class="space-between">
+        Høyde:
+        <input type="number" [(ngModel)]="editItem.height" />
+      </div>
+      <div *ngIf="isGlass(selectedItem)" class="space-between">
+        Skrå høyde:
+        <input type="number" [(ngModel)]="editItem.secondHeight" />
+      </div>
+    </div>
+    <div class="buttons space-between">
+      <button (click)="closeModal()">Avbryt</button>
+      <button (click)="deleteItem()">Slett</button>
+      <button (click)="saveEditItem()">Lagre</button>
+    </div>
+  </div>
 </div>

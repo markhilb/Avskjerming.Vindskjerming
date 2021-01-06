@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 
 import { CanvasComponent } from '../../components/canvas/canvas.component';
 
@@ -22,16 +22,29 @@ export class HomePageComponent implements OnInit {
   globalHeight = 60;
   transport = 'sendes';
 
-  individualWidth: number;
-  individualHeight: number;
+  individualWidth = 60;
+  individualHeight = 60;
   secondGlassHeight: number;
 
-  packageList: any;
-  totalWeight: number;
+  packageList = [];
+  totalWeight: string;
 
-  constructor() {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {}
+
+  updatePackageList(event) {
+    this.totalWeight = (event.weight / 1000).toFixed(0);
+    delete event.weight;
+    this.packageList = [];
+    Object.entries(event).map(([key, val]) => {
+      Object.entries(val).map(([size, num]) => {
+        this.packageList.push([key, size, num]);
+        key = '';
+      });
+    });
+    this.cdr.detectChanges();
+  }
 
   onSave() {
     // TODO

@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  ViewChild,
+  EventEmitter,
+} from '@angular/core';
 
 import { Item, Wallmount, Post, Glass } from '../../models/items.model';
 import { WallComponent } from './wall/wall.component';
@@ -11,6 +18,10 @@ import { WallComponent } from './wall/wall.component';
 export class CanvasComponent implements OnInit {
   @ViewChild('leftWall') leftWall: WallComponent;
   @ViewChild('rightWall') rightWall: WallComponent;
+
+  @Output() packageList = new EventEmitter<any>();
+  packageListL = [];
+  packageListR = [];
 
   @Input() totalWidthL: number;
   @Input() totalWidthR: number;
@@ -98,7 +109,55 @@ export class CanvasComponent implements OnInit {
   }
 
   undo() {
-    if (this.rightWall) this.rightWall.undo();
+    if (this.rightWall && this.rightWall.undo()) return;
     else if (this.leftWall) this.leftWall.undo();
   }
+
+  changePackageListL(event) {
+    this.packageListL = event;
+    this.updatePackageList();
+  }
+
+  changePackageListR(event) {
+    this.packageListR = event;
+    this.updatePackageList();
+  }
+
+  _updatePackageList(map, items) {
+    const glassType = '(' + this.glassType + ')';
+    let key: string;
+    let size: string;
+    items.forEach((item) => {
+      size = `${+item.height.toFixed(2)}`;
+      if (item.type === 'Wallmount') {
+        key = 'Veggskinne';
+      } else if (item.type === 'Post') {
+        key = 'Stolpe';
+      } else {
+        if (item.height !== item.secondHeight) {
+          key = 'Skrå glass ' + glassType;
+          size = `${+item.width.toFixed(2)}x${+item.height.toFixed(
+            2,
+          )}x${+item.secondHeight.toFixed(2)}`;
+        } else {
+          key = 'Glass ' + glassType;
+          size = `${+item.width.toFixed(2)}x${+item.height.toFixed(2)}`;
+        }
+      }
+      setDefault(setDefault(map, key, {})[key], size, 0)[size] += 1;
+      map['weight'] += item.weight;
+    });
+  }
+
+  updatePackageList() {
+    const res = { weight: 0 };
+    this._updatePackageList(res, this.packageListL);
+    this._updatePackageList(res, this.packageListR);
+    this.packageList.emit(res);
+  }
 }
+
+const setDefault = (map, key, val) => {
+  if (!(key in map)) map[key] = val;
+  return map;
+};
