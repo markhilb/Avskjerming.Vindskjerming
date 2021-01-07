@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 
-import { Wallmount, Post } from '../../models/items.model';
+import { Item, Wallmount, Post } from '../../models/items.model';
 import { WallComponent } from './wall/wall.component';
 
 @Component({
@@ -248,6 +248,18 @@ export class CanvasComponent implements OnInit {
     });
     this.packageListChanged.emit(res);
   }
+
+  _itemsAsJson = (items: Item[]) =>
+    items.map((item) => {
+      if (item instanceof Wallmount) return ['Wallmount', item.height];
+      else if (item instanceof Post) return ['Post', item.height];
+      return ['Glass', `${item.width}x${item.height}x${item.secondHeight}`];
+    });
+
+  itemsAsJson = () => [
+    this._itemsAsJson(this.leftWall.items),
+    this._itemsAsJson(this.rightWall.items),
+  ];
 }
 
 const setDefault = (map, key, val) => {

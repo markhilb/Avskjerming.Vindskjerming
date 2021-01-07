@@ -6,6 +6,12 @@
 <div class="menu hidden">
   <button (click)="onSave()">Lagre</button>
   <button (click)="onLoad()">Last opp</button>
+  <input
+    id="fileInput"
+    type="file"
+    (change)="fileSelected($event.target.files)"
+    style="display: none"
+  />
   <button (click)="onExport()">Eksporter</button>
   <div class="spacer"></div>
   <button (click)="onReset()">Reset</button>

@@ -33,6 +33,26 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  get blob(): Blob {
+    const body = JSON.stringify({
+      customer: this.customer,
+      orderNumber: this.orderNumber,
+      totalWidthL: this.totalWidthL,
+      totalWidthR: this.totalWidthR,
+      globalWidth: this.globalWidth,
+      globalHeight: this.globalHeight,
+      individualWidth: this.individualWidth,
+      individualHeight: this.individualHeight,
+      secondGlassHeight: this.secondGlassHeight,
+      leftMount: this.leftMount,
+      rightMount: this.rightMount,
+      transport: this.transport,
+      glassType: this.glassType,
+      items: this.canvas.itemsAsJson(),
+    });
+    return new Blob([body], { type: 'text/plain;charset=utf-8' });
+  }
+
   packageListChanged(event) {
     this.totalWeight = (event.weight / 1000).toFixed(0);
     this.packageList = event.list;
@@ -40,13 +60,31 @@ export class HomePageComponent implements OnInit {
   }
 
   onSave() {
-    // TODO
-    // console.log('Save...');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(this.blob);
+    a.download = 'filename';
+    a.click();
   }
 
   onLoad() {
-    // TODO
-    // console.log('Load...');
+    document.getElementById('fileInput').click();
+  }
+
+  _fileSelected(text: string) {
+    try {
+      const json = JSON.parse(text);
+      const items = json.items;
+      delete json.items;
+      Object.entries(json).forEach(([key, val]) => (this[key] = val));
+    } catch {}
+  }
+
+  fileSelected(files: File[]) {
+    if (files.length === 1) {
+      const fr = new FileReader();
+      fr.onload = () => this._fileSelected(fr.result.toString());
+      fr.readAsText(files[0]);
+    }
   }
 
   onExport() {
