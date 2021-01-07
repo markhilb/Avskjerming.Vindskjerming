@@ -33,16 +33,9 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  updatePackageList(event) {
+  packageListChanged(event) {
     this.totalWeight = (event.weight / 1000).toFixed(0);
-    delete event.weight;
-    this.packageList = [];
-    Object.entries(event).map(([key, val]) => {
-      Object.entries(val).map(([size, num]) => {
-        this.packageList.push([key, size, num]);
-        key = '';
-      });
-    });
+    this.packageList = event.list;
     this.cdr.detectChanges();
   }
 

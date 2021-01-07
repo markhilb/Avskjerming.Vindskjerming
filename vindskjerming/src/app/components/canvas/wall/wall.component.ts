@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { Item, Wallmount, Post, Glass } from '../../../models/items.model';
 import * as Config from '../../../config.json';
@@ -9,56 +9,49 @@ import * as Config from '../../../config.json';
   styleUrls: ['./wall.component.scss'],
 })
 export class WallComponent implements OnInit {
-  @Output() packageList = new EventEmitter<any>();
+  @Input() totalWidth: number;
+  @Input() globalWidth: number;
+  @Input() globalHeight: number;
+  @Input() individualWidth: number;
+  @Input() individualHeight: number;
+  _leftMount: string;
+  _rightMount: string;
+  _glassType: string;
 
   items: Item[] = [];
   selectedItem: Item;
   editItem: { width: number; height: number; secondHeight: number };
-
   modalOpen = false;
-
-  _totalWidth: number;
-  currentWidth: number;
-  _globalWidth: number;
-  _globalHeight: number;
-  individualWidth: number;
-  individualHeight: number;
-  _leftMount: string;
-  _rightMount: string;
-  _glassType: string;
+  currentWidth = 0;
 
   constructor() {}
 
   ngOnInit(): void {}
 
-  @Input() set totalWidth(val: number) {
-    this._totalWidth = val;
-    this.autoCalculate();
-  }
-
-  @Input() set globalWidth(val: number) {
-    this._globalWidth = val;
-    val >= 10 ? this.autoCalculate() : this.clear();
-  }
-
-  @Input() set globalHeight(val: number) {
-    this._globalHeight = val;
-    val >= 10 ? this.autoCalculate() : this.clear();
-  }
-
   @Input() set leftMount(val: string) {
     this._leftMount = val;
-    if (val === 'post') this.items[0] = new Post(this._globalHeight);
-    else if (val === 'wallmount')
-      this.items[0] = new Wallmount(this._globalHeight);
+    if (this.items.length > 0) {
+      if (val === 'post')
+        this.items[0] = new Post(this.globalHeight + Config['post']['margin']);
+      else if (val === 'wallmount')
+        this.items[0] = new Wallmount(
+          this.globalHeight + Config['wallmount']['margin'],
+        );
+    }
   }
 
   @Input() set rightMount(val: string) {
     this._rightMount = val;
-    if (val === 'post')
-      this.items[this.items.length - 1] = new Post(this._globalHeight);
-    else if (val === 'wallmount')
-      this.items[this.items.length - 1] = new Wallmount(this._globalHeight);
+    if (this.items.length > 0) {
+      if (val === 'post')
+        this.items[this.items.length - 1] = new Post(
+          this.globalHeight + Config['post']['margin'],
+        );
+      else if (val === 'wallmount')
+        this.items[this.items.length - 1] = new Wallmount(
+          this.globalHeight + Config['wallmount']['margin'],
+        );
+    }
   }
 
   @Input() set glassType(val: string) {
@@ -66,17 +59,30 @@ export class WallComponent implements OnInit {
     this.items.forEach((item) => {
       if (item instanceof Glass) item.glassType = val;
     });
-    this.updatePackageList();
+  }
+
+  get packageList() {
+    return this.items.map((item) => {
+      return {
+        type: item.constructor.name,
+        width: item.width,
+        height: item.height,
+        secondHeight: item.secondHeight,
+        weight: item.weight,
+      };
+    });
   }
 
   autoCalculate() {
     this.clear();
+    if (!this.totalWidth || this.totalWidth < 10 || this.totalWidth > 9999)
+      return;
 
     // Add the left mount (if there is one)
     if (this._leftMount === 'post') {
-      if (!this.addPost(this._globalHeight)) return;
+      if (!this.addPost(this.globalHeight)) return;
     } else if (this._leftMount === 'wallmount') {
-      if (!this.addWallmount(this._globalHeight)) return;
+      if (!this.addWallmount(this.globalHeight)) return;
     }
 
     // Get the width of the right mount (if there is one)
@@ -88,23 +94,26 @@ export class WallComponent implements OnInit {
     else rightMountWidth = 0;
 
     // Calculate the number of items to add (minus mounts)
-    const width = this._totalWidth - this.currentWidth - rightMountWidth;
-    const num = width / (this._globalWidth + Config['post']['width']);
+    const width = this.totalWidth - this.currentWidth - rightMountWidth;
+    const num = width / (this.globalWidth + Config['post']['width']);
 
     // Num is floored because another glass and the right mount
     // is added after the loop
     for (let i = 0; i < Math.floor(num); i++) {
-      this.addGlass(this._globalWidth, this._globalHeight);
-      this.addPost(this._globalHeight);
+      this.addGlass(this.globalWidth, this.globalHeight);
+      this.addPost(this.globalHeight);
     }
 
-    this.addGlass(this._globalWidth, this._globalHeight);
-    if (this._rightMount === 'post') this.addPost(this._globalHeight);
+    this.addGlass(this.globalWidth, this.globalHeight);
+    if (this._rightMount === 'post') this.addPost(this.globalHeight);
     else if (this._rightMount === 'wallmount')
-      this.addWallmount(this._globalHeight);
+      this.addWallmount(this.globalHeight);
   }
 
   addWallmount(height: number, addMargin = true): boolean {
+    if (!this.totalWidth || this.totalWidth < 10 || this.totalWidth > 9999)
+      return false;
+
     // Only add wallmount if the previous item is glass
     // (or this is the first item)
     if (
@@ -114,9 +123,9 @@ export class WallComponent implements OnInit {
       // If adding a wallmount makes the wall too long,
       // try to cut the last glass
       if (
-        this.currentWidth + Config['wallmount']['width'] > this._totalWidth &&
+        this.currentWidth + Config['wallmount']['width'] > this.totalWidth &&
         !this.cutGlass(
-          this.currentWidth + Config['wallmount']['width'] - this._totalWidth,
+          this.currentWidth + Config['wallmount']['width'] - this.totalWidth,
         )
       )
         return false;
@@ -134,6 +143,9 @@ export class WallComponent implements OnInit {
   }
 
   addPost(height: number, addMargin = true): boolean {
+    if (!this.totalWidth || this.totalWidth < 10 || this.totalWidth > 9999)
+      return false;
+
     // Only add post if the previous item is glass
     // (or this is the first item)
     if (
@@ -143,9 +155,9 @@ export class WallComponent implements OnInit {
       // If adding a post makes the wall too long,
       // try to cut the last glass
       if (
-        this.currentWidth + Config['post']['lastWidth'] > this._totalWidth &&
+        this.currentWidth + Config['post']['lastWidth'] > this.totalWidth &&
         !this.cutGlass(
-          this.currentWidth + Config['post']['lastWidth'] - this._totalWidth,
+          this.currentWidth + Config['post']['lastWidth'] - this.totalWidth,
         )
       )
         return false;
@@ -166,7 +178,10 @@ export class WallComponent implements OnInit {
   }
 
   addGlass(width: number, height: number, secondHeight = -1): boolean {
-    if (this.currentWidth < this._totalWidth) {
+    if (!this.totalWidth || this.totalWidth < 10 || this.totalWidth > 9999)
+      return false;
+
+    if (this.currentWidth < this.totalWidth) {
       if (this.items.length > 0) {
         const lastItem = this.items[this.items.length - 1];
         // Don't add two glasses after each other
@@ -179,7 +194,7 @@ export class WallComponent implements OnInit {
             this.updateCurrentWidth();
             // If the wall becomes too long from this,
             // undo and don't add glass
-            if (this.currentWidth >= this._totalWidth) {
+            if (this.currentWidth >= this.totalWidth) {
               lastItem.isLast = true;
               this.updateCurrentWidth();
               return false;
@@ -189,8 +204,8 @@ export class WallComponent implements OnInit {
       }
 
       // If the glass is too wide, cut it
-      if (this.currentWidth + width > this._totalWidth)
-        width = this._totalWidth - this.currentWidth;
+      if (this.currentWidth + width > this.totalWidth)
+        width = this.totalWidth - this.currentWidth;
 
       this.items.push(
         new Glass(
@@ -262,27 +277,34 @@ export class WallComponent implements OnInit {
 
       // Calculate number of items to add (minus edges)
       const remainingWidth =
-        this._totalWidth - this.currentWidth - lastItem.width;
-      const num =
-        remainingWidth / (this._globalWidth + Config['post']['width']);
+        this.totalWidth - this.currentWidth - lastItem.width;
+      const num = remainingWidth / (this.globalWidth + Config['post']['width']);
 
       for (let i = 0; i < Math.floor(num) + 1; i++) {
-        this.addGlass(this._globalWidth, this._globalHeight);
-        this.addPost(this._globalHeight);
+        this.addGlass(this.globalWidth, this.globalHeight);
+        this.addPost(this.globalHeight);
       }
-      this.addGlass(this._globalWidth, this._globalHeight);
-      if (lastItem instanceof Wallmount) this.addWallmount(this._globalHeight);
-      else if (lastItem instanceof Post) this.addPost(this._globalHeight);
+      this.addGlass(this.globalWidth, this.globalHeight);
+      if (lastItem instanceof Wallmount) this.addWallmount(this.globalHeight);
+      else if (lastItem instanceof Post) this.addPost(this.globalHeight);
     }
   }
 
   saveEditItem() {
+    if (!this.editItem.height || this.editItem.height <= 0) return;
     if (
       this.selectedItem instanceof Post ||
       this.selectedItem instanceof Wallmount
     )
       this.selectedItem.height = this.editItem.height;
-    else this.editGlass();
+    else if (
+      this.editItem.width &&
+      this.editItem.height > 0 &&
+      this.editItem.secondHeight &&
+      this.editItem.secondHeight > 0
+    )
+      this.editGlass();
+    else return;
 
     this.update();
     this.modalOpen = false;
@@ -312,23 +334,8 @@ export class WallComponent implements OnInit {
   updateCurrentWidth = () =>
     (this.currentWidth = this.items.reduce((tot, cur) => tot + cur.width, 0));
 
-  updatePackageList() {
-    this.packageList.emit(
-      this.items.map((item) => {
-        return {
-          type: item.constructor.name,
-          width: item.width,
-          height: item.height,
-          secondHeight: item.secondHeight,
-          weight: item.weight,
-        };
-      }),
-    );
-  }
-
   update() {
     this.updateCurrentWidth();
-    this.updatePackageList();
   }
 
   closeModal = () => (this.modalOpen = false);

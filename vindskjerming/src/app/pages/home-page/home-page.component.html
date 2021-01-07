@@ -100,7 +100,7 @@
   <div class="canvas">
     <app-canvas
       #canvas
-      (packageList)="updatePackageList($event)"
+      (packageListChanged)="packageListChanged($event)"
       [totalWidthL]="totalWidthL"
       [totalWidthR]="totalWidthR"
       [globalWidth]="globalWidth"

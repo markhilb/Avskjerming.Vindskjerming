@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 
-import { Item, Wallmount, Post, Glass } from '../../models/items.model';
+import { Wallmount, Post } from '../../models/items.model';
 import { WallComponent } from './wall/wall.component';
 
 @Component({
@@ -19,19 +19,104 @@ export class CanvasComponent implements OnInit {
   @ViewChild('leftWall') leftWall: WallComponent;
   @ViewChild('rightWall') rightWall: WallComponent;
 
-  @Output() packageList = new EventEmitter<any>();
-  packageListL = [];
-  packageListR = [];
+  @Output() packageListChanged = new EventEmitter<any>();
 
-  @Input() totalWidthL: number;
-  @Input() totalWidthR: number;
-  @Input() globalWidth: number;
-  @Input() globalHeight: number;
+  _totalWidthL: number;
+  _totalWidthR: number;
+  _globalWidth: number;
+  _globalHeight: number;
+  _leftMount: string;
+  _rightMount: string;
+  _glassType: string;
+
+  @Input() set totalWidthL(val: number) {
+    this._totalWidthL = val;
+    if (this.leftWall) {
+      this.leftWall.totalWidth = val;
+      this.leftWall.autoCalculate();
+      this.updatePackageList();
+    }
+  }
+
+  @Input() set totalWidthR(val: number) {
+    this._totalWidthR = val;
+    if (this.rightWall) {
+      this.rightWall.totalWidth = val;
+      this.rightWall.autoCalculate();
+      this.updatePackageList();
+    }
+  }
+
+  @Input() set globalWidth(val: number) {
+    this._globalWidth = val;
+    if (val >= 10) {
+      if (this.leftWall) {
+        if (this.leftWall) {
+          this.rightWall.globalWidth = val;
+          this.rightWall.autoCalculate();
+        }
+        this.leftWall.globalWidth = val;
+        this.leftWall.autoCalculate();
+      }
+    } else {
+      this.leftWall?.clear();
+      this.rightWall?.clear();
+    }
+    this.updatePackageList();
+  }
+
+  @Input() set globalHeight(val: number) {
+    this._globalHeight = val;
+    if (val >= 10) {
+      if (this.leftWall) {
+        if (this.rightWall) {
+          this.rightWall.globalHeight = val;
+          this.rightWall.autoCalculate();
+        }
+        this.leftWall.globalHeight = val;
+        this.leftWall.autoCalculate();
+      }
+    } else {
+      this.leftWall?.clear();
+      this.rightWall?.clear();
+    }
+    this.updatePackageList();
+  }
+
+  @Input() set leftMount(val: string) {
+    this._leftMount = val;
+    if (this.leftWall?.items.length > 0) {
+      this.leftWall.leftMount = val;
+      this.updatePackageList();
+    }
+  }
+
+  @Input() set rightMount(val: string) {
+    this._rightMount = val;
+    if (this.rightWall?.items.length > 0) {
+      this.rightWall.rightMount = val;
+      this.updatePackageList();
+    } else if (this.leftWall?.items.length > 0) {
+      this.leftWall.rightMount = val;
+      this.updatePackageList();
+    }
+  }
+
+  @Input() set glassType(val: string) {
+    this._glassType = val;
+    if (this.leftWall && this.rightWall) {
+      this.leftWall.glassType = val;
+      this.rightWall.glassType = val;
+      this.updatePackageList();
+    }
+  }
+
   @Input() individualWidth: number;
   @Input() individualHeight: number;
-  @Input() leftMount: string;
-  @Input() rightMount: string;
-  @Input() glassType: string;
+
+  get leftWallRightMount(): string {
+    return this.rightWall?.items.length > 0 ? 'post' : this._rightMount;
+  }
 
   constructor() {}
 
@@ -51,6 +136,7 @@ export class CanvasComponent implements OnInit {
     } else if (this.leftWall) {
       this.leftWall.addWallmount(this.individualHeight);
     }
+    this.updatePackageList();
   }
 
   addPost() {
@@ -67,6 +153,7 @@ export class CanvasComponent implements OnInit {
     } else if (this.leftWall) {
       this.leftWall.addPost(this.individualHeight);
     }
+    this.updatePackageList();
   }
 
   addGlass(secondHeight = -1) {
@@ -101,37 +188,30 @@ export class CanvasComponent implements OnInit {
         secondHeight,
       );
     }
-  }
-
-  clear() {
-    if (this.leftWall) this.leftWall.clear();
-    if (this.rightWall) this.rightWall.clear();
-  }
-
-  undo() {
-    if (this.rightWall && this.rightWall.undo()) return;
-    else if (this.leftWall) this.leftWall.undo();
-  }
-
-  changePackageListL(event) {
-    this.packageListL = event;
     this.updatePackageList();
   }
 
-  changePackageListR(event) {
-    this.packageListR = event;
+  clear() {
+    this.leftWall?.clear();
+    this.rightWall?.clear();
+    this.updatePackageList();
+  }
+
+  undo() {
+    if (this.rightWall && this.rightWall.undo()) {
+    } else if (this.leftWall) this.leftWall.undo();
     this.updatePackageList();
   }
 
   _updatePackageList(map, items) {
-    const glassType = '(' + this.glassType + ')';
+    const glassType = '(' + this._glassType + ')';
     let key: string;
     let size: string;
     items.forEach((item) => {
       size = `${+item.height.toFixed(2)}`;
-      if (item.type === 'Wallmount') {
+      if (item instanceof Wallmount) {
         key = 'Veggskinne';
-      } else if (item.type === 'Post') {
+      } else if (item instanceof Post) {
         key = 'Stolpe';
       } else {
         if (item.height !== item.secondHeight) {
@@ -150,10 +230,19 @@ export class CanvasComponent implements OnInit {
   }
 
   updatePackageList() {
-    const res = { weight: 0 };
-    this._updatePackageList(res, this.packageListL);
-    this._updatePackageList(res, this.packageListR);
-    this.packageList.emit(res);
+    const map = { weight: 0 };
+    if (this.leftWall) this._updatePackageList(map, this.leftWall.items);
+    if (this.rightWall) this._updatePackageList(map, this.rightWall.items);
+
+    const res = { weight: map.weight, list: [] };
+    delete map.weight;
+    Object.entries(map).map(([key, val]) => {
+      Object.entries(val).map(([size, num]) => {
+        res.list.push([key, size, num]);
+        key = '';
+      });
+    });
+    this.packageListChanged.emit(res);
   }
 }
 
