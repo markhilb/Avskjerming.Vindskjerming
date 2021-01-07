@@ -20,7 +20,7 @@ export class WallComponent implements OnInit {
 
   items: Item[] = [];
   selectedItem: Item;
-  editItem: { width: number; height: number; secondHeight: number };
+  editItem: EditItem;
   modalOpen = false;
   currentWidth = 0;
 
@@ -347,4 +347,10 @@ export class WallComponent implements OnInit {
   isPost = (item: Item): boolean => item instanceof Post;
 
   isGlass = (item: Item): boolean => item instanceof Glass;
+}
+
+interface EditItem {
+  width: number;
+  height: number;
+  secondHeight: number;
 }

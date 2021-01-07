@@ -16,15 +16,14 @@ export class HomePageComponent implements OnInit {
   orderNumber: string;
 
   glassType = 'klart';
+  transport = 'sendes';
   leftMount = 'wallmount';
   rightMount = 'post';
   globalWidth = 60;
   globalHeight = 60;
-  transport = 'sendes';
-
   individualWidth = 60;
   individualHeight = 60;
-  secondGlassHeight: number;
+  secondGlassHeight = 20;
 
   packageList = [];
   totalWeight: string;
@@ -59,23 +58,11 @@ export class HomePageComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  onSave() {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(this.blob);
-    a.download = 'filename';
-    a.click();
-  }
-
-  onLoad() {
-    document.getElementById('fileInput').click();
-  }
-
   _fileSelected(text: string) {
     try {
       const json = JSON.parse(text);
-      const items = json.items;
-      delete json.items;
       Object.entries(json).forEach(([key, val]) => (this[key] = val));
+      // TODO: Somehow load saved items
     } catch {}
   }
 
@@ -119,6 +106,15 @@ export class HomePageComponent implements OnInit {
     hidden.forEach((tag, i) => (tag.style.display = oldStyles[i]));
     this.canvas.toggleWrap();
   }
+
+  onSave() {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(this.blob);
+    a.download = this.orderNumber ?? 'vindskjerming';
+    a.click();
+  }
+
+  onLoad = () => document.getElementById('fileInput').click();
 
   onReset = () => this.canvas.clear();
 
