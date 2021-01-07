@@ -1,14 +1,20 @@
-<div class="menu">
-  <button class="save" (click)="onSave()">Lagre</button>
-  <button class="load" (click)="onLoad()">Last opp</button>
+<div id="export-header">
+  <img src="/assets/avskjerming-logo.jpg" />
+  <h2>Vindskjerming</h2>
+</div>
+
+<div class="menu hidden">
+  <button (click)="onSave()">Lagre</button>
+  <button (click)="onLoad()">Last opp</button>
+  <button (click)="onExport()">Eksporter</button>
   <div class="spacer"></div>
-  <button class="reset" (click)="onReset()">Reset</button>
-  <button class="undo" (click)="onUndo()">Angre</button>
+  <button (click)="onReset()">Reset</button>
+  <button (click)="onUndo()">Angre</button>
 </div>
 
 <div class="page">
   <div class="top-container">
-    <h2 style="text-align: center">Automatisk utregning</h2>
+    <h2 class="hidden" style="text-align: center">Automatisk utregning</h2>
     <div class="grid-center-right">
       <div class="center row">
         <div style="margin-right: 1rem">
@@ -37,7 +43,7 @@
     </div>
 
     <div class="second-row">
-      <div class="glass-type">
+      <div class="glass-type hidden">
         Glass type:
         <br />
         <select [(ngModel)]="glassType">
@@ -45,13 +51,22 @@
           <option value="frost">Frost</option>
         </select>
       </div>
-      <div class="left-mount">
+      <div class="transport">
+        Transport:
+        <br />
+        <select [(ngModel)]="transport">
+          <option value="sendes">Sendes</option>
+          <option value="hentes">Hentes</option>
+          <option value="monteres">Monteres</option>
+        </select>
+      </div>
+      <div class="left-mount hidden">
         <select [(ngModel)]="leftMount">
           <option value="post">Stolpe</option>
           <option value="wallmount">Veggskinne</option>
         </select>
       </div>
-      <div class="global row">
+      <div class="global row hidden">
         <div style="margin-right: 0.5rem">
           Global bredde:
           <br />
@@ -63,18 +78,10 @@
           <input type="number" [(ngModel)]="globalHeight" />
         </div>
       </div>
-      <div class="right-mount">
+      <div class="right-mount hidden">
         <select [(ngModel)]="rightMount">
           <option value="post">Stolpe</option>
           <option value="wallmount">Veggskinne</option>
-        </select>
-      </div>
-      <div class="transport">
-        Transport:
-        <br />
-        <select [(ngModel)]="transport">
-          <option value="sendes">Sendes</option>
-          <option value="hentes">Hentes</option>
         </select>
       </div>
       <table class="table">
@@ -99,6 +106,7 @@
 
   <div class="canvas">
     <app-canvas
+      id="canvas"
       #canvas
       (packageListChanged)="packageListChanged($event)"
       [totalWidthL]="totalWidthL"
@@ -113,7 +121,7 @@
     ></app-canvas>
   </div>
 
-  <div class="bottom-container">
+  <div class="bottom-container hidden">
     <h2 style="text-align: center">Manuel utregning</h2>
     <div class="grid-center-right container">
       <div class="center row">

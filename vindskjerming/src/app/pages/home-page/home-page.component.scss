@@ -116,3 +116,15 @@
     margin: auto 0.5rem;
   }
 }
+
+#export-header {
+  display: none;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  margin: 0 1rem 1rem 1rem;
+
+  img {
+    height: 60px;
+  }
+}

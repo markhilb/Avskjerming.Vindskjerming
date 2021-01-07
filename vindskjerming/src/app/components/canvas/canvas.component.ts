@@ -203,6 +203,10 @@ export class CanvasComponent implements OnInit {
     this.updatePackageList();
   }
 
+  toggleWrap() {
+    document.getElementById('container').classList.toggle('wrap');
+  }
+
   _updatePackageList(map, items) {
     const glassType = '(' + this._glassType + ')';
     let key: string;
