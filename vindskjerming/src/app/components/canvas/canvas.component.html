@@ -1,23 +1,23 @@
 <div id="container">
   <app-wall
     #leftWall
-    [totalWidth]="_totalWidthL"
-    [globalWidth]="_globalWidth"
-    [globalHeight]="_globalHeight"
-    [glassType]="_glassType"
+    [totalWidth]="totalWidthL"
+    [globalWidth]="globalWidth"
+    [globalHeight]="globalHeight"
     [individualWidth]="individualWidth"
     [individualHeight]="individualHeight"
-    [leftMount]="_leftMount"
+    [glassType]="glassType"
+    [leftMount]="leftMount"
     [rightMount]="leftWallRightMount"
   ></app-wall>
   <app-wall
     #rightWall
-    [totalWidth]="_totalWidthR"
-    [globalWidth]="_globalWidth"
-    [globalHeight]="_globalHeight"
-    [glassType]="_glassType"
+    [totalWidth]="totalWidthR"
+    [globalWidth]="globalWidth"
+    [globalHeight]="globalHeight"
     [individualWidth]="individualWidth"
     [individualHeight]="individualHeight"
-    [rightMount]="_rightMount"
+    [glassType]="glassType"
+    [rightMount]="rightMount"
   ></app-wall>
 </div>

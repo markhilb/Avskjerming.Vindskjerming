@@ -21,16 +21,26 @@ export class CanvasComponent implements OnInit {
 
   @Output() packageListChanged = new EventEmitter<any>();
 
-  _totalWidthL: number;
-  _totalWidthR: number;
-  _globalWidth: number;
-  _globalHeight: number;
-  _leftMount: string;
-  _rightMount: string;
-  _glassType: string;
+  @Input() totalWidthL: number;
+  @Input() totalWidthR: number;
+  @Input() globalWidth: number;
+  @Input() globalHeight: number;
+  @Input() individualWidth: number;
+  @Input() individualHeight: number;
+  @Input() glassType: string;
+  @Input() leftMount: string;
+  @Input() rightMount: string;
 
-  @Input() set totalWidthL(val: number) {
-    this._totalWidthL = val;
+  constructor() {}
+
+  ngOnInit(): void {}
+
+  get leftWallRightMount(): string {
+    return this.rightWall?.items.length > 0 ? 'post' : this.rightMount;
+  }
+
+  setTotalWidthL(val: number) {
+    this.totalWidthL = val;
     if (this.leftWall) {
       this.leftWall.totalWidth = val;
       this.leftWall.autoCalculate();
@@ -38,8 +48,8 @@ export class CanvasComponent implements OnInit {
     }
   }
 
-  @Input() set totalWidthR(val: number) {
-    this._totalWidthR = val;
+  setTotalWidthR(val: number) {
+    this.totalWidthR = val;
     if (this.rightWall) {
       this.rightWall.totalWidth = val;
       this.rightWall.autoCalculate();
@@ -47,8 +57,8 @@ export class CanvasComponent implements OnInit {
     }
   }
 
-  @Input() set globalWidth(val: number) {
-    this._globalWidth = val;
+  setGlobalWidth(val: number) {
+    this.globalWidth = val;
     if (val >= 10) {
       if (this.leftWall) {
         if (this.leftWall) {
@@ -65,8 +75,8 @@ export class CanvasComponent implements OnInit {
     this.updatePackageList();
   }
 
-  @Input() set globalHeight(val: number) {
-    this._globalHeight = val;
+  setGlobalHeight(val: number) {
+    this.globalHeight = val;
     if (val >= 10) {
       if (this.leftWall) {
         if (this.rightWall) {
@@ -83,16 +93,25 @@ export class CanvasComponent implements OnInit {
     this.updatePackageList();
   }
 
-  @Input() set leftMount(val: string) {
-    this._leftMount = val;
+  setGlassType(val: string) {
+    this.glassType = val;
+    if (this.leftWall && this.rightWall) {
+      this.leftWall.glassType = val;
+      this.rightWall.glassType = val;
+      this.updatePackageList();
+    }
+  }
+
+  setLeftMount(val: string) {
+    this.leftMount = val;
     if (this.leftWall?.items.length > 0) {
       this.leftWall.leftMount = val;
       this.updatePackageList();
     }
   }
 
-  @Input() set rightMount(val: string) {
-    this._rightMount = val;
+  setRightMount(val: string) {
+    this.rightMount = val;
     if (this.rightWall?.items.length > 0) {
       this.rightWall.rightMount = val;
       this.updatePackageList();
@@ -101,26 +120,6 @@ export class CanvasComponent implements OnInit {
       this.updatePackageList();
     }
   }
-
-  @Input() set glassType(val: string) {
-    this._glassType = val;
-    if (this.leftWall && this.rightWall) {
-      this.leftWall.glassType = val;
-      this.rightWall.glassType = val;
-      this.updatePackageList();
-    }
-  }
-
-  @Input() individualWidth: number;
-  @Input() individualHeight: number;
-
-  get leftWallRightMount(): string {
-    return this.rightWall?.items.length > 0 ? 'post' : this._rightMount;
-  }
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   addWallmount() {
     if (this.rightWall) {
@@ -208,7 +207,7 @@ export class CanvasComponent implements OnInit {
   }
 
   _updatePackageList(map, items) {
-    const glassType = '(' + this._glassType + ')';
+    const glassType = '(' + this.glassType + ')';
     let key: string;
     let size: string;
     items.forEach((item) => {
@@ -260,6 +259,12 @@ export class CanvasComponent implements OnInit {
     this._itemsAsJson(this.leftWall.items),
     this._itemsAsJson(this.rightWall.items),
   ];
+
+  loadItems(items, totalWidthL, totalWidthR) {
+    this.leftWall.loadItems(items[0], totalWidthL);
+    this.rightWall.loadItems(items[1], totalWidthR);
+    this.updatePackageList();
+  }
 }
 
 const setDefault = (map, key, val) => {

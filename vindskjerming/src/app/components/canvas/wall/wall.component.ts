@@ -338,6 +338,18 @@ export class WallComponent implements OnInit {
     this.updateCurrentWidth();
   }
 
+  loadItems(items, totalWidth) {
+    this.totalWidth = totalWidth;
+    items.forEach(([type, size]) => {
+      if (type === 'Wallmount') this.addWallmount(size, false);
+      else if (type === 'Post') this.addPost(size, false);
+      else {
+        size = size.split('x');
+        this.addGlass(+size[0], +size[1], +size[2]);
+      }
+    });
+  }
+
   closeModal = () => (this.modalOpen = false);
 
   ceil = (a: number): number => Math.ceil(a);
