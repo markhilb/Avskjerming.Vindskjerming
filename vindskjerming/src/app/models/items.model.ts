@@ -26,7 +26,7 @@ export class Wallmount extends Item {
 
   constructor(height: number) {
     super();
-    this.height = height;
+    this.height = +height.toFixed(2);
   }
 
   get weight(): number {
@@ -43,7 +43,7 @@ export class Post extends Item {
   constructor(height: number) {
     super();
     this.isLast = true;
-    this.height = height;
+    this.height = +height.toFixed(2);
   }
 
   set isLast(val: boolean) {
@@ -67,9 +67,9 @@ export class Glass extends Item {
     secondHeight?: number,
   ) {
     super();
-    this.width = width;
-    this.height = height;
-    this.secondHeight = secondHeight ?? height;
+    this.width = +width.toFixed(2);
+    this.height = +height.toFixed(2);
+    this.secondHeight = secondHeight ? +secondHeight.toFixed(2) : this.height;
     this.glassType = glassType;
   }
 
