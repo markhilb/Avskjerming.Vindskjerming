@@ -12,8 +12,6 @@ export class WallComponent implements OnInit {
   @Input() totalWidth: number;
   @Input() globalWidth: number;
   @Input() globalHeight: number;
-  @Input() individualWidth: number;
-  @Input() individualHeight: number;
   _leftMount: string;
   _rightMount: string;
   _glassType: string;
