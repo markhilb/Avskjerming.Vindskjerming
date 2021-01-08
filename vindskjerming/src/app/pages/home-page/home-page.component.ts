@@ -128,7 +128,8 @@ export class HomePageComponent implements OnInit {
       const items = json.items;
       delete json.items;
       Object.entries(json).forEach(([key, val]) => (this[key] = val));
-      this.canvas.loadItems(items, this._totalWidthL, this._totalWidthR)
+      this.canvas.loadItems(items, this._totalWidthL, this._totalWidthR);
+      (<HTMLInputElement>document.getElementById('fileInput')).value = null;
     } catch {}
   }
 
