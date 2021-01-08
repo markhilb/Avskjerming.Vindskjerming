@@ -197,9 +197,8 @@ export class CanvasComponent implements OnInit {
   }
 
   undo() {
-    if (this.rightWall && this.rightWall.undo()) {
-    } else if (this.leftWall) this.leftWall.undo();
-    this.updatePackageList();
+    if (this.rightWall?.undo() || this.leftWall?.undo())
+      this.updatePackageList();
   }
 
   toggleWrap() {
