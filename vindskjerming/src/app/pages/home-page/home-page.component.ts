@@ -177,7 +177,7 @@ export class HomePageComponent implements OnInit {
   onSave() {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(this.blob);
-    a.download = this.orderNumber ?? 'vindskjerming';
+    a.download = this.orderNumber ? this.orderNumber : 'vindskjerming';
     a.click();
   }
 
