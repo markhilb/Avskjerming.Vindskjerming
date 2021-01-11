@@ -1,6 +1,7 @@
 <div id="container">
   <app-wall
     #leftWall
+    (updatePackageList)="updatePackageList()"
     [totalWidth]="totalWidthL"
     [globalWidth]="globalWidth"
     [globalHeight]="globalHeight"
@@ -10,6 +11,7 @@
   ></app-wall>
   <app-wall
     #rightWall
+    (updatePackageList)="updatePackageList()"
     [totalWidth]="totalWidthR"
     [globalWidth]="globalWidth"
     [globalHeight]="globalHeight"

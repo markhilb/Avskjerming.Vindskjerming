@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { Item, Wallmount, Post, Glass } from '../../../models/items.model';
 import * as Config from '../../../config.json';
@@ -9,6 +9,8 @@ import * as Config from '../../../config.json';
   styleUrls: ['./wall.component.scss'],
 })
 export class WallComponent implements OnInit {
+  @Output() updatePackageList = new EventEmitter();
+
   @Input() totalWidth: number;
   @Input() globalWidth: number;
   @Input() globalHeight: number;
@@ -306,6 +308,7 @@ export class WallComponent implements OnInit {
 
     this.update();
     this.modalOpen = false;
+    this.updatePackageList.emit();
   }
 
   deleteItem(item: Item) {
@@ -315,6 +318,7 @@ export class WallComponent implements OnInit {
     this.update();
 
     this.modalOpen = false;
+    this.updatePackageList.emit();
   }
 
   clear() {
