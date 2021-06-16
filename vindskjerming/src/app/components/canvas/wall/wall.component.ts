@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { Item, Wallmount, Post, Glass } from '../../../models/items.model';
-import * as Config from '../../../config.json';
+import Config from '../../../config.json';
 
 @Component({
   selector: 'app-wall',
