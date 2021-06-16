@@ -3,6 +3,7 @@
     <div
       *ngIf="isWallmount(item)"
       class="wallmount pointer"
+      title="Rediger veggskinne"
       (click)="onEditItem(item)"
       [style.height.px]="item.height + 5"
       [style.backgroundColor]="item.color"
@@ -11,6 +12,7 @@
     <div
       *ngIf="isPost(item)"
       class="post pointer"
+      title="Rediger stolpe"
       (click)="onEditItem(item)"
       [style.height.px]="item.height + 5"
       [style.backgroundColor]="item.color"
@@ -29,6 +31,7 @@
       <div
         *ngIf="item.height > item.secondHeight"
         class="item pointer"
+        title="Rediger glass"
         (click)="onEditItem(item)"
         [style.borderTopWidth.px]="item.height - item.secondHeight"
         [style.borderLeftWidth.px]="ceil(item.width)"
@@ -38,6 +41,7 @@
       <div
         *ngIf="item.height <= item.secondHeight"
         class="item pointer"
+        title="Rediger glass"
         (click)="onEditItem(item)"
         [style.borderTopWidth.px]="item.secondHeight - item.height"
         [style.borderRightWidth.px]="ceil(item.width)"
