@@ -311,7 +311,7 @@ export class WallComponent implements OnInit {
     this.updatePackageList.emit();
   }
 
-  deleteItem(item: Item) {
+  deleteItem() {
     const index = this.items.indexOf(this.selectedItem);
     const num = index + 1 < this.items.length ? 2 : 1;
     this.items.splice(index, num);

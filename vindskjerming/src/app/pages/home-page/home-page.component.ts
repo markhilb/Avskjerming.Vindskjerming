@@ -133,7 +133,8 @@ export class HomePageComponent implements OnInit {
     } catch {}
   }
 
-  fileSelected(files: File[]) {
+  fileSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
     if (files.length === 1) {
       const fr = new FileReader();
       fr.onload = () => this._fileSelected(fr.result.toString());
@@ -148,9 +149,9 @@ export class HomePageComponent implements OnInit {
 
     // Hide all the unnecessary elements
     const hidden = Array.from(
-      document.getElementsByClassName('hidden') as HTMLCollectionOf<
-        HTMLElement
-      >,
+      document.getElementsByClassName(
+        'hidden',
+      ) as HTMLCollectionOf<HTMLElement>,
     );
     const oldStyles = [];
     hidden.forEach((tag) => {
