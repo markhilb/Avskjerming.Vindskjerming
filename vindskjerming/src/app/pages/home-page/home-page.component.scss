@@ -128,3 +128,13 @@
     height: 60px;
   }
 }
+
+@media print {
+  #export-header {
+    display: flex;
+  }
+
+  .no-print {
+    display: none;
+  }
+}
