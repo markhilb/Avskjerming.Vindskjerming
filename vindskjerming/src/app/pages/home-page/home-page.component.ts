@@ -31,7 +31,20 @@ export class HomePageComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Resize if needed before printing
+    window.onbeforeprint = () => {
+      // 700 = magic number (approx. width of a4 paper) 🤷
+      const canvas = document.getElementById('canvas');
+      if (canvas.offsetWidth > 700)
+        canvas.style.zoom = (100 / (canvas.offsetWidth / 700)).toFixed(0) + '%';
+    };
+
+    // Reset page after printing
+    window.onafterprint = () => {
+      document.getElementById('canvas').style.zoom = '100%';
+    };
+  }
 
   get totalWidthL(): number {
     return this._totalWidthL;
@@ -140,19 +153,6 @@ export class HomePageComponent implements OnInit {
       fr.onload = () => this._fileSelected(fr.result.toString());
       fr.readAsText(files[0]);
     }
-  }
-
-  onExport() {
-    // Resize if needed
-    // 700 = magic number (approx. width of a4 paper) 🤷
-    const canvas = document.getElementById('canvas');
-    if (canvas.offsetWidth > 700)
-      canvas.style.zoom = (100 / (canvas.offsetWidth / 700)).toFixed(0) + '%';
-
-    window.print();
-
-    // Reset page
-    canvas.style.zoom = '100%';
   }
 
   onSave() {
