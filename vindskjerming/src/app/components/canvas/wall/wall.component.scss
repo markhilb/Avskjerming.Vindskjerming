@@ -38,32 +38,33 @@
   }
 }
 
-.length-bar {
-  width: 100%;
-  height: 5px;
-  background-color: var(--black);
-  margin-top: 1rem;
-
-  .end {
-    position: relative;
-    width: 4px;
-    height: 15px;
+.length-bar-container {
+  .length-bar {
+    width: 100%;
+    height: 5px;
     background-color: var(--black);
-    top: -5px;
-  }
+    margin-top: 1rem;
 
-  .left {
-    left: 0;
-  }
+    .end {
+      position: relative;
+      width: 4px;
+      height: 15px;
+      background-color: var(--black);
+      top: -5px;
+    }
 
-  .right {
-    top: -20px;
-    left: calc(100% - 4px);
+    .left {
+      left: 0;
+    }
+
+    .right {
+      top: -20px;
+      left: calc(100% - 4px);
+    }
   }
 
   p {
     text-align: center;
-    margin: -1rem 0 0 0;
   }
 }
 
