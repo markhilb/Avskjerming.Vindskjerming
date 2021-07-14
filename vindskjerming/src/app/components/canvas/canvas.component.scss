@@ -5,12 +5,13 @@
   gap: 4rem;
   justify-content: center;
 
-  &.wrap {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
   app-wall {
     width: fit-content;
+  }
+}
+
+@media print {
+  #container {
+    flex-direction: column;
   }
 }

@@ -3,7 +3,7 @@
   <h2>Vindskjerming</h2>
 </div>
 
-<div class="menu hidden">
+<div class="menu no-print">
   <button (click)="onSave()">Lagre</button>
   <button (click)="onLoad()">Last opp</button>
   <input
@@ -20,7 +20,7 @@
 
 <div class="page">
   <div class="top-container">
-    <h2 class="hidden" style="text-align: center">Automatisk utregning</h2>
+    <h2 class="no-print" style="text-align: center">Automatisk utregning</h2>
     <div class="grid-center-right">
       <div class="center row">
         <div style="margin-right: 1rem">
@@ -49,7 +49,7 @@
     </div>
 
     <div class="second-row">
-      <div class="glass-type hidden">
+      <div class="glass-type no-print">
         Glass type:
         <br />
         <select [(ngModel)]="glassType">
@@ -66,13 +66,13 @@
           <option value="monteres">Monteres</option>
         </select>
       </div>
-      <div class="left-mount hidden">
+      <div class="left-mount no-print">
         <select [(ngModel)]="leftMount">
           <option value="post">Stolpe</option>
           <option value="wallmount">Veggskinne</option>
         </select>
       </div>
-      <div class="global row hidden">
+      <div class="global row no-print">
         <div style="margin-right: 0.5rem">
           Global bredde:
           <br />
@@ -84,7 +84,7 @@
           <input type="number" [(ngModel)]="globalHeight" />
         </div>
       </div>
-      <div class="right-mount hidden">
+      <div class="right-mount no-print">
         <select [(ngModel)]="rightMount">
           <option value="post">Stolpe</option>
           <option value="wallmount">Veggskinne</option>
@@ -127,7 +127,7 @@
     ></app-canvas>
   </div>
 
-  <div class="bottom-container hidden">
+  <div class="bottom-container no-print">
     <h2 style="text-align: center">Manuel utregning</h2>
     <div class="grid-center-right container">
       <div class="center row">

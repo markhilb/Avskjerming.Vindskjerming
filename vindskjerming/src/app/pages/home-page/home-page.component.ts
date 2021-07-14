@@ -143,26 +143,9 @@ export class HomePageComponent implements OnInit {
   }
 
   onExport() {
-    // Show header (logo + title)
-    const header = document.getElementById('export-header');
-    header.style.display = 'flex';
-
-    // Hide all the unnecessary elements
-    const hidden = Array.from(
-      document.getElementsByClassName(
-        'hidden',
-      ) as HTMLCollectionOf<HTMLElement>,
-    );
-    const oldStyles = [];
-    hidden.forEach((tag) => {
-      oldStyles.push(window.getComputedStyle(tag).display);
-      tag.style.display = 'none';
-    });
-
-    // Wrap canvas and resize if needed
-    this.canvas.toggleWrap();
-    const canvas = document.getElementById('canvas');
+    // Resize if needed
     // 700 = magic number (approx. width of a4 paper) 🤷
+    const canvas = document.getElementById('canvas');
     if (canvas.offsetWidth > 700)
       canvas.style.zoom = (100 / (canvas.offsetWidth / 700)).toFixed(0) + '%';
 
@@ -170,9 +153,6 @@ export class HomePageComponent implements OnInit {
 
     // Reset page
     canvas.style.zoom = '100%';
-    header.style.display = 'none';
-    hidden.forEach((tag, i) => (tag.style.display = oldStyles[i]));
-    this.canvas.toggleWrap();
   }
 
   onSave() {
