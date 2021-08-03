@@ -51,6 +51,7 @@
             "aot": true,
             "inlineStyleLanguage": "scss",
             "assets": [
+              "src/favicon.svg",
               "src/favicon.ico",
               "src/assets"
             ],

@@ -1,0 +1,8 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <ellipse stroke="#000" ry="200" rx="200" id="svg_1" cy="200" cx="200" fill="#000000"/>
+  <text stroke="#000" font-size="32" font-family="serif" font-style="normal" font-weight="bold" transform="matrix(9.50227 0 0 12.2991 -3036 -3205)" xml:space="preserve" text-anchor="start" id="svg_2" y="287.9477" x="328.45655" stroke-width="0" fill="#ffffff">H</text>
+  <rect transform="rotate(-90 200 200)" stroke="#000" id="svg_4" height="130" width="30" y="135" x="190" stroke-width="0" fill="#ffffff"/>
+ </g>
+</svg>
