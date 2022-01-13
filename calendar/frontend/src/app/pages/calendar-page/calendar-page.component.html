@@ -1,0 +1,201 @@
+<div id="header" class="row text-center w-100 py-2">
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div
+        class="btn btn-primary"
+        mwlCalendarPreviousView
+        [view]="view === CalendarView.Month ? CalendarView.Week : view"
+        [(viewDate)]="viewDate"
+      >
+        Forrige
+      </div>
+      <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">I dag</div>
+      <div
+        class="btn btn-primary"
+        mwlCalendarNextView
+        [view]="view === CalendarView.Month ? CalendarView.Week : view"
+        [excludeDays]="excludeDays"
+        [(viewDate)]="viewDate"
+      >
+        Neste
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h3 *ngIf="view === CalendarView.Day; else week">
+      {{ viewDate | date: 'd. MMM YYYY' }}
+    </h3>
+    <ng-template #week>
+      <h3>
+        {{ addDays(startOfWeek(viewDate), 1) | date: 'd. MMM' }}
+        -
+        {{ addDays(startOfWeek(viewDate), view === CalendarView.Month ? 12 : 5) | date: 'd. MMM YYYY' }}
+      </h3>
+    </ng-template>
+  </div>
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div
+        class="btn btn-primary"
+        (click)="changeView(CalendarView.Month)"
+        [class.active]="view === CalendarView.Month"
+      >
+        2 Uker
+      </div>
+      <div class="btn btn-primary" (click)="changeView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+        Uke
+      </div>
+      <div class="btn btn-primary" (click)="changeView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
+        Dag
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="calendar-body" [style.zoom]="zoom" [ngSwitch]="view">
+  <div *ngSwitchCase="CalendarView.Month" class="d-flex flex-row w-100">
+    <mwl-calendar-week-view
+      class="w-50"
+      [viewDate]="viewDate"
+      [events]="(events$ | async) ?? []"
+      [refresh]="refresh$"
+      [dayStartHour]="dayStart"
+      [dayEndHour]="dayEnd"
+      [excludeDays]="excludeDays"
+      (hourSegmentClicked)="newEvent($event)"
+      (eventClicked)="openModal($event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    ></mwl-calendar-week-view>
+    <mwl-calendar-week-view
+      class="w-50 second-week"
+      [viewDate]="nextWeekDate"
+      [events]="(events$ | async) ?? []"
+      [refresh]="refresh$"
+      [dayStartHour]="dayStart"
+      [dayEndHour]="dayEnd"
+      [excludeDays]="excludeDays"
+      (hourSegmentClicked)="newEvent($event)"
+      (eventClicked)="openModal($event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    ></mwl-calendar-week-view>
+  </div>
+  <mwl-calendar-week-view
+    *ngSwitchCase="CalendarView.Week"
+    [viewDate]="viewDate"
+    [events]="(events$ | async) ?? []"
+    [refresh]="refresh$"
+    [dayStartHour]="dayStart"
+    [dayEndHour]="dayEnd"
+    [excludeDays]="excludeDays"
+    (hourSegmentClicked)="newEvent($event)"
+    (eventClicked)="openModal($event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)"
+  ></mwl-calendar-week-view>
+  <mwl-calendar-day-view
+    *ngSwitchCase="CalendarView.Day"
+    [viewDate]="viewDate"
+    [events]="(events$ | async) ?? []"
+    [refresh]="refresh$"
+    [dayStartHour]="dayStart"
+    [dayEndHour]="dayEnd"
+    (hourSegmentClicked)="newEvent($event)"
+    (eventClicked)="openModal($event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)"
+  ></mwl-calendar-day-view>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div class="modal-header">
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      Tittel
+      <input class="form-control" type="text" [(ngModel)]="modalData.title" (keyup)="refresh$.next()" />
+    </div>
+    <div class="mt-4">
+      Detaljer
+      <textarea class="form-control" rows="3" [(ngModel)]="modalData.meta.details" (keyup)="refresh$.next()"></textarea>
+    </div>
+    <div class="mt-4">
+      Start
+      <input
+        class="form-control"
+        type="text"
+        mwlFlatpickr
+        [(ngModel)]="modalData.start"
+        (ngModelChange)="refresh$.next()"
+        [altInput]="true"
+        [convertModelValue]="true"
+        [enableTime]="true"
+        [time24hr]="true"
+        dateFormat="Y-m-dTH:i"
+        altFormat="F j, Y H:i"
+        placeholder="Not set"
+      />
+    </div>
+    <div class="mt-4">
+      Slutt
+      <input
+        class="form-control"
+        type="text"
+        mwlFlatpickr
+        [(ngModel)]="modalData.end"
+        (ngModelChange)="refresh$.next()"
+        [altInput]="true"
+        [convertModelValue]="true"
+        [enableTime]="true"
+        [time24hr]="true"
+        dateFormat="Y-m-dTH:i"
+        altFormat="F j, Y H:i"
+        placeholder="Not set"
+      />
+    </div>
+    <div class="mt-4">
+      Team
+      <div ngbDropdown>
+        <button class="btn btn-outline-primary" id="dropdownTeam" ngbDropdownToggle>
+          {{ modalData.meta.team.name ?? 'Velg team' }}
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownTeam">
+          <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="changeTeam(team)">
+            {{ team.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      Montører
+      <div class="d-flex align-items-center" *ngFor="let employee of modalData.meta.employees">
+        <input class="form-control mt-1 mr-2" type="text" [(ngModel)]="employee.name" />
+        <i class="fas fa-fw fa-trash-alt" (click)="removeEmployee(employee)"></i>
+      </div>
+      <div class="mt-1 col-1 mx-auto">
+        <div ngbDropdown>
+          <button class="btn btn-outline-primary" id="dropdownEmployee" ngbDropdownToggle>Velg montør</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownEmployee">
+            <button
+              ngbDropdownItem
+              *ngFor="let employee of availableEmployees(modalData) | async"
+              (click)="addEmployee(employee)"
+            >
+              {{ employee.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer d-flex justify-content-between">
+    <button type="button" class="btn btn-outline-danger" (click)="deleteEvent(modalData)">Slett</button>
+    <button
+      type="button"
+      class="btn btn-outline-success"
+      (click)="modalData.meta.id === 0 ? confirmNewEvent() : updateEvent()"
+    >
+      Lagre
+    </button>
+  </div>
+</ng-template>
