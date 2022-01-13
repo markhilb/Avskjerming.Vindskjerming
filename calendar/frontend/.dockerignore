@@ -1,0 +1,8 @@
+.docker/
+!.docker/nginx.conf
+node_modules/
+.angular/
+dist/
+.prettierrc
+README.md
+
