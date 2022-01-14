@@ -14,9 +14,12 @@ export interface TeamDto {
   name: string;
   primaryColor: string;
   secondaryColor: string;
+  disabled: boolean;
 }
 
 export interface EmployeeDto {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
+  color: string;
+  disabled: boolean;
 }

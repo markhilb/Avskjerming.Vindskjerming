@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Injectable, NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import {
   CalendarDateFormatter,
@@ -43,6 +43,7 @@ class CustomDateFormatter extends CalendarNativeDateFormatter {
     AppRoutingModule,
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     FlatpickrModule.forRoot(),
     CalendarModule.forRoot(

@@ -20,7 +20,7 @@ builder.Services.AddSqlSupport(builder.Configuration.GetSection("DatabaseSetting
 builder.Services.AddSingleton<ISqlSettings>(s => s.GetRequiredService<IOptions<SqlSettings>>().Value);
 
 builder.Services.AddMediatR(typeof(BaseHandler).Assembly);
-builder.Services.AddHostedService<SqlSchemaService>();
+// builder.Services.AddHostedService<SqlSchemaService>();
 
 var app = builder.Build();
 
