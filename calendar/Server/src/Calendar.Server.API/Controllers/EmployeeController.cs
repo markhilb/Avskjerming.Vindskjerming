@@ -14,7 +14,7 @@ namespace Calendar.Server.API.Controllers
     [Route("Employees")]
     public class EmployeeController : BaseController
     {
-        public EmployeeController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) {}
+        public EmployeeController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) { }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployeesAsync(CancellationToken cancellationToken) =>

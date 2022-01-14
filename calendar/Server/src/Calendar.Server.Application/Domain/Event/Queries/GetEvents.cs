@@ -18,7 +18,7 @@ namespace Calendar.Server.Application.Domain.Event.Queries
 
     public class GetEventsHandler : BaseHandler, IRequestHandler<GetEventsQuery, IEnumerable<EventDto>>
     {
-        public GetEventsHandler(DbConnection db) : base(db) { }
+        public GetEventsHandler(ISqlSettings settings) : base(settings) { }
 
         public async Task<IEnumerable<EventDto>> Handle(GetEventsQuery query, CancellationToken cancellationToken)
         {

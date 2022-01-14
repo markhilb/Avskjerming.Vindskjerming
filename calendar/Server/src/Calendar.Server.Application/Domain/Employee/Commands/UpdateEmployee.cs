@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Employee.Commands
 
     public class UpdateEmployeeHandler : BaseHandler, IRequestHandler<UpdateEmployeeCommand, bool>
     {
-        public UpdateEmployeeHandler(DbConnection db) : base(db) { }
+        public UpdateEmployeeHandler(ISqlSettings settings) : base(settings) { }
 
         public async Task<bool> Handle(UpdateEmployeeCommand command, CancellationToken cancellationToken)
         {

@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Employee.Queries
 
     public class GetEmployeesHandler : BaseHandler, IRequestHandler<GetEmployeesQuery, IEnumerable<EmployeeDto>>
     {
-        public GetEmployeesHandler(DbConnection db) : base(db) { }
+        public GetEmployeesHandler(ISqlSettings settings) : base(settings) { }
 
         public Task<IEnumerable<EmployeeDto>> Handle(GetEmployeesQuery query, CancellationToken cancellationToken) =>
             _db.QueryAsync<EmployeeDto>("SELECT * FROM Employees WHERE Disabled = 0");
