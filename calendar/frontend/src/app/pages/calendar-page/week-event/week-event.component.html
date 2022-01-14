@@ -1,0 +1,93 @@
+<ng-template
+  #defaultTemplate
+  let-weekEvent="weekEvent"
+  let-tooltipPlacement="tooltipPlacement"
+  let-eventClicked="eventClicked"
+  let-tooltipTemplate="tooltipTemplate"
+  let-tooltipAppendToBody="tooltipAppendToBody"
+  let-tooltipDisabled="tooltipDisabled"
+  let-tooltipDelay="tooltipDelay"
+  let-column="column"
+  let-daysInWeek="daysInWeek"
+>
+  <div
+    class="cal-event"
+    style="white-space: normal; line-height: 0.8rem"
+    [ngStyle]="{
+      backgroundColor: weekEvent.event.color?.primary,
+      borderColor: weekEvent.event.color?.secondary
+    }"
+    [mwlCalendarTooltip]="
+      !tooltipDisabled
+        ? (weekEvent.event.title
+          | calendarEventTitle
+            : (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip')
+            : weekEvent.tempEvent || weekEvent.event)
+        : ''
+    "
+    [tooltipPlacement]="tooltipPlacement"
+    [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
+    [tooltipTemplate]="tooltipTemplate"
+    [tooltipAppendToBody]="tooltipAppendToBody"
+    [tooltipDelay]="tooltipDelay"
+    (mwlClick)="eventClicked.emit({ sourceEvent: $event })"
+    (mwlKeydownEnter)="eventClicked.emit({ sourceEvent: $event })"
+    tabindex="0"
+    role="application"
+    [attr.aria-label]="
+      { event: weekEvent.tempEvent || weekEvent.event, locale: locale } | calendarA11y: 'eventDescription'
+    "
+  >
+    <mwl-calendar-event-actions
+      [event]="weekEvent.tempEvent || weekEvent.event"
+      [customTemplate]="eventActionsTemplate"
+    ></mwl-calendar-event-actions>
+    &ngsp;
+    <div class="w-100 h-100 d-flex flex-column" style="color: black">
+      <div style="overflow-y: hidden">
+        {{ weekEvent.event.title }}
+      </div>
+      <div *ngIf="weekEvent.event.meta.details" style="font-weight: bold">NB!</div>
+      <div>
+        <span *ngFor="let employee of weekEvent.event.meta.employees; let i = index" [style.color]="employee.color">
+          {{ employee.name }}
+          <span *ngIf="i < weekEvent.event.meta.employees.length - 1">,</span>
+        </span>
+      </div>
+    </div>
+    <!-- <mwl-calendar-event-title -->
+    <!--   [event]="weekEvent.tempEvent || weekEvent.event" -->
+    <!--   [customTemplate]="eventTitleTemplate" -->
+    <!--   [view]="daysInWeek === 1 ? 'day' : 'week'" -->
+    <!-- ></mwl-calendar-event-title> -->
+  </div>
+</ng-template>
+<ng-template
+  [ngTemplateOutlet]="customTemplate || defaultTemplate"
+  [ngTemplateOutletContext]="{
+    weekEvent: weekEvent,
+    tooltipPlacement: tooltipPlacement,
+    eventClicked: eventClicked,
+    tooltipTemplate: tooltipTemplate,
+    tooltipAppendToBody: tooltipAppendToBody,
+    tooltipDisabled: tooltipDisabled,
+    tooltipDelay: tooltipDelay,
+    column: column,
+    daysInWeek: daysInWeek
+  }"
+></ng-template>
+
+<!-- <ng-template #tooltip let-contents="contents" let-placement="placement" let-event="event"> -->
+<!--   <div class="cal-tooltip" [ngClass]="'cal-tooltip-' + placement"> -->
+<!--     <div class="cal-tooltip-arrow"></div> -->
+<!--     <div class="cal-tooltip-inner" [innerHtml]="contents"></div> -->
+<!--   </div> -->
+<!-- </ng-template> -->
+<!-- <ng-template -->
+<!--   [ngTemplateOutlet]="customTemplate || defaultTemplate" -->
+<!--   [ngTemplateOutletContext]="{ -->
+<!--     contents: contents, -->
+<!--     placement: placement, -->
+<!--     event: event -->
+<!--   }" -->
+<!-- ></ng-template> -->
