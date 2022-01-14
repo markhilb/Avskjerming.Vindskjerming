@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { addDays, addHours, startOfWeek } from 'date-fns';
@@ -61,6 +61,8 @@ const _createEvent = (start: Date, end: Date) =>
 })
 export class CalendarPageComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
+  @ViewChild('next', { static: false }) next?: ElementRef;
+  @ViewChild('previous', { static: false }) previous?: ElementRef;
 
   dayStart = 8;
   dayEnd = 17;
@@ -104,6 +106,14 @@ export class CalendarPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize();
+  }
+
+  @HostListener('document:keydown', ['$event']) keydown(event: KeyboardEvent) {
+    if (event.key == 'ArrowRight') {
+      this.next?.nativeElement.click();
+    } else if (event.key === 'ArrowLeft') {
+      this.previous?.nativeElement.click();
+    }
   }
 
   availableEmployees(event: CalendarEvent) {
