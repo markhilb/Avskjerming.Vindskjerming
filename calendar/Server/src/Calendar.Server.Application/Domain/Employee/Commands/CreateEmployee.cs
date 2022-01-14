@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Employee.Commands
 
     public class CreateEmployeeHandler : BaseHandler, IRequestHandler<CreateEmployeeCommand, long>
     {
-        public CreateEmployeeHandler(DbConnection db) : base(db) { }
+        public CreateEmployeeHandler(ISqlSettings settings) : base(settings) { }
 
         public Task<long> Handle(CreateEmployeeCommand command, CancellationToken cancellationToken)
         {

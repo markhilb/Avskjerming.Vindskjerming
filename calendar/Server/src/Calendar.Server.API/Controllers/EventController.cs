@@ -14,7 +14,7 @@ namespace Calendar.Server.API.Controllers
     [Route("Events")]
     public class EventController : BaseController
     {
-        public EventController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) {}
+        public EventController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) { }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(CancellationToken cancellationToken) =>

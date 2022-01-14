@@ -19,7 +19,7 @@ namespace Calendar.Server.Application.Domain.Event.Commands
 
     public class CreateEventHandler : BaseHandler, IRequestHandler<CreateEventCommand, long>
     {
-        public CreateEventHandler(DbConnection db) : base(db) { }
+        public CreateEventHandler(ISqlSettings settings) : base(settings) { }
 
         public async Task<long> Handle(CreateEventCommand command, CancellationToken cancellationToken)
         {

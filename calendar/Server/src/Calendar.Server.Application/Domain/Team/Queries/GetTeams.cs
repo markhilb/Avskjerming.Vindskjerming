@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Team.Queries
 
     public class GetTeamsHandler : BaseHandler, IRequestHandler<GetTeamsQuery, IEnumerable<TeamDto>>
     {
-        public GetTeamsHandler(DbConnection db) : base(db) { }
+        public GetTeamsHandler(ISqlSettings settings) : base(settings) { }
 
         public Task<IEnumerable<TeamDto>> Handle(GetTeamsQuery query, CancellationToken cancellationToken) =>
             _db.QueryAsync<TeamDto>("SELECT * FROM Teams WHERE Disabled = 0");

@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Team.Commands
 
     public class CreateTeamHandler : BaseHandler, IRequestHandler<CreateTeamCommand, long>
     {
-        public CreateTeamHandler(DbConnection db) : base(db) { }
+        public CreateTeamHandler(ISqlSettings settings) : base(settings) { }
 
         public Task<long> Handle(CreateTeamCommand command, CancellationToken cancellationToken)
         {
