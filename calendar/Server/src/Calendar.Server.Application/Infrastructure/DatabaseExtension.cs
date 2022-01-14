@@ -7,9 +7,7 @@ namespace Calendar.Server.Application.Infrastructure
     {
         public static DbConnection CreateSqlConnection(ISqlSettings settings)
         {
-            // var sqlConnection = new SqlConnection(sqlSettings.ConnectionString); // TODO: Fix this
-            var connection = new SqlConnection("Server=localhost,1433; Database=master; User Id=sa; Password=1234abcd<>%&");
-
+            var connection = new SqlConnection(settings.ConnectionString);
             connection.Open();
             return connection;
         }
