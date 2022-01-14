@@ -8,19 +8,23 @@
   </div>
   <div class="col-md-3">
     <div class="btn-group">
-      <div
+      <button
         class="btn btn-primary"
         (click)="changeView(CalendarView.Month)"
         [class.active]="view === CalendarView.Month"
       >
         2 Uker
-      </div>
-      <div class="btn btn-primary" (click)="changeView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="changeView(CalendarView.Week)"
+        [class.active]="view === CalendarView.Week"
+      >
         Uke
-      </div>
-      <div class="btn btn-primary" (click)="changeView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
+      </button>
+      <button class="btn btn-primary" (click)="changeView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
         Dag
-      </div>
+      </button>
     </div>
   </div>
   <div class="col-md-2">
@@ -40,7 +44,7 @@
   </div>
   <div class="col-md-3">
     <div class="btn-group">
-      <div
+      <button
         #previous
         class="btn btn-primary"
         mwlCalendarPreviousView
@@ -48,9 +52,9 @@
         [(viewDate)]="viewDate"
       >
         Forrige
-      </div>
-      <div #today class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">I dag</div>
-      <div
+      </button>
+      <button #today class="btn btn-primary" mwlCalendarToday [(viewDate)]="viewDate">I dag</button>
+      <button
         #next
         class="btn btn-primary"
         mwlCalendarNextView
@@ -59,7 +63,7 @@
         [(viewDate)]="viewDate"
       >
         Neste
-      </div>
+      </button>
     </div>
   </div>
 </div>
