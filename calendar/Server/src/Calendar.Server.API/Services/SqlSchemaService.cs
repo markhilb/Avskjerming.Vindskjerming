@@ -49,7 +49,7 @@ namespace Calendar.Server.API.Services
                             Details VARCHAR(255),
                             Start DATETIME,
                             ""End"" DATETIME,
-                            TeamId INT FOREIGN KEY (TeamId) REFERENCES Teams(Id),
+                            TeamId INT NULL FOREIGN KEY (TeamId) REFERENCES Teams(Id),
                         );
 
                         IF NOT EXISTS (

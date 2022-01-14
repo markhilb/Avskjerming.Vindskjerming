@@ -23,7 +23,7 @@ namespace Calendar.Server.Application.Domain.Event.Queries
         {
             var sql = @"SELECT *
                         FROM Events e
-                        INNER JOIN Teams t ON e.TeamId = t.Id";
+                        LEFT JOIN Teams t ON e.TeamId = t.Id";
 
             var events = await _db.QueryAsync<EventDto, TeamDto, EventDto>(sql, splitOn: "Id", map: (e, t) => { e.Team = t; return e; });
             foreach (var e in events)
