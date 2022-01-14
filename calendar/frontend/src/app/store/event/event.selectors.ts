@@ -21,7 +21,7 @@ export const selectCalendarEvents = createSelector(selectEvents, (state) =>
     start: event.start,
     end: event.end,
     title: event.title,
-    color: { primary: event.team.primaryColor, secondary: event.team.secondaryColor },
+    color: event.team ? { primary: event.team.primaryColor, secondary: event.team.secondaryColor } : { primary: '#ffffff', secondary: '#aaaaaa'},
     resizable: {
       beforeStart: true,
       afterEnd: true,
