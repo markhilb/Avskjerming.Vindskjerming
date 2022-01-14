@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseApi: 'http://localhost:5200/',
+  baseApi: 'https://calendar.hilbertsen.com:5200',
 };
