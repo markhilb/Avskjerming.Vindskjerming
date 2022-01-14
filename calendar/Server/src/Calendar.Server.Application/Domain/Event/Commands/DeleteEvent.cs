@@ -24,7 +24,6 @@ namespace Calendar.Server.Application.Domain.Event.Commands
             var deletedRows = await _db.ExecuteAsync(sql, command);
             await DeleteEventEmployees(command.EventId);
             return deletedRows == 1;
-
         }
 
         private async Task DeleteEventEmployees(long eventId)

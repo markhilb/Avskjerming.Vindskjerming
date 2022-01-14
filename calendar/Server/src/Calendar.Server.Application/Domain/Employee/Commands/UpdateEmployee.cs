@@ -20,7 +20,8 @@ namespace Calendar.Server.Application.Domain.Employee.Commands
         public async Task<bool> Handle(UpdateEmployeeCommand command, CancellationToken cancellationToken)
         {
             var sql = @"UPDATE Employees
-                        SET Name = @Name
+                        SET Name = @Name,
+                            Color = @Color
                         WHERE Id = @Id;";
 
             var updatedRows = await _db.ExecuteAsync(sql, command.Employee);

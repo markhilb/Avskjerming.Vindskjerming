@@ -20,10 +20,12 @@ namespace Calendar.Server.Application.Domain.Employee.Commands
         public Task<long> Handle(CreateEmployeeCommand command, CancellationToken cancellationToken)
         {
             var sql = @"INSERT INTO Employees (
-                            Name
+                            Name,
+                            Color
                         ) OUTPUT INSERTED.Id
                         VALUES (
-                            @Name
+                            @Name,
+                            @Color
                         );";
 
             return _db.QuerySingleAsync<long>(sql, command.Employee);
