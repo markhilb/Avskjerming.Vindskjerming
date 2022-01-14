@@ -1,6 +1,10 @@
 <div id="header" class="row text-center w-100 py-2">
-  <div class="col-md-3">
-    <h3>Uke {{ viewDate | date: 'w' }}</h3>
+  <div class="col-md-1">
+    <div class="me-auto" style="width: fit-content">
+      <a class="col-12" routerLink="/instillinger" style="color: black; font-size: 1.5rem">
+        <i class="fas fa-fw fa-cog"></i>
+      </a>
+    </div>
   </div>
   <div class="col-md-3">
     <div class="btn-group">
@@ -23,6 +27,9 @@
         Neste
       </div>
     </div>
+  </div>
+  <div class="col-md-2">
+    <h3>Uke {{ viewDate | date: 'w' }}</h3>
   </div>
   <div class="col-md-3">
     <h3 *ngIf="view === CalendarView.Day; else week">
