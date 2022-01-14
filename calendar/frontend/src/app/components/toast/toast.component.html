@@ -1,0 +1,7 @@
+<div *ngIf="toasts.length" class="toast-container column gapr-4">
+  <div *ngFor="let toast of toasts; let i = index" class="toast" [class]="toast.type" (click)="onDelete(i)">
+    <span class="mat-body-strong">{{ toast.message }}</span>
+    <i class="fas fa-times"></i>
+    <div class="progress-bar"></div>
+  </div>
+</div>
