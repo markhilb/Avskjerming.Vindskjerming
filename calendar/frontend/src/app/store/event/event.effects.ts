@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY } from 'rxjs';
 import { catchError, exhaustMap, map } from 'rxjs/operators';
 import { EventService } from 'src/app/services/api/event.service';
+import { ToastService } from 'src/app/services/toast.service';
 import * as A from './event.actions';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class EventEffects {
       exhaustMap(() =>
         this.eventService.getEvents().pipe(
           map((events) => A.getEventsOk({ events })),
-          catchError(() => EMPTY),
+          catchError((error) => this.toastService.error(error)),
         ),
       ),
     ),
@@ -25,7 +25,7 @@ export class EventEffects {
       exhaustMap((action) =>
         this.eventService.createEvent(action.event).pipe(
           map((id) => A.createEventOk({ event: { ...action.event, id } })),
-          catchError(() => EMPTY),
+          catchError((error) => this.toastService.error(error)),
         ),
       ),
     ),
@@ -37,7 +37,7 @@ export class EventEffects {
       exhaustMap((action) =>
         this.eventService.updateEvent(action.event).pipe(
           map(() => A.updateEventOk(action)),
-          catchError(() => EMPTY),
+          catchError((error) => this.toastService.error(error)),
         ),
       ),
     ),
@@ -49,11 +49,11 @@ export class EventEffects {
       exhaustMap((action) =>
         this.eventService.deleteEvent(action.id).pipe(
           map(() => A.deleteEventOk(action)),
-          catchError(() => EMPTY),
+          catchError((error) => this.toastService.error(error)),
         ),
       ),
     ),
   );
 
-  constructor(private actions: Actions, private eventService: EventService) {}
+  constructor(private actions: Actions, private eventService: EventService, private toastService: ToastService) {}
 }

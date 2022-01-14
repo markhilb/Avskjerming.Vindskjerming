@@ -1,0 +1,97 @@
+.toast-container {
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  padding-right: 2rem;
+  z-index: 10000;
+  overflow-x: hidden;
+}
+
+.toast {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 300px;
+  border-radius: 8px;
+  padding: 1.5rem;
+  cursor: pointer;
+  box-sizing: border-box;
+  overflow: hidden;
+  animation: fade-in-out 7s forwards;
+  color: rgba(0, 0, 0, 0.87);
+
+  &.success {
+    background: #03dac6;
+  }
+
+  &.error {
+    background: #f44336;
+  }
+
+  i {
+    display: none;
+  }
+
+  &:hover {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    i {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      top: 0;
+      right: 1.5rem;
+      height: 100%;
+      font-size: 2rem;
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .mat-body {
+    flex-grow: 1;
+  }
+
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.5);
+    animation: progress-bar 6.3s forwards linear;
+  }
+}
+
+@keyframes fade-in-out {
+  from,
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  10%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes progress-bar {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0;
+  }
+}
