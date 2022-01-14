@@ -155,7 +155,7 @@
   <div class="modal-body">
     <div>
       Tittel
-      <input class="form-control" type="text" [(ngModel)]="modalData.title" (keyup)="refresh$.next()" />
+      <input id="title" class="form-control" type="text" [(ngModel)]="modalData.title" (keyup)="refresh$.next()" />
     </div>
     <div class="mt-4">
       Detaljer
