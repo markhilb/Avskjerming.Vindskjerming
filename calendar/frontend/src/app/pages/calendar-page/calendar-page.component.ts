@@ -2,7 +2,6 @@ import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } f
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { addDays, addHours, endOfDay, endOfWeek, startOfDay, startOfWeek } from 'date-fns';
-import { Subject } from 'rxjs';
 import { EmployeeDto, EventDto, TeamDto } from 'src/app/models/event.model';
 import {
   AppState,
@@ -164,7 +163,7 @@ export class CalendarPageComponent implements OnInit {
   }
 
   openModal(event: CalendarEvent): void {
-    this.modalData = JSON.parse(JSON.stringify(event));
+    this.modalData = { ...event, meta: { ...event.meta } };
     this.modal.open(this.modalContent, { size: 'lg', centered: true });
   }
 
