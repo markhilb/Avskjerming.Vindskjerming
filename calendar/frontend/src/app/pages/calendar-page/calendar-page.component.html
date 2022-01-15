@@ -32,7 +32,7 @@
   </div>
   <div class="col-md-3">
     <h3 *ngIf="view === CalendarView.Day; else week">
-      {{ viewDate | date: 'd. MMM YYYY' }}
+      {{ viewDate | date: 'EEEE d. MMM YYYY' }}
     </h3>
     <ng-template #week>
       <h3>
