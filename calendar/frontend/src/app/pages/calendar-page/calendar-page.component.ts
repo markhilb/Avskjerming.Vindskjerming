@@ -101,7 +101,7 @@ export class CalendarPageComponent implements OnInit {
   }
 
   constructor(private store: Store<AppState>, private modal: NgbModal) {
-    store.dispatch(getEvents({ from: startOfWeek(this.viewDate), to: endOfWeek(this.viewDate) }));
+    this.fetchEvents();
     store.dispatch(getTeams());
     store.dispatch(getEmployees());
   }
@@ -129,8 +129,7 @@ export class CalendarPageComponent implements OnInit {
     }
   }
 
-  changeDate() {
-    console.log(this.viewDate);
+  fetchEvents() {
     this.store.dispatch(
       getEvents(
         this.view === CalendarView.Day
