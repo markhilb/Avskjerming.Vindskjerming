@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { EventDto } from 'src/app/models/event.model';
 
-export const getEvents = createAction('[Event] Get events', props<{from: Date, to: Date}>());
+export const getEvents = createAction('[Event] Get events', props<{ from: Date; to: Date }>());
 export const getEventsOk = createAction('[Event] Get events Ok', props<{ events: EventDto[] }>());
 
 export const createEvent = createAction('[Event] Create event', props<{ event: EventDto }>());

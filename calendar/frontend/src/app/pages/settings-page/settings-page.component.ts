@@ -2,14 +2,7 @@ import { ChangeDetectionStrategy, Component, TemplateRef, ViewChild } from '@ang
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { EmployeeDto, TeamDto } from 'src/app/models/event.model';
-import {
-  AppState,
-  createEmployee,
-  deleteEmployee,
-  getEmployees,
-  selectEmployees,
-  updateEmployee,
-} from 'src/app/store';
+import { AppState, createEmployee, deleteEmployee, getEmployees, selectEmployees, updateEmployee } from 'src/app/store';
 import { createTeam, deleteTeam, getTeams, selectTeams, updateTeam } from 'src/app/store/team';
 
 @Component({
