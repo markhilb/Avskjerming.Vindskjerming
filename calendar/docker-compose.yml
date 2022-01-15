@@ -11,6 +11,13 @@ services:
     build:
       context: Server
       dockerfile: .docker/Dockerfile
+    volumes:
+      - type: bind
+        source: /etc/letsencrypt/live/calendar.hilbertsen.com
+        target: /https/live/calendar.hilbertsen.com
+      - type: bind
+        source: /etc/letsencrypt/archive/calendar.hilbertsen.com
+        target: /https/archive/calendar.hilbertsen.com
     ports:
       - "5200:5100"
 
