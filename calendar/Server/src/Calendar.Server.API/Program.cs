@@ -1,3 +1,5 @@
+using System;
+using Dapper;
 using Calendar.Server.API.Services;
 using Calendar.Server.Application.Infrastructure;
 using MediatR;
@@ -15,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<SqlSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+SqlMapper.AddTypeMap(typeof(DateTime), System.Data.DbType.DateTime2);
 
 builder.Services.AddSingleton<ISqlSettings>(s => s.GetRequiredService<IOptions<SqlSettings>>().Value);
 

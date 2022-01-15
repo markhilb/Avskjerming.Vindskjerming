@@ -47,8 +47,8 @@ namespace Calendar.Server.API.Services
                             Id INT NOT NULL IDENTITY PRIMARY KEY,
                             Title VARCHAR(255),
                             Details VARCHAR(255),
-                            Start DATETIME,
-                            ""End"" DATETIME,
+                            Start DATETIME2,
+                            ""End"" DATETIME2,
                             TeamId INT NULL FOREIGN KEY (TeamId) REFERENCES Teams(Id),
                         );
 

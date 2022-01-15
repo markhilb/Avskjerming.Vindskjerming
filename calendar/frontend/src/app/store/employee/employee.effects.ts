@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY } from 'rxjs';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/services/api/employee.service';
 import * as A from './employee.actions';
 
@@ -10,7 +10,7 @@ export class EmployeeEffects {
   getEmployees$ = createEffect(() =>
     this.actions.pipe(
       ofType(A.getEmployees),
-      exhaustMap(() =>
+      switchMap(() =>
         this.employeeService.getEmployees().pipe(
           map((employees) => A.getEmployeesOk({ employees })),
           catchError(() => EMPTY),
