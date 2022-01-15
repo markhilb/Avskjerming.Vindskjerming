@@ -28,7 +28,8 @@ namespace Calendar.Server.Application.Domain.Event.Queries
                         FROM Events e
                         LEFT JOIN Teams t ON e.TeamId = t.Id
                         WHERE e.Start BETWEEN @From AND @To
-                           OR e.""End"" BETWEEN @From AND @To";
+                           OR e.""End"" BETWEEN @From AND @To
+                           OR (e.Start < @From AND e.""End"" > @To)";
 
             var events = await _db.QueryAsync<EventDto, TeamDto, EventDto>(sql, param: query, splitOn: "Id", map: (e, t) => { e.Team = t; return e; });
             await Task.WhenAll(events.Select(async e => e.Employees = await GetEmployees(e.Id)));
