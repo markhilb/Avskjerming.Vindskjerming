@@ -24,4 +24,3 @@ export class ToastComponent {
 
   onDelete = (idx: number) => this.toasts.splice(idx, 1);
 }
-
