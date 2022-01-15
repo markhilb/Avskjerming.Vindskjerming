@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY } from 'rxjs';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
 import { TeamService } from 'src/app/services/api/team.service';
 import * as A from './team.actions';
 
@@ -10,7 +10,7 @@ export class TeamEffects {
   getTeams$ = createEffect(() =>
     this.actions.pipe(
       ofType(A.getTeams),
-      exhaustMap(() =>
+      switchMap(() =>
         this.teamService.getTeams().pipe(
           map((teams) => A.getTeamsOk({ teams })),
           catchError(() => EMPTY),

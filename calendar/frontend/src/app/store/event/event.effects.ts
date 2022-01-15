@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
 import { EventService } from 'src/app/services/api/event.service';
 import { ToastService } from 'src/app/services/toast.service';
 import * as A from './event.actions';
@@ -10,8 +10,8 @@ export class EventEffects {
   getEvents$ = createEffect(() =>
     this.actions.pipe(
       ofType(A.getEvents),
-      exhaustMap(() =>
-        this.eventService.getEvents().pipe(
+      switchMap((action) =>
+        this.eventService.getEvents(action.from, action.to).pipe(
           map((events) => A.getEventsOk({ events })),
           catchError((error) => this.toastService.error(error)),
         ),

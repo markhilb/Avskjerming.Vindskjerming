@@ -7,7 +7,6 @@ import {
   createEmployee,
   deleteEmployee,
   getEmployees,
-  getEvents,
   selectEmployees,
   updateEmployee,
 } from 'src/app/store';
@@ -30,7 +29,6 @@ export class SettingsPageComponent {
   employees$ = this.store.select(selectEmployees);
 
   constructor(private modal: NgbModal, private store: Store<AppState>) {
-    store.dispatch(getEvents());
     store.dispatch(getTeams());
     store.dispatch(getEmployees());
   }

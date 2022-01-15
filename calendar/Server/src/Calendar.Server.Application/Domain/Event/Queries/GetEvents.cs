@@ -1,4 +1,6 @@
 using Dapper;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Calendar.Server.Application.Infrastructure;
@@ -12,7 +14,8 @@ namespace Calendar.Server.Application.Domain.Event.Queries
 {
     public class GetEventsQuery : IRequest<IEnumerable<EventDto>>
     {
-        public EventDto Event { get; set; }
+        public DateTime From { get; set; }
+        public DateTime To { get; set; } = DateTime.UtcNow;
     }
 
     public class GetEventsHandler : BaseHandler, IRequestHandler<GetEventsQuery, IEnumerable<EventDto>>
@@ -23,20 +26,19 @@ namespace Calendar.Server.Application.Domain.Event.Queries
         {
             var sql = @"SELECT *
                         FROM Events e
-                        LEFT JOIN Teams t ON e.TeamId = t.Id";
+                        LEFT JOIN Teams t ON e.TeamId = t.Id
+                        WHERE e.Start BETWEEN @From AND @To
+                           OR e.""End"" BETWEEN @From AND @To";
 
-            var events = await _db.QueryAsync<EventDto, TeamDto, EventDto>(sql, splitOn: "Id", map: (e, t) => { e.Team = t; return e; });
-            foreach (var e in events)
-                e.Employees = await GetEmployees(e.Id);
+            var events = await _db.QueryAsync<EventDto, TeamDto, EventDto>(sql, param: query, splitOn: "Id", map: (e, t) => { e.Team = t; return e; });
+            await Task.WhenAll(events.Select(async e => e.Employees = await GetEmployees(e.Id)));
 
             return events;
         }
 
         private Task<IEnumerable<EmployeeDto>> GetEmployees(long eventId)
         {
-            var sql = @"SELECT e.Id Id,
-                               e.Name Name,
-                               e.Color Color
+            var sql = @"SELECT e.*
                         FROM Employees e
                         INNER JOIN EventEmployees em ON em.EmployeeId = e.Id
                         WHERE em.EventId = @EventId";
