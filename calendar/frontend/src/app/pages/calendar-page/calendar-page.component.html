@@ -160,11 +160,11 @@
   <div class="modal-body">
     <div>
       Tittel
-      <input id="title" class="form-control" type="text" [(ngModel)]="modalData.title" />
+      <input id="title" class="form-control" type="text" [(ngModel)]="modalData.title" maxlength="255" />
     </div>
     <div class="mt-4">
       Detaljer
-      <textarea class="form-control" rows="3" [(ngModel)]="modalData.meta.details"></textarea>
+      <textarea class="form-control" rows="3" [(ngModel)]="modalData.meta.details" maxlength="255"></textarea>
     </div>
     <div class="mt-4">
       Start
@@ -193,6 +193,7 @@
         [convertModelValue]="true"
         [enableTime]="true"
         [time24hr]="true"
+        [minDate]="modalData.start"
         dateFormat="Y-m-dTH:i"
         altFormat="F j, Y H:i"
         placeholder="Not set"
