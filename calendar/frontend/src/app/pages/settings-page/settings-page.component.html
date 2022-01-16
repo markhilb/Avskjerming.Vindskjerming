@@ -86,7 +86,7 @@
   <div class="modal-body">
     <div>
       Navn
-      <input class="form-control" type="text" [(ngModel)]="modalTeam.name" />
+      <input class="form-control" type="text" [(ngModel)]="modalTeam.name" maxlength="255" />
     </div>
     <div class="mt-4">
       Hoved farge
@@ -117,7 +117,7 @@
   <div class="modal-body">
     <div>
       Navn
-      <input class="form-control" type="text" [(ngModel)]="modalEmployee.name" />
+      <input class="form-control" type="text" [(ngModel)]="modalEmployee.name" maxlength="255" />
     </div>
     <div class="mt-4">
       Farge
