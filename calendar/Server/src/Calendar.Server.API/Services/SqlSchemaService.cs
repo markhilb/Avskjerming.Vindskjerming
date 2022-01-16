@@ -60,9 +60,22 @@ namespace Calendar.Server.API.Services
                             Id INT NOT NULL IDENTITY PRIMARY KEY,
                             EventId INT FOREIGN KEY (EventId) REFERENCES Events(Id),
                             EmployeeId INT FOREIGN KEY (EmployeeId) REFERENCES Employees(Id),
-                        );";
+                        );
 
-            await _db.ExecuteAsync(sql);
+                        IF NOT EXISTS (
+                            SELECT name
+                            FROM sys.tables
+                            WHERE name = 'Password'
+                        ) CREATE TABLE Password (
+                            Id INT NOT NULL IDENTITY PRIMARY KEY,
+                            Hash VARCHAR(256) NOT NULL,
+                        );
+
+                        INSERT INTO Password (Hash)
+                        SELECT @Hash
+                        WHERE NOT EXISTS (SELECT * FROM Password);";
+
+            await _db.ExecuteAsync(sql, new { Hash = BaseHandler.ComputeSHA256Hash("passord") });
         }
 
         public Task StopAsync(CancellationToken cancellationToken) =>
