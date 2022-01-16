@@ -1,0 +1,15 @@
+<form [formGroup]="fg" (ngSubmit)="login()" class="border p-5">
+  Passord
+  <input
+    id="password"
+    class="form-control"
+    [class.error]="!fg.controls['password'].valid && fg.controls['password'].touched"
+    type="password"
+    formControlName="password"
+  />
+  <div *ngIf="loginFailed" class="error-message">Feil passord</div>
+
+  <div class="ml-auto" style="width: fit-content">
+    <button class="btn btn-primary ms-auto mt-2">Login</button>
+  </div>
+</form>

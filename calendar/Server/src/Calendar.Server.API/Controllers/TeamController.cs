@@ -7,17 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Calendar.Server.Application.Domain.Team.Commands;
 using Calendar.Server.Application.Domain.Team.Queries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Calendar.Server.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("Teams")]
     public class TeamController : BaseController
     {
         public TeamController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeamsAsync(CancellationToken cancellationToken) =>
+        public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeams(CancellationToken cancellationToken) =>
             Ok(await _mediator.Send(new GetTeamsQuery(), cancellationToken));
 
         [HttpPost]
@@ -29,7 +31,7 @@ namespace Calendar.Server.API.Controllers
             Ok(await _mediator.Send(new UpdateTeamCommand { Team = teamDto }, cancellationToken));
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteTeamAsync(long id, CancellationToken cancellationToken) =>
+        public async Task<ActionResult<bool>> DeleteTeam(long id, CancellationToken cancellationToken) =>
             Ok(await _mediator.Send(new DeleteTeamCommand { TeamId = id }, cancellationToken));
     }
 }

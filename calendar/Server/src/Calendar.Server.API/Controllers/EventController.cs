@@ -8,10 +8,12 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Calendar.Server.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("Events")]
     public class EventController : BaseController
     {
@@ -27,11 +29,11 @@ namespace Calendar.Server.API.Controllers
             Ok(await _mediator.Send(new CreateEventCommand { Event = eventDto }, cancellationToken));
 
         [HttpPut]
-        public async Task<ActionResult<bool>> UpdateEventAsync([FromBody] EventDto eventDto, CancellationToken cancellationToken) =>
+        public async Task<ActionResult<bool>> UpdateEvent([FromBody] EventDto eventDto, CancellationToken cancellationToken) =>
             Ok(await _mediator.Send(new UpdateEventCommand { Event = eventDto }, cancellationToken));
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteEventAsync(long id, CancellationToken cancellationToken) =>
+        public async Task<ActionResult<bool>> DeleteEvent(long id, CancellationToken cancellationToken) =>
             Ok(await _mediator.Send(new DeleteEventCommand { EventId = id }, cancellationToken));
     }
 }
