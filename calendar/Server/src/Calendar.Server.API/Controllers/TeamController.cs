@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Calendar.Server.API.Controllers
 {
     [ApiController]
-    [Authorize]
+    // [Authorize]
     [Route("Teams")]
     public class TeamController : BaseController
     {
