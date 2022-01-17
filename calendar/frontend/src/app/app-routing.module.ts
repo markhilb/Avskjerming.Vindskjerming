@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: '',
     component: CalendarPageComponent,
-    canActivate: [AuthenticationGuard],
+    // canActivate: [AuthenticationGuard],
   },
   {
     path: 'login',
@@ -19,7 +19,7 @@ const routes: Routes = [
   {
     path: 'instillinger',
     component: SettingsPageComponent,
-    canActivate: [AuthenticationGuard],
+    // canActivate: [AuthenticationGuard],
   },
 
   // Must be at the bottom
