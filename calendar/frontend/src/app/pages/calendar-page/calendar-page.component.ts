@@ -133,7 +133,9 @@ export class CalendarPageComponent implements OnInit {
       getEvents(
         this.view === CalendarView.Day
           ? { from: startOfDay(this.viewDate), to: endOfDay(this.viewDate) }
-          : { from: startOfWeek(this.viewDate), to: endOfWeek(this.viewDate) },
+          : this.view === CalendarView.Week
+          ? { from: startOfWeek(this.viewDate), to: endOfWeek(this.viewDate) }
+          : { from: startOfWeek(this.viewDate), to: endOfWeek(addDays(this.viewDate, 7)) },
       ),
     );
   }
