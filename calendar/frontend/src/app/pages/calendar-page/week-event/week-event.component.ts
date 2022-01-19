@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/co
 import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 import { WeekViewAllDayEventResize } from 'angular-calendar/modules/week/calendar-week-view.component';
 import { WeekViewHourColumn, WeekViewTimeEvent } from 'calendar-utils';
+import { EmployeeDto } from 'src/app/models/event.model';
 
 @Component({
   selector: 'app-week-event',
@@ -36,4 +37,16 @@ export class WeekEventComponent {
   @Output() eventClicked = new EventEmitter<{
     sourceEvent: MouseEvent | KeyboardEvent;
   }>();
+
+  get tooltipContent() {
+    const event = (this.weekEvent as WeekViewTimeEvent).event;
+    let content = `<div>${event.title.toUpperCase()}</div>`;
+
+    if (event.meta.details) content += `<div>${event.meta.details}</div>`;
+
+    if (event.meta.employees?.length)
+      content += `<div>${event.meta.employees.map((e: EmployeeDto) => `<span>${e.name}</span>`)}</div>`;
+
+    return content;
+  }
 }
