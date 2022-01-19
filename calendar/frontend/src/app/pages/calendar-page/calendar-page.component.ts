@@ -67,8 +67,8 @@ export class CalendarPageComponent implements OnInit {
 
   weekTemplate?: TemplateRef<any>;
 
-  dayStart = 8;
-  dayEnd = 20;
+  dayStart = 7;
+  dayEnd = 22;
   excludeDays = [0, 6];
 
   CalendarView = CalendarView;
@@ -100,6 +100,7 @@ export class CalendarPageComponent implements OnInit {
   }
 
   constructor(private store: Store<AppState>, private modal: NgbModal) {
+    // setInterval(() => console.log('here'), 1000);
     this.fetchEvents();
     store.dispatch(getTeams());
     store.dispatch(getEmployees());
