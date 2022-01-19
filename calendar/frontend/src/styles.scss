@@ -2,3 +2,18 @@
 
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+
+form {
+  width: clamp(0rem, 60rem, 60rem);
+  max-width: 100%;
+  margin: auto;
+  margin-top: 2rem;
+}
+
+.error {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+}

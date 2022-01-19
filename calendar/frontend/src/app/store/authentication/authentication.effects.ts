@@ -50,6 +50,24 @@ export class AuthenticationEffects {
     ),
   );
 
+  changePassword$ = createEffect(() =>
+    this.actions.pipe(
+      ofType(A.changePassword),
+      exhaustMap((action) =>
+        this.authService.changePassword(action.oldPassword, action.newPassword).pipe(
+          map((ok) => {
+            if (ok) {
+              this.toastService.success('Passord endret');
+              return A.changePasswordOk();
+            }
+            return A.changePasswordFailed();
+          }),
+          catchError((error) => this.toastService.error(error)),
+        ),
+      ),
+    ),
+  );
+
   constructor(
     private actions: Actions,
     private authService: AuthenticationService,

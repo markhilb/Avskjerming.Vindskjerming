@@ -29,6 +29,7 @@ import { ToastComponent } from './components/toast/toast.component';
 import localeNo from '@angular/common/locales/no';
 import { metaReducers } from './store/app.reducers';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 
 @Injectable()
 class CustomDateFormatter extends CalendarNativeDateFormatter {
@@ -50,7 +51,7 @@ class CustomDateFormatter extends CalendarNativeDateFormatter {
 registerLocaleData(localeNo);
 
 @NgModule({
-  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent, ToastComponent, LoginPageComponent],
+  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent, ToastComponent, LoginPageComponent, ChangePasswordComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
