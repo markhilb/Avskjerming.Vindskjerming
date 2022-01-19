@@ -16,6 +16,8 @@ import {
 } from 'src/app/store';
 import { Store } from '@ngrx/store';
 import { getTeams, selectTeams } from 'src/app/store/team';
+import { interval } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface MetaData {
   id: number;
@@ -54,6 +56,7 @@ const _createEvent = (start: Date, end: Date) =>
     },
   } as CalendarEvent<MetaData>);
 
+@UntilDestroy()
 @Component({
   selector: 'app-calendar-page',
   templateUrl: './calendar-page.component.html',
@@ -76,6 +79,8 @@ export class CalendarPageComponent implements OnInit {
 
   startOfWeek = startOfWeek;
   addDays = addDays;
+
+  currentWeek = new Date();
 
   viewDate = new Date();
   get nextWeekDate() {
@@ -102,12 +107,22 @@ export class CalendarPageComponent implements OnInit {
   constructor(private store: Store<AppState>, private modal: NgbModal) {
     // setInterval(() => console.log('here'), 1000);
     this.fetchEvents();
+    interval(1000 * 60 * 5)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.fetchEvents());
+
     store.dispatch(getTeams());
     store.dispatch(getEmployees());
-  }
 
-  ngOnInit(): void {
-    this.onResize();
+    interval(5000 * 60 * 60)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        if (!isSameWeek(new Date(), this.currentWeek)) {
+          this.currentWeek = new Date();
+          this.viewDate = this.nextWeekDate;
+          this.fetchEvents();
+        }
+      });
   }
 
   @HostListener('document:keydown', ['$event']) keydown(event: KeyboardEvent) {
@@ -136,7 +151,7 @@ export class CalendarPageComponent implements OnInit {
           ? { from: startOfDay(this.viewDate), to: endOfDay(this.viewDate) }
           : this.view === CalendarView.Week
           ? { from: startOfWeek(this.viewDate), to: endOfWeek(this.viewDate) }
-          : { from: startOfWeek(this.viewDate), to: endOfWeek(addDays(this.viewDate, 7)) },
+          : { from: startOfWeek(this.viewDate), to: endOfWeek(this.nextWeekDate) },
       ),
     );
   }
