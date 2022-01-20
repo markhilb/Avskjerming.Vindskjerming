@@ -35,8 +35,7 @@ namespace Calendar.Server.Application.Domain.Event.Queries
         private Task<IEnumerable<EmployeeDto>> GetEmployees(long eventId)
         {
             var sql = @"SELECT e.Id Id,
-                               e.Name Name,
-                               e.Color Color
+                               e.Name Name
                         FROM Employees e
                         INNER JOIN EventEmployees em ON em.EmployeeId = e.Id
                         WHERE em.EventId = @EventId";
