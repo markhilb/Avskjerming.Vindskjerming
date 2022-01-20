@@ -214,18 +214,10 @@
     </div>
     <div class="mt-4">
       Montører
-      <table class="table">
-        <tbody>
-          <tr *ngFor="let employee of modalData.meta.employees">
-            <td class="w-100">
-              {{ employee.name }}
-            </td>
-            <td>
-              <i class="fas fa-fw fa-trash-alt" (click)="removeEmployee(employee)"></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="d-flex align-items-center" *ngFor="let employee of modalData.meta.employees">
+        <input class="form-control mt-1 mr-2" type="text" [(ngModel)]="employee.name" />
+        <i class="fas fa-fw fa-trash-alt" (click)="removeEmployee(employee)"></i>
+      </div>
       <div class="mt-1">
         <div ngbDropdown>
           <button class="btn btn-outline-primary" id="dropdownEmployee" ngbDropdownToggle>Velg montør</button>
