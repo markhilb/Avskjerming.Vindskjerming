@@ -1,8 +1,5 @@
 <div id="header" class="row text-center w-100 py-2">
-  <div class="col-md-3">
-    <h3>Uke {{ viewDate | date: 'w' }}</h3>
-  </div>
-  <div class="col-md-3">
+  <div class="col-md-4">
     <div class="btn-group">
       <div
         class="btn btn-primary"
@@ -24,7 +21,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-4">
     <h3 *ngIf="view === CalendarView.Day; else week">
       {{ viewDate | date: 'd. MMM YYYY' }}
     </h3>
@@ -36,7 +33,7 @@
       </h3>
     </ng-template>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-4">
     <div class="btn-group">
       <div
         class="btn btn-primary"
