@@ -15,5 +15,5 @@ export class EmployeeService {
 
   updateEmployee = (event: EmployeeDto): Observable<boolean> => this.api.put<boolean>('Employees', {}, event);
 
-  deleteEmployee = (id: number): Observable<boolean> => this.api.delete<boolean>('Employees/' + id);
+  deleteEmployee = (id: number): Observable<boolean> => this.api.delete<boolean>('Employee/' + id);
 }

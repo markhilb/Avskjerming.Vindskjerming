@@ -36,7 +36,6 @@ namespace Calendar.Server.Application.Domain.Schema.Commands
                         ) CREATE TABLE Employees (
                             Id INT NOT NULL IDENTITY PRIMARY KEY,
                             Name VARCHAR(255),
-                            Color VARCHAR(9),
                             Disabled BIT DEFAULT 0
                         );
 

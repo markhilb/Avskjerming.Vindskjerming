@@ -24,6 +24,7 @@ namespace Calendar.Server.Application.Domain.Team.Commands
 
             var deletedRows = await _db.ExecuteAsync(sql, command);
             return deletedRows == 1;
+
         }
     }
 }

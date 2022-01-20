@@ -25,11 +25,15 @@ namespace Calendar.Server.API.Controllers
             Ok(await _mediator.Send(new CreateEmployeeCommand { Employee = employeeDto }, cancellationToken));
 
         [HttpPut]
-        public async Task<ActionResult<bool>> UpdateEmployee([FromBody] EmployeeDto employeeDto, CancellationToken cancellationToken) =>
-            Ok(await _mediator.Send(new UpdateEmployeeCommand { Employee = employeeDto }, cancellationToken));
+        public ActionResult<bool> UpdateEmployee([FromBody] EmployeeDto employeeDto)
+        {
+            return Ok(true);
+        }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteEmployee(long id, CancellationToken cancellationToken) =>
-            Ok(await _mediator.Send(new DeleteEmployeeCommand { EmployeeId = id }, cancellationToken));
+        public ActionResult<bool> DeleteEmployee(long id)
+        {
+            return Ok(true);
+        }
     }
 }

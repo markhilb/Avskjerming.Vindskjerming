@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Calendar.Server.Application.Infrastructure;
 using MediatR;
-using System;
 
 namespace Calendar.Server.Application.Domain.Employee.Commands
 {
@@ -24,8 +23,8 @@ namespace Calendar.Server.Application.Domain.Employee.Commands
                         WHERE Id = @EmployeeId;";
 
             var deletedRows = await _db.ExecuteAsync(sql, command);
-            Console.WriteLine(deletedRows);
             return deletedRows == 1;
+
         }
     }
 }

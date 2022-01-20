@@ -15,5 +15,5 @@ export class TeamService {
 
   updateTeam = (event: TeamDto): Observable<boolean> => this.api.put<boolean>('Teams', {}, event);
 
-  deleteTeam = (id: number): Observable<boolean> => this.api.delete<boolean>('Teams/' + id);
+  deleteTeam = (id: number): Observable<boolean> => this.api.delete<boolean>('Team/' + id);
 }
