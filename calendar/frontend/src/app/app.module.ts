@@ -27,8 +27,6 @@ import { appEffects, appReducers } from './store';
 import { WeekEventComponent } from './pages/calendar-page/week-event/week-event.component';
 import { ToastComponent } from './components/toast/toast.component';
 import localeNo from '@angular/common/locales/no';
-import { metaReducers } from './store/app.reducers';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 @Injectable()
 class CustomDateFormatter extends CalendarNativeDateFormatter {
@@ -50,7 +48,7 @@ class CustomDateFormatter extends CalendarNativeDateFormatter {
 registerLocaleData(localeNo);
 
 @NgModule({
-  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent, ToastComponent, LoginPageComponent],
+  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent, ToastComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -73,7 +71,7 @@ registerLocaleData(localeNo);
       },
     ),
     NgbModule,
-    StoreModule.forRoot(appReducers, { metaReducers }),
+    StoreModule.forRoot(appReducers, {}),
     EffectsModule.forRoot(appEffects),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
