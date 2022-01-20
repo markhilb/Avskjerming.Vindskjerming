@@ -29,13 +29,6 @@ import { ToastComponent } from './components/toast/toast.component';
 
 @Injectable()
 class CustomDateFormatter extends CalendarNativeDateFormatter {
-  override dayViewHour({ date }: DateFormatterParams): string {
-    return new Intl.DateTimeFormat('no-NO', {
-      hour: 'numeric',
-      minute: 'numeric',
-    }).format(date);
-  }
-
   override weekViewHour({ date }: DateFormatterParams): string {
     return new Intl.DateTimeFormat('no-NO', {
       hour: 'numeric',
