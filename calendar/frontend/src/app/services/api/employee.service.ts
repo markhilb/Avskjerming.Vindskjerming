@@ -4,7 +4,7 @@ import { EmployeeDto } from 'src/app/models/event.model';
 import { BaseApiService } from './base-api.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class EmployeeService {
   constructor(private api: BaseApiService) {}

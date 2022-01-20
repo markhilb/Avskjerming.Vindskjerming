@@ -74,7 +74,6 @@
       [dayStartHour]="dayStart"
       [dayEndHour]="dayEnd"
       [excludeDays]="excludeDays"
-      [eventTemplate]="weekTemplate"
       (hourSegmentClicked)="newEvent($event)"
       (eventClicked)="openModal($event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
@@ -87,7 +86,6 @@
       [dayStartHour]="dayStart"
       [dayEndHour]="dayEnd"
       [excludeDays]="excludeDays"
-      [eventTemplate]="weekTemplate"
       (hourSegmentClicked)="newEvent($event)"
       (eventClicked)="openModal($event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
@@ -101,7 +99,6 @@
     [dayStartHour]="dayStart"
     [dayEndHour]="dayEnd"
     [excludeDays]="excludeDays"
-    [eventTemplate]="weekTemplate"
     (hourSegmentClicked)="newEvent($event)"
     (eventClicked)="openModal($event.event)"
     (eventTimesChanged)="eventTimesChanged($event)"
@@ -113,38 +110,11 @@
     [refresh]="refresh$"
     [dayStartHour]="dayStart"
     [dayEndHour]="dayEnd"
-    [eventTemplate]="weekTemplate"
     (hourSegmentClicked)="newEvent($event)"
     (eventClicked)="openModal($event.event)"
     (eventTimesChanged)="eventTimesChanged($event)"
   ></mwl-calendar-day-view>
 </div>
-
-<ng-template
-  #weekTemplate
-  let-weekEvent="weekEvent"
-  let-tooltipPlacement="tooltipPlacement"
-  let-eventClicked="eventClicked"
-  let-tooltipTemplate="tooltipTemplate"
-  let-tooltipAppendToBody="tooltipAppendToBody"
-  let-tooltipDelay="tooltipDelay"
-  let-daysInWeek="daysInWeek"
->
-  <app-week-event
-    [weekEvent]="weekEvent"
-    [tooltipPlacement]="tooltipPlacement"
-    [tooltipTemplate]="tooltipTemplate"
-    [tooltipAppendToBody]="tooltipAppendToBody"
-    [tooltipDelay]="tooltipDelay"
-    [daysInWeek]="daysInWeek"
-    (eventClicked)="
-      eventClicked.emit({
-        event: weekEvent.event,
-        sourceEvent: $event.sourceEvent
-      })
-    "
-  ></app-week-event>
-</ng-template>
 
 <ng-template #modalContent let-close="close">
   <div class="modal-header">

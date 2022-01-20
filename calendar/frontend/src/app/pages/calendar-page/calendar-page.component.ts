@@ -65,8 +65,6 @@ export class CalendarPageComponent implements OnInit {
   @ViewChild('previous', { static: false }) previous?: ElementRef;
   @ViewChild('today', { static: false }) today?: ElementRef;
 
-  weekTemplate?: TemplateRef<any>
-
   dayStart = 8;
   dayEnd = 17;
   excludeDays = [0, 6];

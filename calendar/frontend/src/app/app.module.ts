@@ -24,7 +24,6 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { appEffects, appReducers } from './store';
-import { WeekEventComponent } from './pages/calendar-page/week-event/week-event.component';
 
 @Injectable()
 class CustomDateFormatter extends CalendarNativeDateFormatter {
@@ -37,7 +36,7 @@ class CustomDateFormatter extends CalendarNativeDateFormatter {
 }
 
 @NgModule({
-  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent],
+  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
