@@ -1,6 +1,6 @@
-import { CommonModule, registerLocaleData } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Injectable, LOCALE_ID, NgModule } from '@angular/core';
+import { Injectable, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import {
@@ -26,7 +26,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { appEffects, appReducers } from './store';
 import { WeekEventComponent } from './pages/calendar-page/week-event/week-event.component';
 import { ToastComponent } from './components/toast/toast.component';
-import localeNo from '@angular/common/locales/no';
 
 @Injectable()
 class CustomDateFormatter extends CalendarNativeDateFormatter {
@@ -44,8 +43,6 @@ class CustomDateFormatter extends CalendarNativeDateFormatter {
     }).format(date);
   }
 }
-
-registerLocaleData(localeNo);
 
 @NgModule({
   declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent, ToastComponent],
@@ -78,7 +75,7 @@ registerLocaleData(localeNo);
       logOnly: environment.production,
     }),
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'no-NO' }],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
