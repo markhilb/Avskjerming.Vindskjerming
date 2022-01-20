@@ -1,4 +1,6 @@
+using System;
 using System.Data.Common;
+using Calendar.Server.Application.Domain.Schema.Commands;
 using Calendar.Server.Application.Infrastructure;
 using Microsoft.Extensions.Hosting;
 using System.Threading;
@@ -64,6 +66,7 @@ namespace Calendar.Server.API.Services
 
             await _db.ExecuteAsync(sql);
         }
+        // await _mediator.Send(new CreateSchemaCommand(), cancellationToken);
 
         public Task StopAsync(CancellationToken cancellationToken) =>
             Task.CompletedTask;
