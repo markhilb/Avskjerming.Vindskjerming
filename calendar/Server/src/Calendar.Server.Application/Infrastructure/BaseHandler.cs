@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace Calendar.Server.Application.Infrastructure
 {
-    public class BaseHandler : IDisposable
+    public class BaseHandler :IDisposable
     {
         protected readonly DbConnection _db;
 

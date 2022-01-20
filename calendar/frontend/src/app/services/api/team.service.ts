@@ -4,7 +4,7 @@ import { TeamDto } from 'src/app/models/event.model';
 import { BaseApiService } from './base-api.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class TeamService {
   constructor(private api: BaseApiService) {}
