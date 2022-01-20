@@ -25,10 +25,10 @@ builder.Services.AddHostedService<SqlSchemaService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-#if DEBUG
+// #if DEBUG
 app.UseSwagger();
 app.UseSwaggerUI();
-#endif
+// #endif
 
 app.UseCors(builder =>
 {

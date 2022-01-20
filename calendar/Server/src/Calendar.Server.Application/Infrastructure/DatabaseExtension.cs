@@ -1,5 +1,10 @@
+using System;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using Dapper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Calendar.Server.Application.Infrastructure
 {
