@@ -27,7 +27,7 @@
     "
     [tooltipPlacement]="tooltipPlacement"
     [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
-    [tooltipTemplate]="tooltip"
+    [tooltipTemplate]="tooltipTemplate"
     [tooltipAppendToBody]="tooltipAppendToBody"
     [tooltipDelay]="tooltipDelay"
     (mwlClick)="eventClicked.emit({ sourceEvent: $event })"
@@ -44,14 +44,11 @@
     ></mwl-calendar-event-actions>
     &ngsp;
     <div class="w-100 h-100 d-flex flex-column" style="color: black">
-      <div class="d-flex flex-column flex-wrap">
-        <span>
-          {{ weekEvent.event.title | uppercase }}
-        </span>
-        <span>
-          {{ weekEvent.event.meta.details ? 'NB! ' + weekEvent.event.meta.details : '' }}
-        </span>
+      <div style="overflow-y: hidden">
+        {{ weekEvent.event.title | uppercase }}
       </div>
+      <!-- <div *ngIf="weekEvent.event.meta.details" style="font-weight: bold">NB!</div> -->
+      <div *ngIf="weekEvent.event.meta.details">NB! {{ weekEvent.event.meta.details }}</div>
       <div>
         <span *ngFor="let employee of weekEvent.event.meta.employees; let i = index" [style.color]="employee.color">
           {{ employee.name }}
@@ -59,9 +56,13 @@
         </span>
       </div>
     </div>
+    <!-- <mwl-calendar-event-title -->
+    <!--   [event]="weekEvent.tempEvent || weekEvent.event" -->
+    <!--   [customTemplate]="eventTitleTemplate" -->
+    <!--   [view]="daysInWeek === 1 ? 'day' : 'week'" -->
+    <!-- ></mwl-calendar-event-title> -->
   </div>
 </ng-template>
-
 <ng-template
   [ngTemplateOutlet]="customTemplate || defaultTemplate"
   [ngTemplateOutletContext]="{
@@ -77,9 +78,17 @@
   }"
 ></ng-template>
 
-<ng-template #tooltip let-contents="contents" let-placement="placement" let-event="event">
-  <div class="cal-tooltip" [ngClass]="'cal-tooltip-' + placement">
-    <div class="cal-tooltip-arrow"></div>
-    <div class="cal-tooltip-inner" [innerHtml]="tooltipContent" style="font-size: 0.8rem"></div>
-  </div>
-</ng-template>
+<!-- <ng-template #tooltip let-contents="contents" let-placement="placement" let-event="event"> -->
+<!--   <div class="cal-tooltip" [ngClass]="'cal-tooltip-' + placement"> -->
+<!--     <div class="cal-tooltip-arrow"></div> -->
+<!--     <div class="cal-tooltip-inner" [innerHtml]="contents"></div> -->
+<!--   </div> -->
+<!-- </ng-template> -->
+<!-- <ng-template -->
+<!--   [ngTemplateOutlet]="customTemplate || defaultTemplate" -->
+<!--   [ngTemplateOutletContext]="{ -->
+<!--     contents: contents, -->
+<!--     placement: placement, -->
+<!--     event: event -->
+<!--   }" -->
+<!-- ></ng-template> -->
