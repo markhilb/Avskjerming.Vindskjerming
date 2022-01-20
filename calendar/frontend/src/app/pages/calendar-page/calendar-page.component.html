@@ -9,17 +9,24 @@
   <div class="col-md-3">
     <div class="btn-group">
       <div
+        #previous
         class="btn btn-primary"
-        (click)="changeView(CalendarView.Month)"
-        [class.active]="view === CalendarView.Month"
+        mwlCalendarPreviousView
+        [view]="view === CalendarView.Month ? CalendarView.Week : view"
+        [(viewDate)]="viewDate"
       >
-        2 Uker
+        Forrige
       </div>
-      <div class="btn btn-primary" (click)="changeView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
-        Uke
-      </div>
-      <div class="btn btn-primary" (click)="changeView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
-        Dag
+      <div #today class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">I dag</div>
+      <div
+        #next
+        class="btn btn-primary"
+        mwlCalendarNextView
+        [view]="view === CalendarView.Month ? CalendarView.Week : view"
+        [excludeDays]="excludeDays"
+        [(viewDate)]="viewDate"
+      >
+        Neste
       </div>
     </div>
   </div>
@@ -41,24 +48,17 @@
   <div class="col-md-3">
     <div class="btn-group">
       <div
-        #previous
         class="btn btn-primary"
-        mwlCalendarPreviousView
-        [view]="view === CalendarView.Month ? CalendarView.Week : view"
-        [(viewDate)]="viewDate"
+        (click)="changeView(CalendarView.Month)"
+        [class.active]="view === CalendarView.Month"
       >
-        Forrige
+        2 Uker
       </div>
-      <div #today class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">I dag</div>
-      <div
-        #next
-        class="btn btn-primary"
-        mwlCalendarNextView
-        [view]="view === CalendarView.Month ? CalendarView.Week : view"
-        [excludeDays]="excludeDays"
-        [(viewDate)]="viewDate"
-      >
-        Neste
+      <div class="btn btn-primary" (click)="changeView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+        Uke
+      </div>
+      <div class="btn btn-primary" (click)="changeView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
+        Dag
       </div>
     </div>
   </div>
