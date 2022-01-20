@@ -51,15 +51,7 @@ class CustomDateFormatter extends CalendarNativeDateFormatter {
 registerLocaleData(localeNo);
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    CalendarPageComponent,
-    SettingsPageComponent,
-    WeekEventComponent,
-    ToastComponent,
-    LoginPageComponent,
-    ChangePasswordComponent,
-  ],
+  declarations: [AppComponent, CalendarPageComponent, SettingsPageComponent, WeekEventComponent, ToastComponent, LoginPageComponent, ChangePasswordComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

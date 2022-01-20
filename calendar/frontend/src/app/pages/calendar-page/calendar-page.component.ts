@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
-import { addDays, addHours, endOfDay, endOfWeek, isSameWeek, startOfDay, startOfWeek } from 'date-fns';
+import { addDays, addHours, endOfDay, endOfWeek, startOfDay, startOfWeek } from 'date-fns';
 import { EmployeeDto, EventDto, TeamDto } from 'src/app/models/event.model';
 import {
   AppState,
@@ -62,11 +62,13 @@ const _createEvent = (start: Date, end: Date) =>
   templateUrl: './calendar-page.component.html',
   styleUrls: ['./calendar-page.component.scss'],
 })
-export class CalendarPageComponent {
+export class CalendarPageComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
   @ViewChild('next', { static: false }) next?: ElementRef;
   @ViewChild('previous', { static: false }) previous?: ElementRef;
   @ViewChild('today', { static: false }) today?: ElementRef;
+
+  weekTemplate?: TemplateRef<any>;
 
   dayStart = 7;
   dayEnd = 22;
@@ -91,7 +93,19 @@ export class CalendarPageComponent {
   teams$ = this.store.select(selectTeams);
   employees$ = this.store.select(selectEmployees);
 
+  zoom = 1;
+  @HostListener('window:resize', [])
+  onResize() {
+    // const header = document.getElementById('header') as HTMLElement;
+    // const div = document.getElementById('calendar-body') as HTMLElement;
+    // setTimeout(() => {
+    //   this.zoom = (window.innerHeight - header.offsetHeight) / div.offsetHeight;
+    //   if (this.zoom < 1) this.zoom = 1;
+    // }, 0);
+  }
+
   constructor(private store: Store<AppState>, private modal: NgbModal) {
+    // setInterval(() => console.log('here'), 1000);
     this.fetchEvents();
     interval(1000 * 60 * 5)
       .pipe(untilDestroyed(this))
@@ -179,6 +193,11 @@ export class CalendarPageComponent {
   changeTeam(team: TeamDto) {
     this.modalData.meta.team = team;
     this.modalData.color = { primary: team.primaryColor, secondary: team.secondaryColor };
+  }
+
+  changeView(view: CalendarView) {
+    this.view = view;
+    this.onResize();
   }
 
   removeEmployee(employee: EmployeeDto) {

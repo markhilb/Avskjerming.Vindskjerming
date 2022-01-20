@@ -8,13 +8,21 @@
   </div>
   <div class="col-md-3">
     <div class="btn-group">
-      <button class="btn btn-primary" (click)="view = CalendarView.Month" [class.active]="view === CalendarView.Month">
+      <button
+        class="btn btn-primary"
+        (click)="changeView(CalendarView.Month)"
+        [class.active]="view === CalendarView.Month"
+      >
         2 Uker
       </button>
-      <button class="btn btn-primary" (click)="view = CalendarView.Week" [class.active]="view === CalendarView.Week">
+      <button
+        class="btn btn-primary"
+        (click)="changeView(CalendarView.Week)"
+        [class.active]="view === CalendarView.Week"
+      >
         Uke
       </button>
-      <button class="btn btn-primary" (click)="view = CalendarView.Day" [class.active]="view === CalendarView.Day">
+      <button class="btn btn-primary" (click)="changeView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
         Dag
       </button>
     </div>
@@ -65,7 +73,7 @@
   </div>
 </div>
 
-<div id="calendar-body" [ngSwitch]="view">
+<div id="calendar-body" [style.zoom]="zoom" [ngSwitch]="view">
   <div *ngSwitchCase="CalendarView.Month" class="d-flex flex-row w-100">
     <mwl-calendar-week-view
       class="w-50"
