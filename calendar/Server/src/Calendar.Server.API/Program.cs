@@ -36,11 +36,7 @@ app.UseSwaggerUI();
 app.UseCors(builder =>
 {
     builder
-#if DEBUG
     .WithOrigins("http://localhost:4200", "http://localhost:5000", "http://localhost:12000")
-#else
-    .WithOrigins("https://calendar.hilbertsen.com")
-#endif
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials();
