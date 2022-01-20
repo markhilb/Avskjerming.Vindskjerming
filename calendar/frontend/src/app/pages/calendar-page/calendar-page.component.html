@@ -51,11 +51,11 @@
         [view]="view === CalendarView.Month ? CalendarView.Week : view"
         [excludeDays]="excludeDays"
         [(viewDate)]="viewDate"
-        (click)="fetchEvents()"
+        (click)="changeDate()"
       >
         Forrige
       </button>
-      <button #today class="btn btn-primary" mwlCalendarToday [(viewDate)]="viewDate" (click)="fetchEvents()">
+      <button #today class="btn btn-primary" mwlCalendarToday [(viewDate)]="viewDate" (click)="changeDate()">
         I dag
       </button>
       <button
@@ -65,7 +65,7 @@
         [view]="view === CalendarView.Month ? CalendarView.Week : view"
         [excludeDays]="excludeDays"
         [(viewDate)]="viewDate"
-        (click)="fetchEvents()"
+        (click)="changeDate()"
       >
         Neste
       </button>
