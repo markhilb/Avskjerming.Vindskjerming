@@ -33,7 +33,8 @@ export class BaseApiService {
     return this.httpClient.request<T>(method, environment.baseApi + url, httpOptions).pipe(
       map((response: T) => this.parseResponse<T>(response)),
       catchError((error: HttpErrorResponse) => {
-        throw new Error(error.status === 400 ? 'En uforventet feil har oppstått' : 'Fikk ikke kontakt med serveren');
+        console.log(error);
+        throw new Error(error.status ? 'An unexpected error occured' : 'Could not connect to server');
       }),
     );
   }
