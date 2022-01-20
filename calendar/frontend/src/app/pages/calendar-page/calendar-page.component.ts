@@ -120,13 +120,6 @@ export class CalendarPageComponent implements OnInit {
         this.previous?.nativeElement.click();
       } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         this.today?.nativeElement.click();
-      } else if (event.key === 'Tab') {
-        this.newEvent({ date: new Date() });
-        event.preventDefault();
-      }
-    } else {
-      if (event.key === 'Escape') {
-        this.modal.dismissAll();
       }
     }
   }
@@ -142,7 +135,6 @@ export class CalendarPageComponent implements OnInit {
   newEvent({ date }: { date: Date }) {
     const event = _createEvent(date, addHours(date, 1));
     this.openModal(event);
-    (document.getElementById('title') as HTMLElement).focus();
   }
 
   confirmNewEvent() {
