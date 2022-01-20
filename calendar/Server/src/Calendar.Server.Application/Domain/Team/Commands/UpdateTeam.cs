@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Team.Commands
 
     public class UpdateTeamHandler : BaseHandler, IRequestHandler<UpdateTeamCommand, bool>
     {
-        public UpdateTeamHandler(ISqlSettings settings) : base(settings) { }
+        public UpdateTeamHandler(DbConnection db) : base(db) { }
 
         public async Task<bool> Handle(UpdateTeamCommand command, CancellationToken cancellationToken)
         {

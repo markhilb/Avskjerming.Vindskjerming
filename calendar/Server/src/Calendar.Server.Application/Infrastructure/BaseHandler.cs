@@ -6,7 +6,6 @@ namespace Calendar.Server.Application.Infrastructure
     {
         protected readonly DbConnection _db;
 
-        public BaseHandler(ISqlSettings settings) =>
-            _db = DatabaseExtension.CreateSqlConnection(settings);
+        public BaseHandler(DbConnection db) => _db = db;
     }
 }

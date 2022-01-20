@@ -15,7 +15,7 @@ namespace Calendar.Server.Application.Domain.Employee.Commands
 
     public class DeleteEmployeeHandler : BaseHandler, IRequestHandler<DeleteEmployeeCommand, bool>
     {
-        public DeleteEmployeeHandler(ISqlSettings settings) : base(settings) { }
+        public DeleteEmployeeHandler(DbConnection db) : base(db) { }
 
         public async Task<bool> Handle(DeleteEmployeeCommand command, CancellationToken cancellationToken)
         {

@@ -14,7 +14,7 @@ namespace Calendar.Server.Application.Domain.Event.Commands
 
     public class DeleteEventHandler : BaseHandler, IRequestHandler<DeleteEventCommand, bool>
     {
-        public DeleteEventHandler(ISqlSettings settings) : base(settings) { }
+        public DeleteEventHandler(DbConnection db) : base(db) { }
 
         public async Task<bool> Handle(DeleteEventCommand command, CancellationToken cancellationToken)
         {

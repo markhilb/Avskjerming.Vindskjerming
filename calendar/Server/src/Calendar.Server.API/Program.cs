@@ -15,19 +15,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<SqlSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+builder.Services.AddSqlSupport(builder.Configuration.GetSection("DatabaseSettings"));
 
 builder.Services.AddSingleton<ISqlSettings>(s => s.GetRequiredService<IOptions<SqlSettings>>().Value);
 
 builder.Services.AddMediatR(typeof(BaseHandler).Assembly);
-
-builder.Services.AddHostedService<SqlSchemaService>();
+// builder.Services.AddHostedService<SqlSchemaService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 // #if DEBUG
-app.UseSwagger();
-app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 // #endif
 
 app.UseCors(builder =>

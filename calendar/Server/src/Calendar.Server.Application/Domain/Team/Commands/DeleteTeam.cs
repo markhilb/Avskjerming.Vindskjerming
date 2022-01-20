@@ -14,7 +14,7 @@ namespace Calendar.Server.Application.Domain.Team.Commands
 
     public class DeleteTeamHandler : BaseHandler, IRequestHandler<DeleteTeamCommand, bool>
     {
-        public DeleteTeamHandler(ISqlSettings settings) : base(settings) { }
+        public DeleteTeamHandler(DbConnection db) : base(db) { }
 
         public async Task<bool> Handle(DeleteTeamCommand command, CancellationToken cancellationToken)
         {

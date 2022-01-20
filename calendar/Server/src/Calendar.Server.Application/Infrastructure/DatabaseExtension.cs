@@ -10,13 +10,22 @@ namespace Calendar.Server.Application.Infrastructure
 {
     public static class DatabaseExtension
     {
-        public static DbConnection CreateSqlConnection(ISqlSettings settings)
+        public static void AddSqlSupport(this IServiceCollection services, IConfiguration configuration)
+        {
+            var sqlSettings = configuration.GetSection("DatabaseSettings");
+
+            SqlMapper.AddTypeMap(typeof(DateTime), DbType.Date);
+            // SqlMapper.AddTypeHandler(new DateTimeHandler());
+            services.AddScoped((_) => CreateSqlConnection(sqlSettings.Get<SqlSettings>()));
+        }
+
+        private static DbConnection CreateSqlConnection(SqlSettings sqlSettings)
         {
             // var sqlConnection = new SqlConnection(sqlSettings.ConnectionString); // TODO: Fix this
-            var connection = new SqlConnection("Server=localhost,1433; Database=master; User Id=sa; Password=1234abcd<>%&");
+            var sqlConnection = new SqlConnection("Server=localhost,1433; Database=master; User Id=sa; Password=1234abcd<>%&");
 
-            connection.Open();
-            return connection;
+            sqlConnection.Open();
+            return sqlConnection;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Calendar.Server.Application.Domain.Event.Commands
 
     public class UpdateEventHandler : BaseHandler, IRequestHandler<UpdateEventCommand, bool>
     {
-        public UpdateEventHandler(ISqlSettings settings) : base(settings) { }
+        public UpdateEventHandler(DbConnection db) : base(db) { }
 
         public async Task<bool> Handle(UpdateEventCommand command, CancellationToken cancellationToken)
         {

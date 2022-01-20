@@ -14,7 +14,7 @@ namespace Calendar.Server.API.Controllers
     [Route("Teams")]
     public class TeamController : BaseController
     {
-        public TeamController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) { }
+        public TeamController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) {}
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeamsAsync(CancellationToken cancellationToken) =>
