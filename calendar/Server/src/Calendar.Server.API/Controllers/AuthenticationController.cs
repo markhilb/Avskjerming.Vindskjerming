@@ -49,9 +49,5 @@ namespace Calendar.Server.API.Controllers
         [HttpGet("IsLoggedIn")]
         public ActionResult<bool> IsLoggedIn(CancellationToken cancellationToken) =>
             Ok(HttpContext.User.Identity.IsAuthenticated);
-
-        [HttpPost("ChangePassword")]
-        public async Task<ActionResult<bool>> ChangePassword([FromBody] ChangePasswordDto dto, CancellationToken cancellationToken) =>
-            Ok(await _mediator.Send(new ChangePasswordCommand { ChangePasswordDto = dto }, cancellationToken));
     }
 }
