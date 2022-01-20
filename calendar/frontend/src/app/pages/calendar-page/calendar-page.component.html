@@ -51,13 +51,10 @@
         [view]="view === CalendarView.Month ? CalendarView.Week : view"
         [excludeDays]="excludeDays"
         [(viewDate)]="viewDate"
-        (click)="changeDate()"
       >
         Forrige
       </button>
-      <button #today class="btn btn-primary" mwlCalendarToday [(viewDate)]="viewDate" (click)="changeDate()">
-        I dag
-      </button>
+      <button #today class="btn btn-primary" mwlCalendarToday [(viewDate)]="viewDate">I dag</button>
       <button
         #next
         class="btn btn-primary"
@@ -65,7 +62,6 @@
         [view]="view === CalendarView.Month ? CalendarView.Week : view"
         [excludeDays]="excludeDays"
         [(viewDate)]="viewDate"
-        (click)="changeDate()"
       >
         Neste
       </button>
@@ -79,6 +75,7 @@
       class="w-50"
       [viewDate]="viewDate"
       [events]="(events$ | async) ?? []"
+      [refresh]="refresh$"
       [dayStartHour]="dayStart"
       [dayEndHour]="dayEnd"
       [excludeDays]="excludeDays"
@@ -91,6 +88,7 @@
       class="w-50 second-week"
       [viewDate]="nextWeekDate"
       [events]="(events$ | async) ?? []"
+      [refresh]="refresh$"
       [dayStartHour]="dayStart"
       [dayEndHour]="dayEnd"
       [excludeDays]="excludeDays"
@@ -104,6 +102,7 @@
     *ngSwitchCase="CalendarView.Week"
     [viewDate]="viewDate"
     [events]="(events$ | async) ?? []"
+    [refresh]="refresh$"
     [dayStartHour]="dayStart"
     [dayEndHour]="dayEnd"
     [excludeDays]="excludeDays"
@@ -116,6 +115,7 @@
     *ngSwitchCase="CalendarView.Day"
     [viewDate]="viewDate"
     [events]="(events$ | async) ?? []"
+    [refresh]="refresh$"
     [dayStartHour]="dayStart"
     [dayEndHour]="dayEnd"
     [eventTemplate]="weekTemplate"
@@ -160,11 +160,11 @@
   <div class="modal-body">
     <div>
       Tittel
-      <input id="title" class="form-control" type="text" [(ngModel)]="modalData.title" />
+      <input id="title" class="form-control" type="text" [(ngModel)]="modalData.title" (keyup)="refresh$.next()" />
     </div>
     <div class="mt-4">
       Detaljer
-      <textarea class="form-control" rows="3" [(ngModel)]="modalData.meta.details"></textarea>
+      <textarea class="form-control" rows="3" [(ngModel)]="modalData.meta.details" (keyup)="refresh$.next()"></textarea>
     </div>
     <div class="mt-4">
       Start
@@ -173,6 +173,7 @@
         type="text"
         mwlFlatpickr
         [(ngModel)]="modalData.start"
+        (ngModelChange)="refresh$.next()"
         [altInput]="true"
         [convertModelValue]="true"
         [enableTime]="true"
@@ -189,6 +190,7 @@
         type="text"
         mwlFlatpickr
         [(ngModel)]="modalData.end"
+        (ngModelChange)="refresh$.next()"
         [altInput]="true"
         [convertModelValue]="true"
         [enableTime]="true"

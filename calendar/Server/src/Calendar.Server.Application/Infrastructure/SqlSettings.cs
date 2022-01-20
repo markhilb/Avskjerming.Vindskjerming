@@ -12,7 +12,6 @@ namespace Calendar.Server.Application.Infrastructure
         public string Password { get; set; }
         public int Port { get; set; }
 
-        public string ConnectionString =>
-            $"Server={Host},{Port}; Database={DatabaseName}; User Id={Username}; Password={Password}; MultipleActiveResultSets=True";
+        public string ConnectionString => $"Server={Host},{Port}; Database={DatabaseName}; User Id={Username}; Password={Password}";
     }
 }

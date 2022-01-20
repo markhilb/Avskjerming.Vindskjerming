@@ -43,7 +43,7 @@ export class BaseApiService {
       if (value === null || value === undefined) {
         delete params[key];
       } else if (value instanceof Date) {
-        params[key] = value.toISOString();
+        params[key] = formatISO(value);
       }
     }
 

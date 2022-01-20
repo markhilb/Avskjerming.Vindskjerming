@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
-import { addDays, addHours, endOfDay, endOfWeek, startOfDay, startOfWeek } from 'date-fns';
+import { addDays, addHours, startOfWeek } from 'date-fns';
 import { Subject } from 'rxjs';
 import { EmployeeDto, EventDto, TeamDto } from 'src/app/models/event.model';
 import {
@@ -85,6 +85,8 @@ export class CalendarPageComponent implements OnInit {
 
   modalData = {} as CalendarEvent;
 
+  refresh$ = new Subject<void>();
+
   events$ = this.store.select(selectCalendarEvents);
   teams$ = this.store.select(selectTeams);
   employees$ = this.store.select(selectEmployees);
@@ -101,7 +103,7 @@ export class CalendarPageComponent implements OnInit {
   }
 
   constructor(private store: Store<AppState>, private modal: NgbModal) {
-    store.dispatch(getEvents({ from: startOfWeek(this.viewDate), to: endOfWeek(this.viewDate) }));
+    store.dispatch(getEvents());
     store.dispatch(getTeams());
     store.dispatch(getEmployees());
   }
@@ -129,17 +131,6 @@ export class CalendarPageComponent implements OnInit {
     }
   }
 
-  changeDate() {
-    console.log(this.viewDate);
-    this.store.dispatch(
-      getEvents(
-        this.view === CalendarView.Day
-          ? { from: startOfDay(this.viewDate), to: endOfDay(this.viewDate) }
-          : { from: startOfWeek(this.viewDate), to: endOfWeek(this.viewDate) },
-      ),
-    );
-  }
-
   availableEmployees(event: CalendarEvent) {
     return this.store.select(selectAvailableEmployees(event));
   }
@@ -165,7 +156,7 @@ export class CalendarPageComponent implements OnInit {
   }
 
   openModal(event: CalendarEvent): void {
-    this.modalData = JSON.parse(JSON.stringify(event));
+    this.modalData = { ...event };
     this.modal.open(this.modalContent, { size: 'lg', centered: true });
   }
 

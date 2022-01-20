@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace Calendar.Server.API.Controllers
 {
@@ -18,9 +17,8 @@ namespace Calendar.Server.API.Controllers
         public EventController(ILogger<BaseController> logger, IMediator mediator) : base(logger, mediator) { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(
-                [FromQuery] DateTime from, [FromQuery] DateTime to, CancellationToken cancellationToken) =>
-            Ok(await _mediator.Send(new GetEventsQuery { From = from, To = to }, cancellationToken));
+        public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(CancellationToken cancellationToken) =>
+            Ok(await _mediator.Send(new GetEventsQuery(), cancellationToken));
 
         [HttpPost]
         public async Task<ActionResult<long>> CreateEvent([FromBody] EventDto eventDto, CancellationToken cancellationToken) =>

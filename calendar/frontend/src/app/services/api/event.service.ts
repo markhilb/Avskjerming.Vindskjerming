@@ -9,7 +9,7 @@ import { EventDto } from 'src/app/models/event.model';
 export class EventService {
   constructor(private api: BaseApiService) {}
 
-  getEvents = (from: Date, to: Date): Observable<EventDto[]> => this.api.get<EventDto[]>('Events', { from, to });
+  getEvents = (): Observable<EventDto[]> => this.api.get<EventDto[]>('Events');
 
   createEvent = (event: EventDto): Observable<number> => this.api.post<number>('Events', event);
 
