@@ -199,7 +199,7 @@
       Team
       <div ngbDropdown>
         <button class="btn btn-outline-primary" id="dropdownTeam" ngbDropdownToggle>
-          {{ modalData.meta.team?.name ?? 'Velg team' }}
+          {{ modalData.meta.team.name ?? 'Velg team' }}
         </button>
         <div ngbDropdownMenu aria-labelledby="dropdownTeam">
           <button ngbDropdownItem *ngFor="let team of teams$ | async" (click)="changeTeam(team)">
@@ -214,7 +214,7 @@
         <input class="form-control mt-1 mr-2" type="text" [(ngModel)]="employee.name" />
         <i class="fas fa-fw fa-trash-alt" (click)="removeEmployee(employee)"></i>
       </div>
-      <div class="mt-1">
+      <div class="mt-1 col-1 mx-auto">
         <div ngbDropdown>
           <button class="btn btn-outline-primary" id="dropdownEmployee" ngbDropdownToggle>Velg montør</button>
           <div ngbDropdownMenu aria-labelledby="dropdownEmployee">

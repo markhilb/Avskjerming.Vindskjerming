@@ -21,7 +21,7 @@ import { getTeams, selectTeams } from 'src/app/store/team';
 interface MetaData {
   id: number;
   details: string;
-  team: TeamDto | null;
+  team: TeamDto;
   employees: EmployeeDto[];
 }
 
@@ -31,8 +31,8 @@ const serializeEvent = (event: CalendarEvent<MetaData>): EventDto => ({
   details: event.meta?.details ?? '',
   start: event.start,
   end: event.end ?? event.start,
-  teamId: event.meta?.team?.id ?? null,
-  team: event.meta?.team ?? null,
+  teamId: event.meta?.team.id ?? 0,
+  team: event.meta?.team ?? ({ id: 0 } as TeamDto),
   employees: event.meta?.employees ?? [],
 });
 
@@ -41,7 +41,6 @@ const _createEvent = (start: Date, end: Date) =>
     start,
     end,
     title: '',
-    color: { primary: 'red', secondary: 'green' },
     resizable: {
       beforeStart: true,
       afterEnd: true,
@@ -49,7 +48,7 @@ const _createEvent = (start: Date, end: Date) =>
     draggable: true,
     meta: {
       details: '',
-      team: null,
+      team: {} as TeamDto,
       employees: [],
       id: 0,
     },
@@ -66,10 +65,10 @@ export class CalendarPageComponent implements OnInit {
   @ViewChild('previous', { static: false }) previous?: ElementRef;
   @ViewChild('today', { static: false }) today?: ElementRef;
 
-  weekTemplate?: TemplateRef<any>;
+  weekTemplate?: TemplateRef<any>
 
   dayStart = 8;
-  dayEnd = 20;
+  dayEnd = 17;
   excludeDays = [0, 6];
 
   CalendarView = CalendarView;
@@ -113,14 +112,12 @@ export class CalendarPageComponent implements OnInit {
   }
 
   @HostListener('document:keydown', ['$event']) keydown(event: KeyboardEvent) {
-    if (!this.modal.hasOpenModals()) {
-      if (event.key == 'ArrowRight') {
-        this.next?.nativeElement.click();
-      } else if (event.key === 'ArrowLeft') {
-        this.previous?.nativeElement.click();
-      } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        this.today?.nativeElement.click();
-      }
+    if (event.key == 'ArrowRight') {
+      this.next?.nativeElement.click();
+    } else if (event.key === 'ArrowLeft') {
+      this.previous?.nativeElement.click();
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      this.today?.nativeElement.click();
     }
   }
 

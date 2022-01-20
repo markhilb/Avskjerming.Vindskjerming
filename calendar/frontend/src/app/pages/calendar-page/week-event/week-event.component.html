@@ -47,8 +47,7 @@
       <div style="overflow-y: hidden">
         {{ weekEvent.event.title }}
       </div>
-      <!-- <div *ngIf="weekEvent.event.meta.details" style="font-weight: bold">NB!</div> -->
-      <div *ngIf="weekEvent.event.meta.details">NB! {{ weekEvent.event.meta.details }}</div>
+      <div *ngIf="weekEvent.event.meta.details" style="font-weight: bold">NB!</div>
       <div>
         <span *ngFor="let employee of weekEvent.event.meta.employees; let i = index" [style.color]="employee.color">
           {{ employee.name }}
