@@ -17,12 +17,11 @@ namespace Calendar.Server.Application.Domain.Event.Commands
 
         public async Task<bool> Handle(DeleteEventCommand command, CancellationToken cancellationToken)
         {
-            await DeleteEventEmployees(command.EventId);
-
             var sql = @"DELETE FROM Events
                         WHERE Id = @EventId";
 
             var deletedRows = await _db.ExecuteAsync(sql, command);
+            await DeleteEventEmployees(command.EventId);
             return deletedRows == 1;
         }
 
