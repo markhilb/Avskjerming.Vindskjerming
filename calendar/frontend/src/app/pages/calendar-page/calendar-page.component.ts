@@ -63,7 +63,6 @@ export class CalendarPageComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
   @ViewChild('next', { static: false }) next?: ElementRef;
   @ViewChild('previous', { static: false }) previous?: ElementRef;
-  @ViewChild('today', { static: false }) today?: ElementRef;
 
   dayStart = 8;
   dayEnd = 17;
@@ -114,8 +113,6 @@ export class CalendarPageComponent implements OnInit {
       this.next?.nativeElement.click();
     } else if (event.key === 'ArrowLeft') {
       this.previous?.nativeElement.click();
-    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-      this.today?.nativeElement.click();
     }
   }
 
