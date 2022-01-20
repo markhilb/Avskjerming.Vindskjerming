@@ -1,5 +1,3 @@
-using System;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Calendar.Server.Application.Domain.Authentication.Commands;
@@ -23,18 +21,7 @@ namespace Calendar.Server.API.Controllers
         {
             var ok = await _mediator.Send(new LoginCommand { LoginDto = login }, cancellationToken);
             if (ok)
-            {
-                var claimsIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProps = new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    IssuedUtc = DateTime.UtcNow,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddYears(100),
-                    AllowRefresh = true,
-                };
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProps);
-            }
+                await SetAuthenticated();
 
             return Ok(ok);
         }
@@ -48,6 +35,6 @@ namespace Calendar.Server.API.Controllers
 
         [HttpGet("IsLoggedIn")]
         public ActionResult<bool> IsLoggedIn(CancellationToken cancellationToken) =>
-            Ok(HttpContext.User.Identity.IsAuthenticated);
+            Ok(GetAuthenticated());
     }
 }
