@@ -106,6 +106,7 @@ export class CanvasComponent implements OnInit {
     this.leftMount = val;
     if (this.leftWall?.items.length > 0) {
       this.leftWall.leftMount = val;
+      this.leftWall.autoCalculate();
       this.updatePackageList();
     }
   }
@@ -114,9 +115,11 @@ export class CanvasComponent implements OnInit {
     this.rightMount = val;
     if (this.rightWall?.items.length > 0) {
       this.rightWall.rightMount = val;
+      this.rightWall.autoCalculate();
       this.updatePackageList();
     } else if (this.leftWall?.items.length > 0) {
       this.leftWall.rightMount = val;
+      this.leftWall.autoCalculate();
       this.updatePackageList();
     }
   }
