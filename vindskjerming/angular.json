@@ -97,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "vindskjerming:build:production"
+              "buildTarget": "vindskjerming:build:production"
             },
             "development": {
-              "browserTarget": "vindskjerming:build:development"
+              "buildTarget": "vindskjerming:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -108,7 +108,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "vindskjerming:build"
+            "buildTarget": "vindskjerming:build"
           }
         },
         "lint": {
