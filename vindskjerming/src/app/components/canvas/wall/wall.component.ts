@@ -4,10 +4,10 @@ import { Item, Wallmount, Post, Glass } from '../../../models/items.model';
 import Config from '../../../config.json';
 
 @Component({
-    selector: 'app-wall',
-    templateUrl: './wall.component.html',
-    styleUrls: ['./wall.component.scss'],
-    standalone: false
+  selector: 'app-wall',
+  templateUrl: './wall.component.html',
+  styleUrls: ['./wall.component.scss'],
+  standalone: false,
 })
 export class WallComponent implements OnInit {
   @Output() updatePackageList = new EventEmitter();

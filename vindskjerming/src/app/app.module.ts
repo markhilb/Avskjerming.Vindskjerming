@@ -10,7 +10,12 @@ import { CanvasComponent } from './components/canvas/canvas.component';
 import { WallComponent } from './components/canvas/wall/wall.component';
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent, CanvasComponent, WallComponent],
+  declarations: [
+    AppComponent,
+    HomePageComponent,
+    CanvasComponent,
+    WallComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

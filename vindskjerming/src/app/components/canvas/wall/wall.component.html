@@ -26,7 +26,8 @@
       </p>
       <p *ngIf="item.isPolygon">
         {{ item.width | number: '.0-2' }}x{{ item.height | number: '.0-2' }}x{{
-        item.secondHeight | number: '.0-2' }}
+          item.secondHeight | number: '.0-2'
+        }}
       </p>
       <div
         *ngIf="item.height > item.secondHeight"
