@@ -10,17 +10,22 @@
 
 .wallmount {
   width: 6px;
+  box-sizing: border-box;
+  border-left: 6px solid transparent;
 }
 
 .post {
   width: 12px;
+  box-sizing: border-box;
+  border-left: 12px solid transparent;
 
   .base {
     position: relative;
     width: 20px;
     height: 6px;
-    background-color: black;
-    left: -4px;
+    box-sizing: border-box;
+    border-top: 6px solid black;
+    left: -16px;
     top: 100%;
   }
 }
