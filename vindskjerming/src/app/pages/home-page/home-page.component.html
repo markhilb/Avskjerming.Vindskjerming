@@ -96,16 +96,20 @@
           <th>Størrelse</th>
           <th>Antall</th>
         </tr>
-        <tr *ngFor="let item of packageList">
-          <td>{{ item[0] }}</td>
-          <td>{{ item[1] }}</td>
-          <td>{{ item[2] }}</td>
-        </tr>
-        <tr *ngIf="totalWeight">
-          <td>Vekt</td>
-          <td></td>
-          <td>{{ totalWeight }} kg</td>
-        </tr>
+        @for (item of packageList; track item) {
+          <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+          </tr>
+        }
+        @if (totalWeight) {
+          <tr>
+            <td>Vekt</td>
+            <td></td>
+            <td>{{ totalWeight }} kg</td>
+          </tr>
+        }
       </table>
     </div>
   </div>

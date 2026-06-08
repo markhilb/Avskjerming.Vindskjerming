@@ -1,86 +1,106 @@
 <div class="row">
-  <div *ngFor="let item of items">
-    <div
-      *ngIf="isWallmount(item)"
-      class="wallmount pointer"
-      title="Rediger veggskinne"
-      (click)="onEditItem(item)"
-      [style.height.px]="item.height + 5"
-      [style.borderLeftColor]="item.color"
-    ></div>
-
-    <div
-      *ngIf="isPost(item)"
-      class="post pointer"
-      title="Rediger stolpe"
-      (click)="onEditItem(item)"
-      [style.height.px]="item.height + 5"
-      [style.borderLeftColor]="item.color"
-    >
-      <div class="base"></div>
+  @for (item of items; track item) {
+    <div>
+      @if (isWallmount(item)) {
+        <div
+          class="wallmount pointer"
+          title="Rediger veggskinne"
+          (click)="onEditItem(item)"
+          [style.height.px]="item.height + 5"
+          [style.borderLeftColor]="item.color"
+        ></div>
+      }
+      @if (isPost(item)) {
+        <div
+          class="post pointer"
+          title="Rediger stolpe"
+          (click)="onEditItem(item)"
+          [style.height.px]="item.height + 5"
+          [style.borderLeftColor]="item.color"
+        >
+          <div class="base"></div>
+        </div>
+      }
+      @if (isGlass(item)) {
+        <div class="glass" [style.width.px]="item.width">
+          @if (!item.isPolygon) {
+            <p>
+              {{ item.width | number: '.0-2' }}x{{
+                item.height | number: '.0-2'
+              }}
+            </p>
+          }
+          @if (item.isPolygon) {
+            <p>
+              {{ item.width | number: '.0-2' }}x{{
+                item.height | number: '.0-2'
+              }}x{{ item.secondHeight | number: '.0-2' }}
+            </p>
+          }
+          @if (item.height > item.secondHeight) {
+            <div
+              class="item pointer"
+              title="Rediger glass"
+              (click)="onEditItem(item)"
+              [style.borderTopWidth.px]="item.height - item.secondHeight"
+              [style.borderLeftWidth.px]="ceil(item.width)"
+              [style.borderLeftColor]="item.color"
+              [style.height.px]="item.secondHeight"
+            ></div>
+          }
+          @if (item.height <= item.secondHeight) {
+            <div
+              class="item pointer"
+              title="Rediger glass"
+              (click)="onEditItem(item)"
+              [style.borderTopWidth.px]="item.secondHeight - item.height"
+              [style.borderRightWidth.px]="ceil(item.width)"
+              [style.borderRightColor]="item.color"
+              [style.height.px]="item.height"
+            ></div>
+          }
+        </div>
+      }
     </div>
-
-    <div *ngIf="isGlass(item)" class="glass" [style.width.px]="item.width">
-      <p *ngIf="!item.isPolygon">
-        {{ item.width | number: '.0-2' }}x{{ item.height | number: '.0-2' }}
-      </p>
-      <p *ngIf="item.isPolygon">
-        {{ item.width | number: '.0-2' }}x{{ item.height | number: '.0-2' }}x{{
-          item.secondHeight | number: '.0-2'
-        }}
-      </p>
-      <div
-        *ngIf="item.height > item.secondHeight"
-        class="item pointer"
-        title="Rediger glass"
-        (click)="onEditItem(item)"
-        [style.borderTopWidth.px]="item.height - item.secondHeight"
-        [style.borderLeftWidth.px]="ceil(item.width)"
-        [style.borderLeftColor]="item.color"
-        [style.height.px]="item.secondHeight"
-      ></div>
-      <div
-        *ngIf="item.height <= item.secondHeight"
-        class="item pointer"
-        title="Rediger glass"
-        (click)="onEditItem(item)"
-        [style.borderTopWidth.px]="item.secondHeight - item.height"
-        [style.borderRightWidth.px]="ceil(item.width)"
-        [style.borderRightColor]="item.color"
-        [style.height.px]="item.height"
-      ></div>
-    </div>
-  </div>
+  }
 </div>
 
-<div *ngIf="items.length > 0" class="length-bar-container">
-  <div class="length-bar">
-    <div class="end left"></div>
-    <div class="end right"></div>
+@if (items.length > 0) {
+  <div class="length-bar-container">
+    <div class="length-bar">
+      <div class="end left"></div>
+      <div class="end right"></div>
+    </div>
+    <p>{{ currentWidth | number: '.0-2' }}</p>
   </div>
-  <p>{{ currentWidth | number: '.0-2' }}</p>
-</div>
+}
 
-<div *ngIf="modalOpen" class="modal-container" (click)="closeModal()">
-  <div class="modal-body" (click)="$event.stopPropagation()">
-    <div class="inputs">
-      <div *ngIf="isGlass(selectedItem)" class="space-between">
-        Bredde:
-        <input type="number" [(ngModel)]="editItem.width" />
+@if (modalOpen) {
+  <div class="modal-container" (click)="closeModal()">
+    <div class="modal-body" (click)="$event.stopPropagation()">
+      <div class="inputs">
+        @if (isGlass(selectedItem)) {
+          <div class="space-between">
+            Bredde:
+            <input type="number" [(ngModel)]="editItem.width" />
+          </div>
+        }
+        <div class="space-between">
+          Høyde:
+          <input type="number" [(ngModel)]="editItem.height" />
+        </div>
+        @if (isGlass(selectedItem)) {
+          <div class="space-between">
+            Skrå høyde:
+            <input type="number" [(ngModel)]="editItem.secondHeight" />
+          </div>
+        }
       </div>
-      <div class="space-between">
-        Høyde:
-        <input type="number" [(ngModel)]="editItem.height" />
+      <div class="buttons space-between">
+        <button (click)="closeModal()">Avbryt</button>
+        <button (click)="deleteItem()">Slett</button>
+        <button (click)="saveEditItem()">Lagre</button>
       </div>
-      <div *ngIf="isGlass(selectedItem)" class="space-between">
-        Skrå høyde:
-        <input type="number" [(ngModel)]="editItem.secondHeight" />
-      </div>
-    </div>
-    <div class="buttons space-between">
-      <button (click)="closeModal()">Avbryt</button>
-      <button (click)="deleteItem()">Slett</button>
-      <button (click)="saveEditItem()">Lagre</button>
     </div>
   </div>
-</div>
+}
