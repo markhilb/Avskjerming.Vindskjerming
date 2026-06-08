@@ -1,19 +1,21 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnInit,
+  EventEmitter,
   Input,
+  OnInit,
   Output,
   ViewChild,
-  EventEmitter,
 } from '@angular/core';
 
-import { Item, Wallmount, Post } from '../../models/items.model';
+import { Item, Post, Wallmount } from '../../models/items.model';
 import { WallComponent } from './wall/wall.component';
 
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class CanvasComponent implements OnInit {

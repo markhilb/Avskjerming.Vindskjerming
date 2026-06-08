@@ -1,10 +1,10 @@
 import {
-  trigger,
   animate,
-  transition,
-  style,
-  query,
   group,
+  query,
+  style,
+  transition,
+  trigger,
 } from '@angular/animations';
 
 const moveIn = [

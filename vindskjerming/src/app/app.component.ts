@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { animations } from './animations';
 
 @Component({
@@ -6,6 +6,7 @@ import { animations } from './animations';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   animations: [animations],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent {

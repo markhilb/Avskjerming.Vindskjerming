@@ -1,12 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 
-import { Item, Wallmount, Post, Glass } from '../../../models/items.model';
 import Config from '../../../config.json';
+import { Glass, Item, Post, Wallmount } from '../../../models/items.model';
 
 @Component({
   selector: 'app-wall',
   templateUrl: './wall.component.html',
   styleUrls: ['./wall.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class WallComponent implements OnInit {
