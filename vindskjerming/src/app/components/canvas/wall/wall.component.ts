@@ -279,15 +279,37 @@ export class WallComponent implements OnInit {
       // Calculate number of items to add (minus edges)
       const remainingWidth =
         this.totalWidth - this.currentWidth - lastItem.width;
-      const num = remainingWidth / (this.globalWidth + Config['post']['width']);
+      const num =
+        remainingWidth / (this.globalWidth + Config[this._rightMount]['width']);
 
       for (let i = 0; i < Math.floor(num) + 1; i++) {
         this.addGlass(this.globalWidth, this.globalHeight);
         this.addPost(this.globalHeight);
       }
       this.addGlass(this.globalWidth, this.globalHeight);
-      if (lastItem instanceof Wallmount) this.addWallmount(this.globalHeight);
-      else if (lastItem instanceof Post) this.addPost(this.globalHeight);
+      console.log(this._rightMount);
+      if (this._rightMount === 'wallmount')
+        this.addWallmount(this.globalHeight);
+      else if (this._rightMount === 'post') this.addPost(this.globalHeight);
+    }
+
+    const lastItem = this.items[this.items.length - 1];
+
+    // Switch if last mount is not same as rightMount
+    if (
+      (lastItem instanceof Post && this._rightMount === 'wallmount') ||
+      (lastItem instanceof Wallmount && this._rightMount === 'post')
+    ) {
+      this.rightMount = this._rightMount;
+      this.update();
+
+      const lastGlass = this.items[this.items.length - 2];
+      if (this.currentWidth < this.totalWidth) {
+        if (lastGlass instanceof Glass) {
+          lastGlass.width += this.totalWidth - this.currentWidth;
+          this.update();
+        }
+      }
     }
   }
 
