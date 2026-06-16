@@ -1,0 +1,73 @@
+.Glass div {
+  cursor: pointer;
+
+  border-top: 0 solid transparent;
+  border-left: 0 solid transparent;
+  border-right: 0 solid transparent;
+}
+
+.Glass p {
+  position: relative;
+  text-align: center;
+}
+
+.Stolpe {
+  position: relative;
+  cursor: pointer;
+
+  width: 12px;
+  box-sizing: border-box;
+  border-left: 12px solid black;
+}
+
+.Stolpe.phantom {
+  border: 2px dashed grey;
+}
+
+.Stolpe .post-base {
+  position: relative;
+  width: 20px;
+  height: 6px;
+  box-sizing: border-box;
+  border-top: 6px solid black;
+  left: -16px;
+  top: 100%;
+}
+
+.Stolpe.phantom .post-base {
+  border: 2px dashed grey;
+  top: calc(100% + 2px);
+  left: -6px;
+}
+
+.Veggskinne {
+  cursor: pointer;
+
+  width: 6px;
+  box-sizing: border-box;
+  border-left: 6px solid grey;
+}
+
+.length-bar {
+  width: 100%;
+  height: 5px;
+  background-color: var(--black);
+  margin-top: 1rem;
+}
+
+.length-bar .end {
+  position: relative;
+  width: 4px;
+  height: 15px;
+  background-color: var(--black);
+  top: -5px;
+}
+
+.length-bar .left {
+  left: 0;
+}
+
+.length-bar .right {
+  top: -20px;
+  left: calc(100% - 4px);
+}
